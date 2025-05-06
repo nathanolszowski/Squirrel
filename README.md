@@ -1,6 +1,32 @@
 # Squirrel Scrapers
 
-Ce projet est une collection de scrapers pour extraire des données d'annonces immobilières de différents sites de courtiers.
+Ce projet est une collection de scrapers pour extraire des données d'annonces immobilières de différents sites d'Agence.
+Il permet d'avoir une vue du marché complète pour le bureaux en Île-de-France, locaux d'activités et entrepôts en France.
+Liste des sites d'agences disponibles :
+- CBRE
+- BNP
+- JLL
+- AlexBolton
+- Cushman & Wakefield
+
+## Etat du projet et amélioration à venir
+
+1. Priorité 1 :
+- Implémenter les scrapers dans la liste des plus grosses agences (ArthurLoyd, KnightFrank, Savills)
+- Gérer les doublons d'offres
+- Travail sur la détéctabilité du scraper : session, cookie, user-agent(en cours), TLSfingerprint et Javascriptfingerprint
+
+2. Priorité 2 :
+- Système de cache pour éviter de re-scraper les mêmes pages trop souvent
+- Mise en place de retry mechanisms pour les requêtes échouées
+- Repérage d'un trop grand nombre de N/A sur certaines valeurs
+
+3. Priorité 3 :
+- Travail sur la factorisation du code et la vitesse de scraping
+- Parallélisation des scraping avec asyncio ou multiprocessing (asyncio + aiohttp)
+- Tests unitaires et d'intégration ?
+- Documentation détaillée du code avec docstrings
+- Barre de progression des traitements
 
 ## Structure du projet
 
@@ -19,6 +45,8 @@ test_squirrel/
 │   └── ...
 ├── utils/
 │   └── export.py        # Fonctions d'export (JSON, etc.)
+│   └── user_agent.py    # Génération de l'user-agent
+│   └── logging_config   # Initialisation du logger
 └── main.py             # Point d'entrée
 ```
 
@@ -43,13 +71,32 @@ Pour lancer tous les scrapers :
 python main.py
 ```
 
+format de sortie JSON :
+```
+{
+   "confrere": "BNP",
+   "url": "https://bnppre.fr/a-vendre/local-activite/seine-et-marne-77/croissy-beaubourg-77183/vente-local-activite-1110-m2-non-divisible-OVACT2423977.html",
+   "reference": "Référence : OVACT2423977",
+   "contrat": "Vente",
+   "actif": "Locaux d'activité",
+   "disponibilite": "Immédiate",
+   "surface": "1 111 m²",
+   "division": "N/A",
+   "adresse": "N/A 77183 Croissy-Beaubourg",
+   "contact": "Baptiste Quilgars",
+   "accroche": "BNP PARIBAS REAL ESTATE vous propose, à la Vente, une cellule d'activité avec bureaux d'accompagnement, en bon état, disponible à Croissy-Beaubourg.",
+   "amenagements": "L'essentiel à retenirDisponibilité :ImmédiateCharge au sol Rdc :2,00 tonne(s)/m²Porte d'accès plain-pied :3HauteursHauteur sous poutre :5,00 mètre(s)Accès véhiculesAccessibilité type véhicules :Tous porteursEquipementsCharge au sol Rdc :2,00 tonne(s)/m²Climatisation :Réversible dans la partie BureauxEclairage Bureaux :Luminaires encastrésEclairage naturel :SkydomesFaux plafond :OuiFenêtres :OuiPorte d'accès plain-pied :3Sol bureaux :ParquetSols du bâtiment :BétonSource chauffage :Electrique 2 AérothermesType / Etat du bâtimentEtat de l'immeuble :Etat d'usagePrestations de serviceParking :35 PlacesSécurité :Contrôle d'accès - PortailAménagementsAménagement des bureaux :CloisonnésLocaux sociaux :SanitairesSanitaires :Oui",
+   "prix_global": "1 700 000 €"
+}
+```
+
 ## Fonctionnalités
 
-- Extraction des annonces de bureaux en Île-de-France
-- Support de plusieurs sites (BNP, JLL, etc.)
+- Extraction des annonces de bureaux en Île-de-France, locaux d'activités et entrepôts en France
+- Support de plusieurs sites d'annonces (BNP, JLL, etc.)
 - Export des données en JSON
 - Logging détaillé
-- Gestion des erreurs robuste
+- Gestion des user-agent
 
 ## Ajouter un nouveau scraper
 
