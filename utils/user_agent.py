@@ -3,25 +3,14 @@
 Fonctions pour gérer les user_agents
 """
 
-from bs4 import BeautifulSoup
-import httpx
 import random
 from functools import cached_property
 from typing import List
 from time import time
 from ua_parser import user_agent_parser
 
-url = "https://useragents.io/sitemaps/useragents.xml"
-request = httpx.get(url)
-user_agents = []
-soup = BeautifulSoup(request.text, "xml")
-last_update_url = soup.find_all("sitemap")[-1]
-print(last_update_url)
-
-"""
 class UserAgent:
    
-
     def __init__(self, string) -> None:
         self.string: str = string
         # Parse the User-Agent string
@@ -49,7 +38,6 @@ class UserAgent:
     
 class Rotator:
     
-
     def __init__(self, user_agents: List[UserAgent]):
         # Add User-Agent strings to the UserAgent container
         user_agents = [UserAgent(ua) for ua in user_agents]
@@ -77,7 +65,7 @@ class Rotator:
             weight += 150
         if user_agent.os == "Mac OS X":
             weight += 100
-        if user_agent.os == "Linux" or "Ubuntu":
+        if user_agent.os in ["Linux", "Ubuntu"]:
             weight -= 50
         if user_agent.os == "Android":
             weight -= 100
@@ -97,4 +85,3 @@ class Rotator:
         # Update the last used time when selecting a User-Agent
         user_agent.last_used = time()
         return user_agent
-    """
