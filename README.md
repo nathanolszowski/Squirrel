@@ -14,6 +14,7 @@ Liste des sites d'agences disponibles :
 1. Priorité 1 :
 - Implémenter les scrapers dans la liste des plus grosses agences (ArthurLoyd, KnightFrank, Savills)
 - Gérer les doublons d'offres
+- Créer un cache pour les user-agents
 - Travail sur la détéctabilité du scraper : session, cookie, user-agent(en cours), TLSfingerprint et Javascriptfingerprint
 
 2. Priorité 2 :
@@ -44,9 +45,9 @@ test_squirrel/
 │   ├── jll.py
 │   └── ...
 ├── utils/
-│   └── export.py        # Fonctions d'export (JSON, etc.)
+│   └── export.py        # Fonctions d'export JSON (créé un nouveau dossier exports à la racine)
 │   └── user_agent.py    # Génération de l'user-agent
-│   └── logging_config   # Initialisation du logger
+│   └── logging_config   # Initialisation du logger (créé un nouveau dossier logs à la racine)
 └── main.py             # Point d'entrée
 ```
 
@@ -66,12 +67,12 @@ pip install -r requirements.txt
 
 ## Utilisation
 
-Pour lancer tous les scrapers :
+Pour lancer tous les scrapers (par défaut lance l'analyse pour les 5 premiers urls) :
 ```bash
 python main.py
 ```
 
-format de sortie JSON :
+Format de sortie JSON :
 ```
 {
    "confrere": "BNP",
