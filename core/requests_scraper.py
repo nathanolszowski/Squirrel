@@ -7,7 +7,7 @@ import logging
 import requests
 from bs4 import BeautifulSoup
 from .base_scraper import BaseScraper
-from config.settings import REQUEST_TIMEOUT
+from config.settings import REQUEST_TIMEOUT, USER_AGENT
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +21,7 @@ class RequestsScraper(BaseScraper):
             
             if isinstance(self.sitemap_url, dict):
                 for actif, url in self.sitemap_url.items():
-                    response = requests.get(url, timeout=REQUEST_TIMEOUT)
+                    response = requests.get(url, headers={"User-agent":USER_AGENT.get()}, timeout=REQUEST_TIMEOUT)
                     response.raise_for_status()
                     soup = BeautifulSoup(response.content, "xml")
                     
@@ -29,7 +29,8 @@ class RequestsScraper(BaseScraper):
                     urls.extend([url.find("loc").text for url in soup.find_all("url")])
                 logger.info(f"[{self.name}] Trouvé {len(urls)} URLs dans les sitemaps")
             else:
-                response = requests.get(self.sitemap_url, timeout=REQUEST_TIMEOUT)
+                ua = USER_AGENT.get()
+                response = requests.get(self.sitemap_url, headers={"User-agent":USER_AGENT.get()}, timeout=REQUEST_TIMEOUT)
                 response.raise_for_status()
                 soup = BeautifulSoup(response.content, "xml")
                     

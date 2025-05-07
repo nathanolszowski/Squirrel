@@ -28,7 +28,7 @@ class SeleniumScraper(BaseScraper):
         options = Options()
         for option in SELENIUM_OPTIONS:
             options.add_argument(option)
-        options.add_argument(f"user-agent={USER_AGENT}")
+        options.add_argument(f"user-agent={USER_AGENT.get()}")
         
         try:
             self.driver = webdriver.Chrome(

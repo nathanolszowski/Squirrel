@@ -8,6 +8,9 @@ from functools import cached_property
 from typing import List
 from time import time
 from ua_parser import user_agent_parser
+import logging
+
+logger = logging.getLogger(__name__)
 
 class UserAgent:
    
@@ -40,12 +43,11 @@ class Rotator:
     
     def __init__(self, user_agents: List[UserAgent]):
         # Add User-Agent strings to the UserAgent container
-        user_agents = [UserAgent(ua) for ua in user_agents]
-        self.user_agents = user_agents
+        self.user_agents = [UserAgent(ua) for ua in user_agents]
 
     # Add weight for each User-Agent
     def weigh_user_agent(self, user_agent: UserAgent):
-        weight = 1_000
+        weight = 1000
         # Add higher weight for less used User-Agents
         if user_agent.last_used:
             _seconds_since_last_use = time() - user_agent.last_used
@@ -73,15 +75,20 @@ class Rotator:
 
     def get(self):
         # Weigh all User-Agents
-        user_agent_weights = [
-            self.weigh_user_agent(user_agent) for user_agent in self.user_agents
-        ]
+        logger.info("Récupération d'un user_agent")
+        user_agent_weights = []
+        for user_agent in self.user_agents :
+            user_agent_weights.append(self.weigh_user_agent(user_agent))
+        print("Tous les users on été pesés")
+
         # Select a random User-Agent
         user_agent = random.choices(
             self.user_agents,
             weights=user_agent_weights,
             k=1,
         )[0]
+        print(f"{user_agent} a été trouvé")
         # Update the last used time when selecting a User-Agent
         user_agent.last_used = time()
-        return user_agent
+        logger.info("Un nouvel user_agent a été sélectionné")
+        return str(user_agent)

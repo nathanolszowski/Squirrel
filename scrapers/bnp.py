@@ -7,7 +7,7 @@ import logging
 import requests
 from bs4 import BeautifulSoup
 from core.requests_scraper import RequestsScraper
-from config.settings import DEPARTMENTS_IDF, SITEMAPS, REQUEST_TIMEOUT
+from config.settings import DEPARTMENTS_IDF, SITEMAPS, REQUEST_TIMEOUT, USER_AGENT
 from config.selectors import BNP_SELECTORS
 
 logger = logging.getLogger(__name__)
@@ -22,7 +22,7 @@ class BNPScraper(RequestsScraper):
     def scrape_listing(self, url):
         """Scrape une annonce BNP"""
         try:
-            response = requests.get(url, timeout=REQUEST_TIMEOUT)
+            response = requests.get(url, headers={"User-agent":USER_AGENT.get()}, timeout=REQUEST_TIMEOUT)
             response.raise_for_status()
             soup = BeautifulSoup(response.text, "html.parser")
             

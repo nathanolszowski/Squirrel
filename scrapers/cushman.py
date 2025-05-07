@@ -8,7 +8,7 @@ import requests
 import re
 from bs4 import BeautifulSoup
 from core.requests_scraper import RequestsScraper
-from config.settings import DEPARTMENTS_IDF, SITEMAPS, REQUEST_TIMEOUT
+from config.settings import DEPARTMENTS_IDF, SITEMAPS, REQUEST_TIMEOUT, USER_AGENT
 from config.selectors import CUSHMAN_SELECTORS
 
 logger = logging.getLogger(__name__)
@@ -24,7 +24,7 @@ class CUSHMANScraper(RequestsScraper):
     def scrape_listing(self, url):
         """Scrape une annonce CUSHMAN"""
         try:
-            response = requests.get(url, timeout=REQUEST_TIMEOUT)
+            response = requests.get(url, headers={"User-agent":USER_AGENT.get()}, timeout=REQUEST_TIMEOUT)
             response.raise_for_status()
             soup = BeautifulSoup(response.text, "html.parser")
             
