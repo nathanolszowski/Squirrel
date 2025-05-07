@@ -43,8 +43,9 @@ class Rotator:
     
     def __init__(self, user_agents: List[UserAgent]):
         # Add User-Agent strings to the UserAgent container
+        logger.info("Initialisation du sélecteur d'user-agent")
         self.user_agents = [UserAgent(ua) for ua in user_agents]
-
+        
     # Add weight for each User-Agent
     def weigh_user_agent(self, user_agent: UserAgent):
         weight = 1000
@@ -79,16 +80,14 @@ class Rotator:
         user_agent_weights = []
         for user_agent in self.user_agents :
             user_agent_weights.append(self.weigh_user_agent(user_agent))
-        print("Tous les users on été pesés")
-
+        logger.info("Les user-agents ont été pesés")
         # Select a random User-Agent
         user_agent = random.choices(
             self.user_agents,
             weights=user_agent_weights,
             k=1,
         )[0]
-        print(f"{user_agent} a été trouvé")
         # Update the last used time when selecting a User-Agent
         user_agent.last_used = time()
-        logger.info("Un nouvel user_agent a été sélectionné")
+        logger.info(f"Un nouvel user_agent a été sélectionné {user_agent}")
         return str(user_agent)

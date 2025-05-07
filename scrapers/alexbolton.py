@@ -22,12 +22,12 @@ class ALEXBOLTONScraper(RequestsScraper):
     def scrape_listing(self, url):
         """Scrape une annonce alexbolton"""
         try:
+            logger.info(f"[{self.name.upper()}] Début du scraping des données pour chacune des offres")
             response = requests.get(url, headers={"User-agent":USER_AGENT.get()}, timeout=REQUEST_TIMEOUT)
             response.raise_for_status()
             soup = BeautifulSoup(response.text, "html.parser")
             
             # Déterminer le contrat
-            
             contrat_map = {
                 "Loyer": "Location",
                 "Prix": "Vente",
@@ -58,11 +58,12 @@ class ALEXBOLTONScraper(RequestsScraper):
             return data
             
         except Exception as e:
-            logger.error(f"[self.name] Erreur scraping {url}: {e}")
+            logger.error(f"[self.name] Erreur scraping des données pour {url}: {e}")
             return None
         
     def filtre_idf_bureaux(self, urls):
         """Filtre les URLs pour supprimer les bureaux hors IDF. FYI : AlexBolton ne fait que du Bureaux IDF"""
+        logger.info("Filtrage des offres")
         filtered_urls = []
         for url in urls:
             if url.startswith("https://www.alexbolton.fr/annonces/") :
