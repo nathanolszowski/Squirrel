@@ -1,0 +1,10 @@
+2025-05-07 15:05:49,955 - utils.logging_config - INFO - Logging initialized. Log file: logs\scraping_2025-05-07_15-05.log
+2025-05-07 15:05:49,955 - __main__ - INFO - Démarrage du programme de scraping. Les logs seront conservés dans ce fichier: logs\scraping_2025-05-07_15-05.log
+2025-05-07 15:05:49,956 - __main__ - INFO - Démarrage du scraper CUSHMAN ...
+2025-05-07 15:05:49,956 - core.base_scraper - INFO - [CUSHMAN] Début du scraping
+2025-05-07 15:05:50,435 - core.requests_scraper - INFO - [CUSHMAN] Trouvé 5916 URLs dans le sitemap
+2025-05-07 15:05:50,441 - scrapers.cushman - INFO - [CUSHMAN] Trouvé 3872 URLs filtrées sans bureaux région
+2025-05-07 15:06:02,813 - core.base_scraper - INFO - [CUSHMAN] Fin du scraping. 5 résultats collectés.
+2025-05-07 15:06:02,813 - __main__ - INFO - Récupération de 5 résultats pour le scraper CUSHMAN
+2025-05-07 15:06:02,815 - utils.export - INFO - Exportation réussie de 5 résultats
+2025-05-07 15:06:02,816 - __main__ - INFO - Le programme de scraping est terminé

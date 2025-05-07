@@ -32,7 +32,7 @@ def lister_user_agent (url_actuelle_agents):
     for url in user_agents_liens :
         response = httpx.get(url, timeout=5)
         soup = BeautifulSoup(response.content, "html.parser")
-        user_agents.extend(soup.select_one("body > div:nth-child(1) > main > h1").get_text())
+        user_agents.append(soup.select_one("body > div:nth-child(1) > main > h1").get_text())
     logger.info(f"Trouvé {len(user_agents)} user-agents à jour disponibles pour le scraping")
     return user_agents
 
