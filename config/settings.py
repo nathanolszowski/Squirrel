@@ -3,7 +3,7 @@
 Configuration globale pour les scrapers
 """
 from utils.user_agent import Rotator
-from utils.liste_user_agent import liste_user_agent
+from utils.liste_user_agent import verifier_user_agents
 
 # Départements d'Île-de-France ciblés
 DEPARTMENTS_IDF = ["75", "77", "78", "91", "92", "93", "94", "95"]
@@ -24,7 +24,7 @@ SELENIUM_OPTIONS = [
 ]
 
 # Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36
-USER_AGENT = Rotator(liste_user_agent())
+USER_AGENT = Rotator(verifier_user_agents())
 
 
 # URLs des sitemaps
