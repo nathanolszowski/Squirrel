@@ -23,6 +23,7 @@ class JLLScraper(SeleniumScraper):
     def scrape_listing(self, url):
         """Scrape une annonce JLL"""
         try:
+            logger.info(f"[{self.name.upper()}] Début du scraping des données pour chacune des offres")
             self.driver.get(url)
             time.sleep(SELENIUM_WAIT_TIME)
             
@@ -64,11 +65,12 @@ class JLLScraper(SeleniumScraper):
             return data
             
         except Exception as e:
-            logger.error(f"[JLL] Erreur scraping {url}: {e}")
+            logger.error(f"[self.name] Erreur scraping des données pour {url}: {e}")
             return None
 
     def filtre_idf_bureaux(self, urls):
         """Filtre les URLs pour supprimer les bureaux hors IDF"""
+        logger.info("Filtrage des offres")
         filtered_urls = []
         for url in urls:
             if url.startswith("https://immobilier.jll.fr/location") or url.startswith("https://immobilier.jll.fr/vente") :

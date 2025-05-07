@@ -19,11 +19,11 @@ class CBREScraper(RequestsScraper):
     def __init__(self):
         super().__init__("CBRE", SITEMAPS["CBRE"])
         self.selectors = CBRE_SELECTORS
-        
-        
+           
     def scrape_listing(self, url):
         """Scrape une annonce CUSHMAN"""
         try:
+            logger.info(f"[{self.name.upper()}] Début du scraping des données pour chacune des offres")
             response = requests.get(url, headers={"User-agent":USER_AGENT.get()}, timeout=REQUEST_TIMEOUT)
             response.raise_for_status()
             soup = BeautifulSoup(response.text, "html.parser")
@@ -68,11 +68,12 @@ class CBREScraper(RequestsScraper):
             return data
             
         except Exception as e:
-            logger.error(f"[self.name] Erreur scraping {url}: {e}")
+            logger.error(f"[self.name] Erreur scraping des données pour {url}: {e}")
             return None
         
     def filtre_idf_bureaux(self, urls):
         """Filtre les URLs pour supprimer les bureaux hors IDF"""
+        logger.info("Filtrage des offres")
         filtered_urls = []
         pattern = re.compile(r"https://immobilier.cbre.fr/offre/(a-louer|a-vendre)/bureaux/(\d+)")
         for url in urls:
