@@ -68,8 +68,9 @@ class CUSHMANScraper(RequestsScraper):
         """Filtre les URLs pour supprimer les bureaux hors IDF"""
         logger.info("Filtrage des offres")
         filtered_urls = []
+        pattern = re.compile(r'-\d{5}-\d+[a-zA-Z]*$') # Suffixe de type "-75009-139113AB"
         for url in urls:
-            if url.startswith("https://immobilier.cushmanwakefield.fr/location") or url.startswith("https://immobilier.cushmanwakefield.fr/achat"):
+            if pattern.search(url):
                 if "bureaux" in url:
                     last_segment = url.strip('/').split('/')[-1]
                     part = last_segment.split('-')
@@ -79,4 +80,5 @@ class CUSHMANScraper(RequestsScraper):
                 else :
                     filtered_urls.append(url)
         logger.info(f"[{self.name.upper()}] Trouvé {len(filtered_urls)} URLs filtrées sans bureaux région")
+        print(filtered_urls)
         return filtered_urls
