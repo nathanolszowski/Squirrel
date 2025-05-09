@@ -5,6 +5,7 @@ Classe de base abstraite pour tous les scrapers
 
 from abc import ABC, abstractmethod
 import logging
+from bs4 import BeautifulSoup
 
 
 logger = logging.getLogger(__name__)
@@ -12,7 +13,7 @@ logger = logging.getLogger(__name__)
 class BaseScraper(ABC):
     """Classe de base abstraite pour tous les scrapers"""
     
-    def __init__(self, name, sitemap_url):
+    def __init__(self, name: str, sitemap_url: str) -> None:
         """
         Initialise un nouveau scraper
         
@@ -25,27 +26,35 @@ class BaseScraper(ABC):
         self.results = []
     
     @abstractmethod
-    def get_sitemap_xml(self):
+    def get_sitemap_xml(self) -> None:
         """Récupère les URLs depuis le sitemap"""
         pass
     
     @abstractmethod
-    def scrape_listing(self, url):
+    def scrape_listing(self, url: str) -> None:
         """Scrape une annonce individuelle"""
         pass
     
     @abstractmethod
-    def filtre_idf_bureaux(self, urls):
+    def filtre_idf_bureaux(self, urls: list) -> None:
         """Filtre les URLs en fonction de la sitemap pour supprimer les bureaux hors IDF"""
         pass
     
-    def safe_select_text(self, soup, selector):
-        """Extrait le texte d'un élément HTML de manière sécurisée"""
+    def safe_select_text(self, soup: BeautifulSoup, selector: str) -> str:
+        """
+        Extrait le texte d'un élément HTML de manière sécurisée
+
+        Args:
+            soup (BeautifulSoup): Objet BeautifulSoup représentant le contenu HTML de la page à requêter
+            selector (str): Chaîne de caractère représentant l'élément CSS à requêter et qui provient du fichier settings.py
+        Returns:
+            (str): Chaîne de caractères représentant la valeur du sélécteur requêté sinon la valeur "N/A"
+        """
         el = soup.select_one(selector)
         return el.get_text(strip=True) if el else "N/A"
     
-    def run(self):
-        """Exécute le scraping complet"""
+    def run(self) -> None:
+        """Exécute le programme complet"""
         try:
             logger.info(f"[{self.name.upper()}] Début du scraping")
             urls = self.get_sitemap_xml()
@@ -63,5 +72,5 @@ class BaseScraper(ABC):
             return self.results
             
         except Exception as e:
-            logger.error(f"[{self.name.upper()}] Erreur importante lors du scraping: {e}")
+            logger.error(f"[{self.name.upper()}] Erreur importante lors du scraping : {e}")
             return []

@@ -13,14 +13,19 @@ from config.selectors import BNP_SELECTORS
 logger = logging.getLogger(__name__)
 
 class BNPScraper(RequestsScraper):
-    """Scraper pour le site BNP Paribas Real Estate"""
+    """Scraper pour le site BNP Paribas Real Estate qui hérite de la classe RequestsScraper"""
     
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__("BNP", SITEMAPS["BNP"])
         self.selectors = BNP_SELECTORS
 
-    def scrape_listing(self, url):
-        """Scrape une annonce BNP"""
+    def scrape_listing(self, url: str) -> dict:
+        """
+        Scrape une annonce BNP
+                
+        Retruns:
+            data (dict[str]): Dictionnaire de chaînes de caractères avec les informations de chaque offre scrapée
+        """
         try:
             logger.info(f"[{self.name.upper()}] Début du scraping des données pour chacune des offres")
             response = requests.get(url, headers={"User-agent":USER_AGENT.get()}, timeout=REQUEST_TIMEOUT)
@@ -74,8 +79,15 @@ class BNPScraper(RequestsScraper):
             logger.error(f"[self.name] Erreur scraping des données pour {url}: {e}")
             return None
         
-    def filtre_idf_bureaux(self, urls):
-        """Filtre les URLs pour supprimer les bureaux hors IDF"""
+    def filtre_idf_bureaux(self, urls: list[str]) -> list[str]:
+        """
+        Filtre les URLs pour supprimer les bureaux hors IDF
+
+        Args:
+            urls (list[str]): Liste de chaînes de caractères représentant les urls à scraper
+        Returns:
+            filtered_urls (list[str]): Liste de chaînes de caractères représentant les urls à scraper après filtrage des urls bureaux régions
+        """
         logger.info("Filtrage des offres")
         filtered_urls = []
         for url in urls:

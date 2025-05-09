@@ -12,10 +12,15 @@ from config.settings import REQUEST_TIMEOUT, USER_AGENT
 logger = logging.getLogger(__name__)
 
 class RequestsScraper(BaseScraper):
-    """Classe de base pour les scrapers utilisant requests"""
+    """Classe de base pour les scrapers utilisant requests et qui hérite de la classe abstraite BaseScraper"""
     
-    def get_sitemap_xml(self):
-        """Récupère les URLs depuis le ou les sitemaps XML"""
+    def get_sitemap_xml(self) -> list:
+        """
+        Récupère les URLs depuis le ou les sitemaps XML
+        
+        Returns:
+            urls (list[str]): Liste de chaînes de caractères représentant les urls à scraper
+        """
         logger.info("Récupération des urls depuis la sitemap principale")
         try:
             urls = []
@@ -42,7 +47,7 @@ class RequestsScraper(BaseScraper):
             logger.error(f"[{self.name}] Erreur lors de la récupération du sitemap {self.sitemap_url}: {e}")
             return None
     
-    def scrape_listing(self, url):
+    def scrape_listing(self, url: str) -> None:
         """
         Scrape une annonce individuelle
         

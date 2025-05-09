@@ -13,14 +13,19 @@ from config.selectors import ALEXBOLTON_SELECTORS
 logger = logging.getLogger(__name__)
 
 class ALEXBOLTONScraper(RequestsScraper):
-    """Scraper pour le site ALEXBOLTON"""
+    """Scraper pour le site ALEXBOLTON qui hérite de la classe RequestsScraper"""
     
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__("ALEXBOLTON", SITEMAPS["ALEXBOLTON"])
         self.selectors = ALEXBOLTON_SELECTORS# -*- coding: utf-8 -*-
 
-    def scrape_listing(self, url):
-        """Scrape une annonce alexbolton"""
+    def scrape_listing(self, url: str) -> dict:
+        """
+        Scrape une annonce Alexbolton
+        
+        Retruns:
+            data (dict[str]): Dictionnaire de chaînes de caractères avec les informations de chaque offre scrapée
+        """
         try:
             logger.info(f"[{self.name.upper()}] Début du scraping des données pour chacune des offres")
             response = requests.get(url, headers={"User-agent":USER_AGENT.get()}, timeout=REQUEST_TIMEOUT)
@@ -61,8 +66,15 @@ class ALEXBOLTONScraper(RequestsScraper):
             logger.error(f"[self.name] Erreur scraping des données pour {url}: {e}")
             return None
         
-    def filtre_idf_bureaux(self, urls):
-        """Filtre les URLs pour supprimer les bureaux hors IDF. FYI : AlexBolton ne fait que du Bureaux IDF"""
+    def filtre_idf_bureaux(self, urls: list[str]) -> list[str]:
+        """
+        Filtre les URLs pour supprimer les bureaux hors IDF. FYI : AlexBolton ne fait que du Bureaux IDF
+
+        Args:
+            urls (list[str]): Liste de chaînes de caractères représentant les urls à scraper
+        Returns:
+            filtered_urls (list[str]): Liste de chaînes de caractères représentant les urls à scraper après filtrage des urls bureaux régions
+        """
         logger.info("Filtrage des offres")
         filtered_urls = []
         for url in urls:

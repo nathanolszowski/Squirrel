@@ -5,14 +5,17 @@ Configuration et utilitaires pour le logging
 
 import logging
 import os
+from typing import TextIO
 from datetime import datetime
 
-def setup_logging(log_dir="logs"):
+def setup_logging(log_dir: str ="logs") -> TextIO:
     """
     Configure le logging pour écrire à la fois dans un fichier et la console
     
     Args:
-        log_dir (str): Répertoire où stocker les logs
+        log_dir (str): Chaîne de caractère représentant le répertoire où stocker les logs
+    Returns:
+        TextIO: Un objet fichier JSON ouvert en mode lecture.
     """
     # Créer le répertoire de logs s'il n'existe pas
     if not os.path.exists(log_dir):

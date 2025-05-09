@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Fonctions d'export des résultats
+Fonctions d'export des résultats sous format JSON
 """
 
 import json
@@ -10,7 +10,7 @@ import os
 
 logger = logging.getLogger(__name__)
 
-def export_json(data, log_dir="exports"):
+def export_json(data, log_dir: str ="exports"):
     """
     Exporte les résultats au format JSON
     
@@ -33,4 +33,4 @@ def export_json(data, log_dir="exports"):
         logger.info(f"Exportation réussie de {len(data)} résultats")
         
     except Exception as e:
-        logger.error(f"Error exporting data to JSON: {e}")
+        logger.error(f"Erreur lors de l'export des données au format JSON: {e}")

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Sélecteurs CSS pour chaque site
+Sélecteurs CSS pour chacun des sites à scraper
 """
 
 BNP_SELECTORS = {

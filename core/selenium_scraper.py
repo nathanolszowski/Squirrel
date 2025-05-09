@@ -16,15 +16,15 @@ from config.settings import SELENIUM_OPTIONS, USER_AGENT
 logger = logging.getLogger(__name__)
 
 class SeleniumScraper(BaseScraper):
-    """Classe de base pour les scrapers utilisant Selenium"""
+    """Classe de base pour les scrapers utilisant Selenium et qui hérite de la classe abstraite BaseScraper"""
     
-    def __init__(self, name, sitemap_url):
+    def __init__(self, name: str, sitemap_url: str) -> None:
         super().__init__(name, sitemap_url)
         self.driver = None
         self.setup_driver()
     
-    def setup_driver(self):
-        """Configure le driver Selenium"""
+    def setup_driver(self) -> None:
+        """Configure le driver Selenium via les infos du fichier settings.py"""
         options = Options()
         for option in SELENIUM_OPTIONS:
             options.add_argument(option)
@@ -40,8 +40,13 @@ class SeleniumScraper(BaseScraper):
             logger.error(f"[{self.name.upper()}] Erreur pendant l'initialisation du driver Selenium: {e}")
             raise
     
-    def get_sitemap_xml(self):
-        """Récupère les URLs depuis le ou les sitemaps XML"""
+    def get_sitemap_xml(self) -> list:
+        """
+        Récupère les URLs depuis le ou les sitemaps XML
+        
+        Returns:
+            urls (list[str]): Liste de chaîne de caractères représentants les urls à scraper
+        """
         try:
             urls = []
             if isinstance(self.sitemap_url, dict):
@@ -61,7 +66,7 @@ class SeleniumScraper(BaseScraper):
             logger.error(f"[{self.name.upper()}] Erreur lors de la récupération du sitemap: {self.sitemap_url} {e}")
             return []
     
-    def scrape_listing(self, url):
+    def scrape_listing(self, url: str) -> None:
         """
         Scrape une annonce individuelle
         
@@ -70,7 +75,7 @@ class SeleniumScraper(BaseScraper):
         """
         raise NotImplementedError("Les sous-classes doivent implémentées la méthode scrape_listing()")
     
-    def __del__(self):
+    def __del__(self) -> None:
         """Nettoie les ressources Selenium"""
         if self.driver:
             try:
