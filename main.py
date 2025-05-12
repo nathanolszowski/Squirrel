@@ -28,7 +28,7 @@ def main():
         #CBREScraper(),
         #ALEXBOLTONScraper()
         #CUSHMANScraper()
-        KNIGHTFRANK()
+        KNIGHTFRANKScraper()
         # Ajouter les autres scrapers ici
     ]
     

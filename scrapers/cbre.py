@@ -4,7 +4,7 @@ Scraper pour CBRE
 """
 
 import logging
-import requests
+import httpx
 import re
 from bs4 import BeautifulSoup
 from core.requests_scraper import RequestsScraper
@@ -31,7 +31,7 @@ class CBREScraper(RequestsScraper):
         """
         try:
             logger.info(f"[{self.name.upper()}] Début du scraping des données pour chacune des offres")
-            response = requests.get(url, headers={"User-agent":USER_AGENT.get()}, timeout=REQUEST_TIMEOUT)
+            response = httpx.get(url, headers={"User-agent":USER_AGENT.get()}, timeout=REQUEST_TIMEOUT)
             response.raise_for_status()
             soup = BeautifulSoup(response.text, "html.parser")
             

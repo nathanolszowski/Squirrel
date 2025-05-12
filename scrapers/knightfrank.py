@@ -4,11 +4,11 @@ Scraper pour KNIGHT FRANK
 """
 
 import logging
-import requests
+import httpx
 import re
 from bs4 import BeautifulSoup
 from core.requests_scraper import RequestsScraper
-from config.settings import DEPARTMENTS_IDF, SITEMAPS, REQUEST_TIMEOUT, USER_AGENT
+from config.settings import SITEMAPS, REQUEST_TIMEOUT, USER_AGENT
 from config.selectors import KNIGHTFRANK_SELECTORS
 
 logger = logging.getLogger(__name__)
@@ -31,7 +31,7 @@ class KNIGHTFRANKcraper(RequestsScraper):
         """
         try:
             logger.info(f"[{self.name.upper()}] Début du scraping des données pour chacune des offres")
-            response = requests.get(url, headers={"User-agent":USER_AGENT.get()}, timeout=REQUEST_TIMEOUT)
+            response = httpx.get(url, headers={"User-agent":USER_AGENT.get()}, timeout=REQUEST_TIMEOUT)
             response.raise_for_status()
             soup = BeautifulSoup(response.text, "html.parser")
             
@@ -59,21 +59,22 @@ class KNIGHTFRANKcraper(RequestsScraper):
             return None
         
     
-    def navigation_pages(self, url, url_base, contrat):
+    def navigation_pages(self, url, url_base, contrat) -> None:
         """
         Navigue de la première à la dernière page
         
         Args:
+
         
         """
         urls = []
         print("Début du scraping des offres " + contrat)
         while url:
-            r = requests.get(url, headers=HEADERS, timeout=10)
+            r = httpx.get(url, timeout=10)
             r.raise_for_status()
             soup = BeautifulSoup(r.text, 'html.parser')
             
-            urls += trouver_formater_urls(soup, url_base)
+            urls += self.trouver_formater_urls(soup, url_base)
             
             div_parent = soup.select_one("body > main > section > div.container.pagination.py-5 > div")
             if div_parent:
@@ -88,13 +89,13 @@ class KNIGHTFRANKcraper(RequestsScraper):
         offres_ktf = []
         print("Début du scraping des données offres " + contrat)
         for url in urls :
-            result = scraper(url, url_base, contrat)
+            result = self.scrape_listing(url, url_base, contrat)
             offres_ktf.append(result)
             
         return print("Scraping terminé pour le contrat :" + contrat)
         
             
-    def trouver_formater_urls(self, soup, url_base):
+    def trouver_formater_urls(self, soup, url_base) -> list:
         div_parent = soup.select_one("#listCards > div")
         if not div_parent:
             print("Pas d'élément listCards trouvé")

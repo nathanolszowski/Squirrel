@@ -4,7 +4,7 @@ Scraper pour Alex Bolton
 """
 
 import logging
-import requests
+import httpx
 from bs4 import BeautifulSoup
 from core.requests_scraper import RequestsScraper
 from config.settings import SITEMAPS, REQUEST_TIMEOUT, USER_AGENT
@@ -30,7 +30,7 @@ class ALEXBOLTONScraper(RequestsScraper):
         """
         try:
             logger.info(f"[{self.name.upper()}] Début du scraping des données pour chacune des offres")
-            response = requests.get(url, headers={"User-agent":USER_AGENT.get()}, timeout=REQUEST_TIMEOUT)
+            response = httpx.get(url, headers={"User-agent":USER_AGENT.get()}, timeout=REQUEST_TIMEOUT)
             response.raise_for_status()
             soup = BeautifulSoup(response.text, "html.parser")
             

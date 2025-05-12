@@ -4,7 +4,7 @@ Classe de base pour les scrapers utilisant requests
 """
 
 import logging
-import requests
+import httpx
 from bs4 import BeautifulSoup
 from .base_scraper import BaseScraper
 from config.settings import REQUEST_TIMEOUT, USER_AGENT
@@ -26,7 +26,7 @@ class RequestsScraper(BaseScraper):
             urls = []
             if isinstance(self.sitemap_url, dict):
                 for actif, url in self.sitemap_url.items():
-                    response = requests.get(url, headers={"User-agent":USER_AGENT.get()}, timeout=REQUEST_TIMEOUT)
+                    response = httpx.get(url, headers={"User-agent":USER_AGENT.get()}, timeout=REQUEST_TIMEOUT)
                     response.raise_for_status()
                     soup = BeautifulSoup(response.content, "xml")
                     
@@ -34,7 +34,7 @@ class RequestsScraper(BaseScraper):
                     urls.extend([url.find("loc").text for url in soup.find_all("url")])
                 logger.info(f"[{self.name}] Trouvé {len(urls)} URLs dans les sitemaps")
             else:
-                response = requests.get(self.sitemap_url, headers={"User-agent":USER_AGENT.get()}, timeout=REQUEST_TIMEOUT)
+                response = httpx.get(self.sitemap_url, headers={"User-agent":USER_AGENT.get()}, timeout=REQUEST_TIMEOUT)
                 response.raise_for_status()
                 soup = BeautifulSoup(response.content, "xml")
                     
