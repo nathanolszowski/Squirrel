@@ -25,6 +25,8 @@ class CUSHMANScraper(RequestsScraper):
         """
         Scrape une annonce CUSHMAN
         
+        Args:
+            urls (str): Chaîne de caractères représentant l'url à scraper
         Retruns:
             data (dict[str]): Dictionnaire de chaînes de caractères avec les informations de chaque offre scrapée
         """

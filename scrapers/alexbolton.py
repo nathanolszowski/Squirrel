@@ -23,6 +23,8 @@ class ALEXBOLTONScraper(RequestsScraper):
         """
         Scrape une annonce Alexbolton
         
+        Args:
+            urls (str): Chaîne de caractères représentant l'url à scraper
         Retruns:
             data (dict[str]): Dictionnaire de chaînes de caractères avec les informations de chaque offre scrapée
         """
@@ -82,3 +84,4 @@ class ALEXBOLTONScraper(RequestsScraper):
                 filtered_urls.append(url)
         logger.info(f"[{self.name.upper()}] Trouvé {len(filtered_urls)} URLs filtrées sans bureaux région")
         return filtered_urls
+

@@ -22,7 +22,9 @@ class BNPScraper(RequestsScraper):
     def scrape_listing(self, url: str) -> dict:
         """
         Scrape une annonce BNP
-                
+        
+        Args:
+            urls (str): Chaîne de caractères représentant l'url à scraper
         Retruns:
             data (dict[str]): Dictionnaire de chaînes de caractères avec les informations de chaque offre scrapée
         """
@@ -72,7 +74,6 @@ class BNPScraper(RequestsScraper):
                 "amenagements" : self.safe_select_text(soup, self.selectors["amenagements"]),
                 "prix_global" : prix_global
             }
-            
             return data
             
         except Exception as e:

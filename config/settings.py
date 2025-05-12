@@ -35,6 +35,8 @@ SITEMAPS = {
     "JLL": "https://immobilier.jll.fr/sitemap-properties.xml",
     "CBRE": "https://immobilier.cbre.fr/sitemap.xml",
     "ALEXBOLTON" : "https://www.alexbolton.fr/sitemap.xml",
-    "CUSHMAN" : "https://immobilier.cushmanwakefield.fr/sitemap.xml"
+    "CUSHMAN" : "https://immobilier.cushmanwakefield.fr/sitemap.xml",
+    "KNIGHTFRANK" : {"Location" : "https://www.knightfrank.fr/resultat?nature=1&localisation=75%7C77%7C78%7C91%7C92%7C93%7C94%7C95%7C&typeOffre=1", 
+                    "Vente" : "https://www.knightfrank.fr/resultat?nature=2&localisation=75%7C77%7C78%7C91%7C92%7C93%7C94%7C95%7C&typeOffre=1"}
     # Ajouter les autres sitemaps ici
 }

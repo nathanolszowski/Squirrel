@@ -8,7 +8,8 @@ import logging
 #from scrapers.jll import JLLScraper
 #from scrapers.cbre import CBREScraper
 #from scrapers.alexbolton import ALEXBOLTONScraper
-from scrapers.cushman import CUSHMANScraper
+#from scrapers.cushman import CUSHMANScraper
+from scrapers.knightfrank import KNIGHTFRANKScraper
 from utils.export import export_json
 from utils.logging_config import setup_logging
 
@@ -26,7 +27,8 @@ def main():
         #JLLScraper(),
         #CBREScraper(),
         #ALEXBOLTONScraper()
-        CUSHMANScraper()
+        #CUSHMANScraper()
+        KNIGHTFRANK()
         # Ajouter les autres scrapers ici
     ]
     

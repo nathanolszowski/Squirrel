@@ -24,6 +24,8 @@ class JLLScraper(SeleniumScraper):
         """
         Scrape une annonce JLL
         
+        Args:
+            urls (str): Chaîne de caractères représentant l'url à scraper
         Retruns:
             data (dict[str]): Dictionnaire de chaînes de caractères avec les informations de chaque offre scrapée
         """
@@ -66,7 +68,6 @@ class JLLScraper(SeleniumScraper):
                 "amenagements": self.safe_select_text(soup, self.selectors["amenagements"]),
                 "prix_global": self.safe_select_text(soup, self.selectors["prix_global"])
             }
-            
             return data
             
         except Exception as e:
