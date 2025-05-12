@@ -27,7 +27,7 @@ class JLLScraper(SeleniumScraper):
         Args:
             urls (str): Chaîne de caractères représentant l'url à scraper
         Retruns:
-            data (dict[str]): Dictionnaire de chaînes de caractères avec les informations de chaque offre scrapée
+            data (dict): Dictionnaire avec les informations de chaque offre scrapée
         """
         try:
             logger.info(f"[{self.name.upper()}] Début du scraping des données pour chacune des offres")

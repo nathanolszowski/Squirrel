@@ -19,26 +19,66 @@ class BaseScraper(ABC):
         
         Args:
             name (str): Nom du scraper (ex: 'bnp', 'jll')
-            sitemap_url (str): URL du sitemap XML
+            sitemap_url (str): URL de la sitemap XML ou HTML
         """
         self.name = name
         self.sitemap_url = sitemap_url
         self.results = []
     
     @abstractmethod
-    def get_sitemap_xml(self) -> None:
-        """Récupère les URLs depuis le sitemap"""
+    def get_sitemap_xml(self) -> list:
+        """
+        Récupère les URLs depuis le ou les sitemaps XML
+        
+        Returns:
+            urls (list[str]): Liste de chaînes de caractères représentant les urls à scraper
+        """
         pass
     
     @abstractmethod
-    def scrape_listing(self, url: str) -> None:
-        """Scrape une annonce individuelle"""
+    def get_sitemap_html(self) -> list:
+        """
+        Récupère les URLs depuis le ou les sitemaps HTML
+        
+        Returns:
+            urls (list[str]): Liste de chaînes de caractères représentant les urls à scraper
+        """
         pass
     
     @abstractmethod
-    def filtre_idf_bureaux(self, urls: list) -> None:
-        """Filtre les URLs en fonction de la sitemap pour supprimer les bureaux hors IDF"""
+    def scrape_listing(self, url: str) -> dict:
+        """
+        Scrape les données d'une annonce à partir de son url
+        
+        Args:
+            urls (str): Chaîne de caractères représentant l'url à scraper
+        Retruns:
+            data (dict): Dictionnaire de chaînes de caractères avec les informations de chaque offre scrapée
+        """
         pass
+    
+    @abstractmethod
+    def filtre_idf_bureaux(self, urls: list) -> list:
+        """
+        Filtre les URLs pour supprimer les bureaux hors IDF
+
+        Args:
+            urls (list[str]): Liste de chaînes de caractères représentant les urls à scraper
+        Returns:
+            filtered_urls (list[str]): Liste de chaînes de caractères représentant les urls à scraper après filtrage des urls bureaux régions
+        """
+        pass
+    
+    def choix_sitemap(self) -> None:
+        """
+        Choisi le mode d'extraction de la sitemap en fonction de son type xml ou html
+        """
+        url = next(iter(self.sitemap_url.keys())) if isinstance(self.sitemap_url, dict) else self.sitemap_url
+
+        if url.endswith(".xml"):
+            self.get_sitemap_xml()
+        else:
+            self.get_sitemap_html()
     
     def safe_select_text(self, soup: BeautifulSoup, selector: str) -> str:
         """
@@ -57,8 +97,12 @@ class BaseScraper(ABC):
         """Exécute le programme complet"""
         try:
             logger.info(f"[{self.name.upper()}] Début du scraping")
-            urls = self.get_sitemap_xml()
-            url_filtrees = self.filtre_idf_bureaux(urls)
+            urls = self.choix_sitemap()
+            
+            if hasattr(self, "filtre_idf_bureaux") and callable(getattr(self, "filtre_idf_bureaux")):
+                url_filtrees = self.filtre_idf_bureaux(urls)
+            else:
+                url_filtrees = urls
 
             for url in url_filtrees[:5]:
                 try:

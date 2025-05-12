@@ -13,6 +13,8 @@ from config.selectors import KNIGHTFRANK_SELECTORS
 
 logger = logging.getLogger(__name__)
 
+BASE_URL = "https://www.knightfrank.fr"
+
 class KNIGHTFRANKcraper(RequestsScraper):
     """Scraper pour le site CBRE qui hérite de la classe RequestsScraper"""
     
@@ -22,12 +24,12 @@ class KNIGHTFRANKcraper(RequestsScraper):
            
     def scrape_listing(self, url: str) -> dict:
         """
-        Scrape une annonce KNIGHTFRANK
+        Scrape une annonce KNIGHT FRANK
         
         Args:
             urls (str): Chaîne de caractères représentant l'url à scraper
         Retruns:
-            data (dict[str]): Dictionnaire de chaînes de caractères avec les informations de chaque offre scrapée
+            data (dict): Dictionnaire avec les informations de chaque offre scrapée
         """
         try:
             logger.info(f"[{self.name.upper()}] Début du scraping des données pour chacune des offres")
@@ -59,18 +61,19 @@ class KNIGHTFRANKcraper(RequestsScraper):
             return None
         
     
-    def navigation_pages(self, url, url_base, contrat) -> None:
+    def get_sitemap_html(self, url_base, contrat) -> list:
         """
         Navigue de la première à la dernière page
         
         Args:
-
-        
+            url_base (str): URL de base pour le site en question
+        Returns:
+            TBC
         """
         urls = []
         print("Début du scraping des offres " + contrat)
         while url:
-            r = httpx.get(url, timeout=10)
+            r = httpx.get(self.sitemap_url, timeout=10)
             r.raise_for_status()
             soup = BeautifulSoup(r.text, 'html.parser')
             
