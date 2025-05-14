@@ -66,7 +66,7 @@ CUSHMAN_SELECTORS = {
     "prix_global": "#js-page > div.c-page__inner > main > div.o-container > article > div.o-grid.u-fxd\\(column\\)\\@phone.u-fxw\\(nowrap\\)\\@phone > div:nth-child(2) > div:nth-child(1) > div > div:nth-child(3) > div > div > p > span.u-t--tertiary"
 }
 
-KNIGHTFRANK = {
+KNIGHTFRANK_SELECTORS = {
     "reference": "body > main > section > div.container.p-lg-0.contOMob > div > div.col-xl-7.p-xl-0.p-0 > div:nth-child(1) > div > ol > li:nth-child(5) > a > span",
     "disponibilite": "body > main > section > div.container.p-lg-0.contOMob > div > div.col-xl-7.p-xl-0.p-0 > div.row.pb-4.align-items-center.p24 > div.col-xl-4.col-md-4.col-12.cDisp > div > p",
     "surface": "",

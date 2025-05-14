@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 BASE_URL = "https://www.knightfrank.fr"
 
-class KNIGHTFRANKcraper(RequestsScraper):
+class KNIGHTFRANKScraper(RequestsScraper):
     """Scraper pour le site CBRE qui hérite de la classe RequestsScraper"""
     
     def __init__(self) -> None:
@@ -24,7 +24,7 @@ class KNIGHTFRANKcraper(RequestsScraper):
            
     def scrape_listing(self, url: str) -> dict:
         """
-        Scrape une annonce KNIGHT FRANK
+        Scrape une annonce KNIGHT FRANK en implémentant la méthode de la classe mère RequestsScraper
         
         Args:
             urls (str): Chaîne de caractères représentant l'url à scraper
@@ -60,10 +60,9 @@ class KNIGHTFRANKcraper(RequestsScraper):
             logger.error(f"[self.name] Erreur scraping des données pour {url}: {e}")
             return None
         
-    
     def get_sitemap_html(self, url_base, contrat) -> list:
         """
-        Navigue de la première à la dernière page
+        Navigue de la première à la dernière page en implémentant la méthode de la classe abstraite BaseScraper
         
         Args:
             url_base (str): URL de base pour le site en question
@@ -108,3 +107,6 @@ class KNIGHTFRANKcraper(RequestsScraper):
         liens = [offre.find("a", class_="infosCard") for offre in offres if offre.find("a", class_="infosCard")]
         hrefs = [url_base + lien['href'] for lien in liens if liens and lien.has_attr('href')]
         return hrefs
+    #obligé de l'appeler car classe abstraite
+    def filtre_idf_bureaux(self, urls: list) -> list:
+        pass

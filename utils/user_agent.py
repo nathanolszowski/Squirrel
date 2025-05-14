@@ -52,7 +52,7 @@ class Rotator:
     
     def __init__(self, user_agents: List[UserAgent]) -> None:
         """
-        Initialise un nouvel générateur d'user-agent
+        Initialise un nouveau générateur d'user-agent
         
         Args:
             user-agents (list[str]): Liste de chaînes représentant des user-agents, par exemple : "Mozilla/5.0 (Windows NT 10.0; Win64; x64) 

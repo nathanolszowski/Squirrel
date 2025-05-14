@@ -46,7 +46,7 @@ class RequestsScraper(BaseScraper):
         except Exception as e:
             logger.error(f"[{self.name}] Erreur lors de la récupération du sitemap {self.sitemap_url}: {e}")
             return None
-    
+    # voir si on peut l'enlever car ne sert pas
     def scrape_listing(self, url: str) -> None:
         """
         Scrape une annonce individuelle

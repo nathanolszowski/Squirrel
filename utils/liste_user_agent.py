@@ -9,8 +9,9 @@ import os
 import json
 
 logging.basicConfig(level=logging.INFO)
-logging.getLogger("httpx").setLevel(logging.WARNING)
 logger = logging.getLogger(__name__)
+logging.getLogger("httpx").setLevel(logging.WARNING)
+
 
 
 def url_actualise_user_agents () -> str:
@@ -18,7 +19,7 @@ def url_actualise_user_agents () -> str:
     Récupère la liste des user-agents à jour et disponible via useragents.io
 
     Returns:
-        str: Chaîne de caractère représentant l'url de la dernière sitemap d'user-agents à jour
+        derniere_url_actualise (str): Chaîne de caractère représentant l'url de la dernière sitemap d'user-agents à jour
     """
     logger.info("Récupération de l'url vers la dernière liste à jour d'user-agents")
     url = "https://useragents.io/sitemaps/useragents.xml"
@@ -73,15 +74,22 @@ def verifier_user_agents () -> list:
 
                 # Si l'URL est la même que celle du sitemap actuel, on utilise le cache
                 if url_fichier == derniere_url_actuelle:
-                    liste_user_agent = contenu[url_fichier]
                     logger.info("L'url n'a pas changé, le code va utiliser la liste d'user-agents déjà en cache")
+                    liste_user_agent = contenu[url_fichier]
                 else:
                     # Sinon, on met à jour
-                    logger.info("L'url a pas changé, le code va récupérer la nouvelle liste d'user-agents et écraser l'ancienne")
-                    liste_user_agent = lister_user_agent(derniere_url_actuelle)
-                    contenu_actualise = {derniere_url_actuelle: liste_user_agent}
-                    with open("user_agent.json", "w", encoding="utf-8") as f:
-                        json.dump(contenu_actualise, f, ensure_ascii=False, indent=4)
+                    # Demander confirmation à l'utilisateur car le processus prend du temps
+                    reponse = input("L'URL a changé. Souhaitez-vous mettre à jour la liste d'user-agents ? (o/n) : ").strip().lower()
+                    if reponse == 'o':
+                        logger.info("L'url a changé, le code va récupérer la nouvelle liste d'user-agents et écraser l'ancienne")
+                        liste_user_agent = lister_user_agent(derniere_url_actuelle)
+                        contenu_actualise = {derniere_url_actuelle: liste_user_agent}
+                        with open("user_agent.json", "w", encoding="utf-8") as f:
+                            json.dump(contenu_actualise, f, ensure_ascii=False, indent=4)
+                    else:
+                        logger.info("Mise à jour annulée par l'utilisateur. Utilisation de la liste d'user-agents précédente si disponible.")
+                        liste_user_agent = contenu[url_fichier]
+
         else:
             # Fichier JSON inexistant : on récupère et on enregistre
             logger.info("Le fichier de cache avec la liste d'user-agents n'existe pas, création d'un fichier de cache")
