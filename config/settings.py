@@ -27,7 +27,6 @@ SELENIUM_OPTIONS = [
 # Faut-il vraiment initié le rotator ici ?
 USER_AGENT = Rotator(verifier_user_agents())
 
-
 # URLs des sitemaps
 SITEMAPS = {
     "BNP": {"Bureaux" : "https://bnppre.fr/sitemaps/bnppre/sitemap-bureaux.xml", 
@@ -41,3 +40,6 @@ SITEMAPS = {
                     "Vente" : "https://www.knightfrank.fr/resultat?nature=2&localisation=75%7C77%7C78%7C91%7C92%7C93%7C94%7C95%7C&typeOffre=1"}
     # Ajouter les autres sitemaps ici
 }
+
+# Mise à jour ou non de la liste des user-agents
+USER_AGENT_MAJ = False

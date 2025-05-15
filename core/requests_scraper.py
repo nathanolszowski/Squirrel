@@ -5,6 +5,7 @@ Classe de base pour les scrapers utilisant requests
 
 import logging
 import httpx
+from typing import List
 from bs4 import BeautifulSoup
 from .base_scraper import BaseScraper
 from config.settings import REQUEST_TIMEOUT, USER_AGENT
@@ -14,14 +15,14 @@ logger = logging.getLogger(__name__)
 class RequestsScraper(BaseScraper):
     """Classe de base pour les scrapers utilisant requests et qui hérite de la classe abstraite BaseScraper"""
     
-    def get_sitemap_xml(self) -> list:
+    def get_sitemap_xml(self) -> List[str]:
         """
-        Récupère les URLs depuis le ou les sitemaps XML
+        Récupère les URLs depuis le ou les sitemaps XML en surchageant la méthode de la classe abstraite BaseScraper
         
         Returns:
-            urls (list[str]): Liste de chaînes de caractères représentant les urls à scraper
+            urls (List[str]): Liste de chaînes de caractères représentant les urls à scraper
         """
-        logger.info("Récupération des urls depuis la sitemap principale")
+        logger.info("Récupération des urls depuis la ou les sitemaps XML")
         try:
             urls = []
             if isinstance(self.sitemap_url, dict):
@@ -46,12 +47,3 @@ class RequestsScraper(BaseScraper):
         except Exception as e:
             logger.error(f"[{self.name}] Erreur lors de la récupération du sitemap {self.sitemap_url}: {e}")
             return None
-    # voir si on peut l'enlever car ne sert pas
-    def scrape_listing(self, url: str) -> None:
-        """
-        Scrape une annonce individuelle
-        
-        Cette méthode doit être surchargée par les classes enfants
-        pour implémenter la logique spécifique à chaque site
-        """
-        raise NotImplementedError("Les sous-classes doivent implémentées la méthode scrape_listing()")

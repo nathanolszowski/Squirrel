@@ -4,9 +4,9 @@ Classe de base abstraite pour tous les scrapers
 """
 
 from abc import ABC, abstractmethod
+from typing import List
 import logging
 from bs4 import BeautifulSoup
-
 
 logger = logging.getLogger(__name__)
 
@@ -26,22 +26,22 @@ class BaseScraper(ABC):
         self.results = []
     
     @abstractmethod
-    def get_sitemap_xml(self) -> list:
+    def get_sitemap_xml(self) -> List[str]:
         """
         Récupère les URLs depuis le ou les sitemaps XML
         
         Returns:
-            urls (list[str]): Liste de chaînes de caractères représentant les urls à scraper
+            urls (List[str]): Liste de chaînes de caractères représentant les urls à scraper
         """
         pass
     
     @abstractmethod
-    def get_sitemap_html(self) -> list:
+    def get_sitemap_html(self) -> List[str]:
         """
         Récupère les URLs depuis le ou les sitemaps HTML
         
         Returns:
-            urls (list[str]): Liste de chaînes de caractères représentant les urls à scraper
+            urls (List[str]): Liste de chaînes de caractères représentant les urls à scraper
         """
         pass
     
@@ -76,9 +76,9 @@ class BaseScraper(ABC):
         url = next(iter(self.sitemap_url.keys())) if isinstance(self.sitemap_url, dict) else self.sitemap_url
 
         if url.endswith(".xml"):
-            self.get_sitemap_xml()
+            return self.get_sitemap_xml()
         else:
-            self.get_sitemap_html()
+            return self.get_sitemap_html()
     
     def safe_select_text(self, soup: BeautifulSoup, selector: str) -> str:
         """
@@ -98,12 +98,12 @@ class BaseScraper(ABC):
         try:
             logger.info(f"[{self.name.upper()}] Début du scraping")
             urls = self.choix_sitemap()
-            
+            print(urls)
             if hasattr(self, "filtre_idf_bureaux") and callable(getattr(self, "filtre_idf_bureaux")):
                 url_filtrees = self.filtre_idf_bureaux(urls)
             else:
                 url_filtrees = urls
-
+            
             for url in url_filtrees[:5]:
                 try:
                     result = self.scrape_listing(url)

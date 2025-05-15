@@ -20,8 +20,6 @@ def main():
     log_file = setup_logging()
     logger = logging.getLogger(__name__)
     logger.info(f"Démarrage du programme de scraping. Les logs seront conservés dans ce fichier: {log_file}")
-
-    
     
     # Liste des scrapers à exécuter
     scrapers = [

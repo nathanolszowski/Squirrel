@@ -6,6 +6,7 @@ Scraper pour KNIGHT FRANK
 import logging
 import httpx
 import re
+from typing import List
 from bs4 import BeautifulSoup
 from core.requests_scraper import RequestsScraper
 from config.settings import SITEMAPS, REQUEST_TIMEOUT, USER_AGENT
@@ -13,14 +14,13 @@ from config.selectors import KNIGHTFRANK_SELECTORS
 
 logger = logging.getLogger(__name__)
 
-BASE_URL = "https://www.knightfrank.fr"
-
 class KNIGHTFRANKScraper(RequestsScraper):
     """Scraper pour le site CBRE qui hérite de la classe RequestsScraper"""
     
     def __init__(self) -> None:
         super().__init__("KNIGHTFRANK", SITEMAPS["KNIGHTFRANK"])
         self.selectors = KNIGHTFRANK_SELECTORS
+        self.base_url = "https://www.knightfrank.fr"
            
     def scrape_listing(self, url: str) -> dict:
         """
@@ -59,45 +59,9 @@ class KNIGHTFRANKScraper(RequestsScraper):
         except Exception as e:
             logger.error(f"[self.name] Erreur scraping des données pour {url}: {e}")
             return None
-        
-    def get_sitemap_html(self, url_base, contrat) -> list:
-        """
-        Navigue de la première à la dernière page en implémentant la méthode de la classe abstraite BaseScraper
-        
-        Args:
-            url_base (str): URL de base pour le site en question
-        Returns:
-            TBC
-        """
-        urls = []
-        print("Début du scraping des offres " + contrat)
-        while url:
-            r = httpx.get(self.sitemap_url, timeout=10)
-            r.raise_for_status()
-            soup = BeautifulSoup(r.text, 'html.parser')
-            
-            urls += self.trouver_formater_urls(soup, url_base)
-            
-            div_parent = soup.select_one("body > main > section > div.container.pagination.py-5 > div")
-            if div_parent:
-                suivant = div_parent.find_all("a", attrs={"aria-label": "Next"})
-                if suivant:
-                    href = suivant[0].get("href")
-                    url = url_base + href
-                else:
-                    print(str(len(urls)) + " offres " + contrat + " trouvées chez KTF")
-                    url = None
                     
-        offres_ktf = []
-        print("Début du scraping des données offres " + contrat)
-        for url in urls :
-            result = self.scrape_listing(url, url_base, contrat)
-            offres_ktf.append(result)
-            
-        return print("Scraping terminé pour le contrat :" + contrat)
-        
-            
-    def trouver_formater_urls(self, soup, url_base) -> list:
+    def trouver_formater_urls_offres(self, soup) -> list:
+        """Permet de formater les urls lors de la méthode get_sitemap_html"""
         div_parent = soup.select_one("#listCards > div")
         if not div_parent:
             print("Pas d'élément listCards trouvé")
@@ -105,8 +69,52 @@ class KNIGHTFRANKScraper(RequestsScraper):
 
         offres = div_parent.find_all("div", class_=re.compile("cardOffreListe"))
         liens = [offre.find("a", class_="infosCard") for offre in offres if offre.find("a", class_="infosCard")]
-        hrefs = [url_base + lien['href'] for lien in liens if liens and lien.has_attr('href')]
+        hrefs = [self.base_url + lien['href'] for lien in liens if liens and lien.has_attr('href')]
         return hrefs
-    #obligé de l'appeler car classe abstraite
-    def filtre_idf_bureaux(self, urls: list) -> list:
-        pass
+    
+    def navigation_page(self, url):
+        """Permet de naviguer entre les différentes pages d'offres"""
+        urls =[]
+        while url:
+            response = httpx.get(url, headers={"User-agent":USER_AGENT.get()}, timeout=REQUEST_TIMEOUT)
+            response.raise_for_status()
+            soup = BeautifulSoup(response.content, "html.parser")
+            
+            urls += self.trouver_formater_urls_offres(soup)
+            
+            div_parent = soup.select_one("body > main > section > div.container.pagination.py-5 > div")
+            if div_parent:
+                suivant = div_parent.find_all("a", attrs={"aria-label": "Next"})
+                if suivant:
+                    href = suivant[0].get("href")
+                    url = self.base_url + href
+                else:
+                    url = None
+        return urls
+    
+    def get_sitemap_html(self) -> List[str]:
+        """
+        Navigue de la première à la dernière page en implémentant la méthode de la classe abstraite BaseScraper
+        
+        Returns:
+            urls (List[str]): Liste de chaînes de caractères représentant les urls à scraper
+        """
+        logger.info("Récupération des urls depuis le ou les sitemap HTML")
+        try:
+            urls = []
+            if isinstance(self.sitemap_url, dict):
+                for contrat, url in self.sitemap_url.items():
+                    urls += self.navigation_page(url)
+                logger.info(f"[{self.name}] Trouvé {len(urls)} URLs dans les sitemaps")
+            else:
+                urls = self.navigation_page(self.sitemap_url)
+                logger.info(f"[{self.name}] Trouvé {len(urls)} URLs dans les sitemaps")
+            return urls
+
+        except Exception as e:
+            logger.error(f"[{self.name}] Erreur lors de la récupération du sitemap {self.sitemap_url}: {e}")
+            return None
+
+    #Obligé de l'appeler car classe abstraite
+    def filtre_idf_bureaux(self, urls: list) -> List[str]:
+        return urls
