@@ -6,12 +6,13 @@ Point d'entrée principal du scraper
 import logging
 #from scrapers.bnp import BNPScraper
 #from scrapers.jll import JLLScraper
-#from scrapers.cbre import CBREScraper
+from scrapers.cbre import CBREScraper
 #from scrapers.alexbolton import ALEXBOLTONScraper
 #from scrapers.cushman import CUSHMANScraper
-from scrapers.knightfrank import KNIGHTFRANKScraper
+#from scrapers.knightfrank import KNIGHTFRANKScraper
 from utils.export import export_json
 from utils.logging_config import setup_logging
+from utils.user_agent import Rotator, ListUserAgent
 
 def main():
     """Fonction principale"""
@@ -19,16 +20,20 @@ def main():
     # Configuration du logging avec fichier horodaté
     log_file = setup_logging()
     logger = logging.getLogger(__name__)
+    logging.getLogger("httpx").setLevel(logging.WARNING)
     logger.info(f"Démarrage du programme de scraping. Les logs seront conservés dans ce fichier: {log_file}")
+    
+    ua_liste = ListUserAgent
+    ua_generateur = Rotator(ua_liste)
     
     # Liste des scrapers à exécuter
     scrapers = [
         #BNPScraper(),
         #JLLScraper(),
-        #CBREScraper(),
+        CBREScraper(ua_generateur),
         #ALEXBOLTONScraper()
         #CUSHMANScraper()
-        KNIGHTFRANKScraper()
+        #KNIGHTFRANKScraper()
         # Ajouter les autres scrapers ici
     ]
     

@@ -8,7 +8,7 @@ import httpx
 from typing import List
 from bs4 import BeautifulSoup
 from .base_scraper import BaseScraper
-from config.settings import REQUEST_TIMEOUT, USER_AGENT
+from config.settings import REQUEST_TIMEOUT
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +27,7 @@ class RequestsScraper(BaseScraper):
             urls = []
             if isinstance(self.sitemap_url, dict):
                 for actif, url in self.sitemap_url.items():
-                    response = httpx.get(url, headers={"User-agent":USER_AGENT.get()}, timeout=REQUEST_TIMEOUT)
+                    response = httpx.get(url, headers={"User-agent":self.ua_generateur.get()}, timeout=REQUEST_TIMEOUT)
                     response.raise_for_status()
                     soup = BeautifulSoup(response.content, "xml")
                     
@@ -35,7 +35,7 @@ class RequestsScraper(BaseScraper):
                     urls.extend([url.find("loc").text for url in soup.find_all("url")])
                 logger.info(f"[{self.name}] Trouvé {len(urls)} URLs dans les sitemaps")
             else:
-                response = httpx.get(self.sitemap_url, headers={"User-agent":USER_AGENT.get()}, timeout=REQUEST_TIMEOUT)
+                response = httpx.get(self.sitemap_url, headers={"User-agent":self.ua_generateur.get()}, timeout=REQUEST_TIMEOUT)
                 response.raise_for_status()
                 soup = BeautifulSoup(response.content, "xml")
                     
@@ -47,3 +47,6 @@ class RequestsScraper(BaseScraper):
         except Exception as e:
             logger.error(f"[{self.name}] Erreur lors de la récupération du sitemap {self.sitemap_url}: {e}")
             return None
+    
+    def get_sitemap_html(self) -> List[str]:
+        pass

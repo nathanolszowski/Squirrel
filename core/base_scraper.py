@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 class BaseScraper(ABC):
     """Classe de base abstraite pour tous les scrapers"""
     
-    def __init__(self, name: str, sitemap_url: str) -> None:
+    def __init__(self, ua_generateur, name: str, sitemap_url: str) -> None:
         """
         Initialise un nouveau scraper
         
@@ -21,6 +21,7 @@ class BaseScraper(ABC):
             name (str): Nom du scraper (ex: 'bnp', 'jll')
             sitemap_url (str): URL de la sitemap XML ou HTML
         """
+        self.ua_generateur = ua_generateur
         self.name = name
         self.sitemap_url = sitemap_url
         self.results = []

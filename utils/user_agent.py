@@ -4,11 +4,16 @@ Fonctions pour gérer les user_agents
 """
 
 import random
+import httpx
+from bs4 import BeautifulSoup
+import json
+import os
 from functools import cached_property
-from typing import List
+from typing import List, Optional, Union, Dict
 from time import time
 from ua_parser import user_agent_parser
 import logging
+from config.settings import USER_AGENT_MAJ, FICHIER_CACHE_USER_AGENT
 
 logger = logging.getLogger(__name__)
 
@@ -47,20 +52,135 @@ class UserAgent:
     def __str__(self) -> str:
         return self.string
     
+class ListUserAgent:
+    """Initialise et gère la liste d'user-agents"""
+    
+    def __init__(self, fichier_cache=FICHIER_CACHE_USER_AGENT, activer_maj=USER_AGENT_MAJ):
+        self.fichier_cache = fichier_cache
+        self.activer_maj = activer_maj
+        self.url_actuelle_user_agents = self.obtenir_url_actualise_user_agents()
+        self.liste_user_agents = [UserAgent(ua) for ua in self.obtenir_liste_user_agents()]
+
+    def obtenir_url_actualise_user_agents(self) -> str:
+        """
+        Récupère depuis la sitemap du site useragents.io, l'url à jour avec une liste d'user-agents disponibles pour le scraping
+
+        Returns:
+            derniere_url_actualise (str): Chaîne de caractère représentant l'url de la dernière liste d'user-agents à jour
+        """
+        logger.info("Récupération de l'url vers la dernière liste à jour d'user-agents")
+        url_usergantsio = "https://useragents.io/sitemaps/useragents.xml"
+        try:
+            request = httpx.get(url_usergantsio, timeout=5)
+            soup = BeautifulSoup(request.text, "xml")
+            url_actuelle_user_agents = soup.find_all("sitemap")[-1]
+            url_actuelle_user_agents = url_actuelle_user_agents.find("loc").text
+            logger.info("Url vers la dernière liste à jour d'user-agents a été récupérée")
+            return url_actuelle_user_agents
+        except httpx.HTTPError as e:
+            logger.error(f"[{url_usergantsio}] Erreur lors de l'interrogation de la sitemap : {e}")
+        except AttributeError as e:
+            logger.error(f"[{url_usergantsio}] Erreur lors de la récupération de la valeur de la dernière liste à jour d'user-agents : {e}")
+        
+    def obtenir_liste_user_agents_actualise(self) -> List[str]:
+        """
+        Récupère les user_agents string depuis la dernière liste à jour
+
+        Returns:
+            user_agents (List[str]): Chaîne de caractère représentant l'url de la dernière sitemap d'user-agents à jour
+        """
+        logger.info("Récupération de la liste d'user-agents")
+        try:
+            liste_agents = httpx.get(self.url_actuelle_user_agents)
+            sitemap_actuelle = BeautifulSoup(liste_agents.text, "xml")
+            user_agents_liens = [url.find("loc").text for url in sitemap_actuelle.find_all("url")]
+        except httpx.HTTPError as e:
+            logger.error(f"[{self.url_actuelle_user_agents}] Erreur lors de la récupération la dernière liste à jour d'user-agents : {e}")
+        except AttributeError as e:
+            logger.error(f"[{self.url_actuelle_user_agents}] Erreur lors de la récupération de la valeur de la dernière liste à jour d'user-agents : {e}")
+        user_agents_string=[]
+        for url in user_agents_liens :
+            try:
+                response = httpx.get(url, timeout=5)
+                soup = BeautifulSoup(response.content, "html.parser")
+                user_agents_string.append(soup.select_one("body > div:nth-child(1) > main > h1").get_text())
+            except httpx.HTTPError as e:
+                logger.error(f"[{self.url_actuelle_user_agents}] Erreur lors de la récupération la dernière liste à jour d'user-agents : {e}")
+            except AttributeError as e:
+                logger.error(f"Erreur lors de la récupération de la valeur de la dernière liste à jour d'user-agents : {e}")
+            
+        logger.info(f"Trouvé {len(user_agents_string)} user-agents à jour disponibles pour le scraping")
+        return user_agents_string
+        
+    def lire_cache_user_agents(self) -> Union[Dict[str, List[str]], None]:
+        """Vérifie la présence du fichier de cache d'user-agents"""
+        logger.info("Vérifie la présence du fichier de cache d'user-agents")
+        try:
+            if os.path.exists("user_agent.json"):
+                logger.info("Le fichier de cache avec la liste d'user-agents existe")
+                with open(self.fichier_cache, "r", encoding="utf-8") as f:
+                    cache_user_agents = json.load(f)
+                return cache_user_agents
+            else:
+                return None
+        except IOError as e:
+            logger.error(f"[{self.fichier_cache}] Erreur lors de l'ouverture du ficher cache JSON : {e}")
+        except json.JSONDecodeError as e:
+            logger.error(f"[{self.fichier_cache}] Erreur lors de la lecture du ficher cache JSON : {e}")
+
+    def obtenir_url_cache_user_agents(self) -> Optional[str]:
+        """Récupére l'url de la dernière liste d'user-agents depuis notre cache"""
+        cache = self.lire_cache_user_agents()
+        if cache:
+            return next(iter(cache.keys()), None)
+        return None
+    
+    def compare_url_actualise_url_cache(self) -> bool:
+        """
+        Compare l'url actualisée depuis le site useragents.io avec l'url présent dans notre cache JSON
+        """
+        cache_url = self.obtenir_url_cache_user_agents()
+        return self.url_actuelle_user_agents == cache_url
+
+    def sauvegarder_cache_user_agents (self, user_agents: List[str]) -> None:
+        """Sauvegarde la liste d'user-agents dans le cache JSON"""
+        logger.info("Début de la sauvegarde de la liste d'user-agents dans le cache JSON")
+        try:
+            liste_user_agents = user_agents
+            contenu_actualise = {self.url_actuelle_user_agents: liste_user_agents}
+            with open(self.fichier_cache, "w", encoding="utf-8") as f:
+                json.dump(contenu_actualise, f, ensure_ascii=False, indent=4)
+        except IOError as e:
+            logger.error(f"[{self.fichier_cache}] Erreur lors de l'ouverture du ficher cache JSON : {e}")
+        except json.JSONDecodeError as e:
+            logger.error(f"[{self.fichier_cache}] Erreur lors de la lecture du ficher cache JSON : {e}")
+            
+    def obtenir_liste_user_agents(self):
+        """Renvoi la liste d'user-agents à mettre à jour ou non"""
+        logger.info("Début de la récupération de la liste d'user-agents à jour, depuis le cache si possible.")
+        if self.compare_url_actualise_url_cache() and self.activer_maj:
+            logger.info("URL inchangée ou la mise à jour n'a pas été activée. Chargement depuis le cache.")
+            cache = self.lire_cache_user_agents()
+            return list(cache.values())[0] if cache else []
+        else:
+            logger.info("URL a changée. Mise à jour nécessaire.")
+            user_agents = self.obtenir_liste_user_agents_actualise()
+            self.sauvegarder_cache_user_agents(user_agents)
+            return user_agents
+    
 class Rotator:
     """Classe de base pour tous le générateur d'user-agent"""
     
-    def __init__(self, user_agents: List[UserAgent]) -> None:
+    def __init__(self, user_agents: ListUserAgent) -> None:
         """
         Initialise un nouveau générateur d'user-agent
         
         Args:
-            user-agents (list[str]): Liste de chaînes représentant des user-agents, par exemple : "Mozilla/5.0 (Windows NT 10.0; Win64; x64) 
-                AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
+            user-agents ListUserAgent[List[UserAgent]]: Représente un objet ListUserAgent qui est une liste d'objet UserAgent
         """
         # Add User-Agent strings to the UserAgent container
         logger.info("Initialisation du sélecteur d'user-agent")
-        self.user_agents = [UserAgent(ua) for ua in user_agents]
+        self.user_agents = user_agents
         
     # Add weight for each User-Agent
     def weigh_user_agent(self, user_agent: UserAgent) -> int:
