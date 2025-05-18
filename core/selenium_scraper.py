@@ -11,7 +11,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 from .base_scraper import BaseScraper
-from config.settings import SELENIUM_OPTIONS, USER_AGENT
+from config.settings import SELENIUM_OPTIONS
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +28,7 @@ class SeleniumScraper(BaseScraper):
         options = Options()
         for option in SELENIUM_OPTIONS:
             options.add_argument(option)
-        options.add_argument(f"user-agent={USER_AGENT.get()}")
+        options.add_argument(f"user-agent={self.ua_generateur.get()}")
         
         try:
             self.driver = webdriver.Chrome(
@@ -51,7 +51,7 @@ class SeleniumScraper(BaseScraper):
             urls = []
             if isinstance(self.sitemap_url, dict):
                 for actif, url in self.sitemap_url.items():
-                    self.driver.get(self.sitemap_url)
+                    self.driver.get(url)
                     soup = BeautifulSoup(self.driver.page_source, "xml")
                     urls.extend([url.find("loc").text for url in soup.find_all("url")])
                 logger.info(f"[{self.name}] Trouvé {len(urls)} URLs dans les sitemaps")
@@ -83,3 +83,6 @@ class SeleniumScraper(BaseScraper):
                 logger.info(f"[{self.name.upper()}] Le driver Selenium a été fermé avec succès")
             except Exception as e:
                 logger.error(f"[{self.name.upper()}] Une erreur est survenue lors de la fermeture du driver Selenium: {e}")
+
+    def get_sitemap_html(self) -> None:
+        pass

@@ -16,8 +16,8 @@ logger = logging.getLogger(__name__)
 class JLLScraper(SeleniumScraper):
     """Scraper pour le site JLL qui hérite de la classe SeleniumScraper"""
     
-    def __init__(self) -> None:
-        super().__init__("JLL", SITEMAPS["JLL"])
+    def __init__(self, ua_generateur) -> None:
+        super().__init__(ua_generateur,"JLL", SITEMAPS["JLL"])
         self.selectors = JLL_SELECTORS
      
     def scrape_listing(self, url: str) -> dict:

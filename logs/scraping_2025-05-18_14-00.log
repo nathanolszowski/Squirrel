@@ -1,0 +1,11 @@
+2025-05-18 14:00:16,411 - utils.logging_config - INFO - Logging initialized. Log file: logs\scraping_2025-05-18_14-00.log
+2025-05-18 14:00:16,412 - __main__ - INFO - Démarrage du programme de scraping. Les logs seront conservés dans ce fichier: logs\scraping_2025-05-18_14-00.log
+2025-05-18 14:00:16,419 - utils.user_agent - INFO - Récupération de l'url vers la dernière liste à jour d'user-agents
+2025-05-18 14:00:16,843 - utils.user_agent - INFO - Url vers la dernière liste à jour d'user-agents a été récupérée
+2025-05-18 14:00:16,859 - utils.user_agent - INFO - Début de la récupération de la liste d'user-agents à jour, depuis le cache si possible.
+2025-05-18 14:00:16,859 - utils.user_agent - INFO - Vérifie la présence du fichier de cache d'user-agents
+2025-05-18 14:00:16,859 - utils.user_agent - INFO - Le fichier de cache avec la liste d'user-agents existe
+2025-05-18 14:00:16,859 - utils.user_agent - INFO - URL inchangée ou la mise à jour n'a pas été activée. Chargement depuis le cache.
+2025-05-18 14:00:16,859 - utils.user_agent - INFO - Vérifie la présence du fichier de cache d'user-agents
+2025-05-18 14:00:16,868 - utils.user_agent - INFO - Le fichier de cache avec la liste d'user-agents existe
+2025-05-18 14:00:18,774 - utils.user_agent - INFO - Initialisation du sélecteur d'user-agent

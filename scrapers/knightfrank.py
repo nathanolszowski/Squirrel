@@ -17,8 +17,8 @@ logger = logging.getLogger(__name__)
 class KNIGHTFRANKScraper(RequestsScraper):
     """Scraper pour le site CBRE qui hérite de la classe RequestsScraper"""
     
-    def __init__(self) -> None:
-        super().__init__("KNIGHTFRANK", SITEMAPS["KNIGHTFRANK"])
+    def __init__(self, ua_generateur) -> None:
+        super().__init__(ua_generateur, "KNIGHTFRANK", SITEMAPS["KNIGHTFRANK"])
         self.selectors = KNIGHTFRANK_SELECTORS
         self.base_url = "https://www.knightfrank.fr"
            
@@ -33,7 +33,7 @@ class KNIGHTFRANKScraper(RequestsScraper):
         """
         try:
             logger.info(f"[{self.name.upper()}] Début du scraping des données pour chacune des offres")
-            response = httpx.get(url, headers={"User-agent":USER_AGENT.get()}, timeout=REQUEST_TIMEOUT)
+            response = httpx.get(url, headers={"User-agent":self.ua_generateur.get()}, timeout=REQUEST_TIMEOUT)
             response.raise_for_status()
             soup = BeautifulSoup(response.text, "html.parser")
             
@@ -76,7 +76,7 @@ class KNIGHTFRANKScraper(RequestsScraper):
         """Permet de naviguer entre les différentes pages d'offres"""
         urls =[]
         while url:
-            response = httpx.get(url, headers={"User-agent":USER_AGENT.get()}, timeout=REQUEST_TIMEOUT)
+            response = httpx.get(url, headers={"User-agent":self.ua_generateur.get()}, timeout=REQUEST_TIMEOUT)
             response.raise_for_status()
             soup = BeautifulSoup(response.content, "html.parser")
             

@@ -7,7 +7,7 @@ import logging
 import httpx
 from bs4 import BeautifulSoup
 from core.requests_scraper import RequestsScraper
-from config.settings import DEPARTMENTS_IDF, SITEMAPS, REQUEST_TIMEOUT, USER_AGENT
+from config.settings import DEPARTMENTS_IDF, SITEMAPS, REQUEST_TIMEOUT
 from config.selectors import BNP_SELECTORS
 
 logger = logging.getLogger(__name__)
@@ -15,8 +15,8 @@ logger = logging.getLogger(__name__)
 class BNPScraper(RequestsScraper):
     """Scraper pour le site BNP Paribas Real Estate qui hérite de la classe RequestsScraper"""
     
-    def __init__(self) -> None:
-        super().__init__("BNP", SITEMAPS["BNP"])
+    def __init__(self, ua_generateur) -> None:
+        super().__init__(ua_generateur, "BNP", SITEMAPS["BNP"])
         self.selectors = BNP_SELECTORS
 
     def scrape_listing(self, url: str) -> dict:
@@ -30,7 +30,7 @@ class BNPScraper(RequestsScraper):
         """
         try:
             logger.info(f"[{self.name.upper()}] Début du scraping des données pour chacune des offres")
-            response = httpx.get(url, headers={"User-agent":USER_AGENT.get()}, timeout=REQUEST_TIMEOUT)
+            response = httpx.get(url, headers={"User-agent":self.ua_generateur.get()}, timeout=REQUEST_TIMEOUT)
             response.raise_for_status()
             soup = BeautifulSoup(response.text, "html.parser")
             
