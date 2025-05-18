@@ -60,7 +60,11 @@ class ListUserAgent:
         self.activer_maj = activer_maj
         self.url_actuelle_user_agents = self.obtenir_url_actualise_user_agents()
         self.liste_user_agents = [UserAgent(ua) for ua in self.obtenir_liste_user_agents()]
-
+    
+    def obtenir_liste(self):
+        """Retourne la liste ListUserAgents"""
+        return self.liste_user_agents if self.liste_user_agents else []
+    
     def obtenir_url_actualise_user_agents(self) -> str:
         """
         Récupère depuis la sitemap du site useragents.io, l'url à jour avec une liste d'user-agents disponibles pour le scraping
@@ -158,7 +162,7 @@ class ListUserAgent:
     def obtenir_liste_user_agents(self):
         """Renvoi la liste d'user-agents à mettre à jour ou non"""
         logger.info("Début de la récupération de la liste d'user-agents à jour, depuis le cache si possible.")
-        if self.compare_url_actualise_url_cache() and self.activer_maj:
+        if self.compare_url_actualise_url_cache() or not self.activer_maj:
             logger.info("URL inchangée ou la mise à jour n'a pas été activée. Chargement depuis le cache.")
             cache = self.lire_cache_user_agents()
             return list(cache.values())[0] if cache else []
@@ -176,7 +180,7 @@ class Rotator:
         Initialise un nouveau générateur d'user-agent
         
         Args:
-            user-agents ListUserAgent[List[UserAgent]]: Représente un objet ListUserAgent qui est une liste d'objet UserAgent
+            user-agents ListUserAgent: Représente un objet ListUserAgent qui est une liste d'objet UserAgent
         """
         # Add User-Agent strings to the UserAgent container
         logger.info("Initialisation du sélecteur d'user-agent")
@@ -246,4 +250,4 @@ class Rotator:
         # Met à jour l'attribut de dernière utilisation
         user_agent.last_used = time()
         logger.info(f"Un nouvel user_agent a été sélectionné {user_agent}")
-        return str(user_agent)
+        return user_agent

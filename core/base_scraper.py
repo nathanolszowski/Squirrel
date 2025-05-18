@@ -77,8 +77,10 @@ class BaseScraper(ABC):
         url = next(iter(self.sitemap_url.keys())) if isinstance(self.sitemap_url, dict) else self.sitemap_url
 
         if url.endswith(".xml"):
+            logger.info(f"[{self.sitemap_url}] Utilisation de la méthode XML")
             return self.get_sitemap_xml()
         else:
+            logger.info(f"[{self.sitemap_url}] Utilisation de la méthode XML")
             return self.get_sitemap_html()
     
     def safe_select_text(self, soup: BeautifulSoup, selector: str) -> str:
@@ -99,7 +101,7 @@ class BaseScraper(ABC):
         try:
             logger.info(f"[{self.name.upper()}] Début du scraping")
             urls = self.choix_sitemap()
-            print(urls)
+
             if hasattr(self, "filtre_idf_bureaux") and callable(getattr(self, "filtre_idf_bureaux")):
                 url_filtrees = self.filtre_idf_bureaux(urls)
             else:

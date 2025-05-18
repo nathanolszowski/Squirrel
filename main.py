@@ -23,8 +23,8 @@ def main():
     logging.getLogger("httpx").setLevel(logging.WARNING)
     logger.info(f"Démarrage du programme de scraping. Les logs seront conservés dans ce fichier: {log_file}")
     
-    ua_liste = ListUserAgent
-    ua_generateur = Rotator(ua_liste)
+    ua_liste = ListUserAgent()
+    ua_generateur = Rotator(ua_liste.obtenir_liste())
     
     # Liste des scrapers à exécuter
     scrapers = [
