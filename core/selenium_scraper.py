@@ -18,8 +18,8 @@ logger = logging.getLogger(__name__)
 class SeleniumScraper(BaseScraper):
     """Classe de base pour les scrapers utilisant Selenium et qui hérite de la classe abstraite BaseScraper"""
     
-    def __init__(self, name: str, sitemap_url: str) -> None:
-        super().__init__(name, sitemap_url)
+    def __init__(self, ua_generateur, name: str, sitemap_url: str) -> None:
+        super().__init__(ua_generateur, name, sitemap_url)
         self.driver = None
         self.setup_driver()
     
@@ -54,7 +54,7 @@ class SeleniumScraper(BaseScraper):
                     self.driver.get(url)
                     soup = BeautifulSoup(self.driver.page_source, "xml")
                     urls.extend([url.find("loc").text for url in soup.find_all("url")])
-                logger.info(f"[{self.name}] Trouvé {len(urls)} URLs dans les sitemaps")
+                logger.info(f"[{self.name}{actif}] Trouvé {len(urls)} URLs dans les sitemaps")
             else:
                 self.driver.get(self.sitemap_url)
                 soup = BeautifulSoup(self.driver.page_source, "xml")

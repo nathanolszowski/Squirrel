@@ -29,7 +29,7 @@ def main():
     # Liste des scrapers à exécuter
     scrapers = [
         #BNPScraper(ua_generateur),
-        JLLScraper(ua_generateur),
+        JLLScraper(ua_generateur)
         #CBREScraper(ua_generateur),
         #ALEXBOLTONScraper(ua_generateur)
         #CUSHMANScraper(ua_generateur)
