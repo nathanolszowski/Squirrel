@@ -30,7 +30,7 @@ class CBREScraper(RequestsScraper):
             data (dict): Dictionnaire avec les informations de chaque offre scrapée
         """
         try:
-            logger.info(f"[{self.name.upper()}] Début du scraping des données pour chacune des offres")
+            logger.info(f"[{self.name.upper()}] Début du scraping des données pour l'offre")
             response = httpx.get(url, headers={"User-agent":self.ua_generateur.get()}, timeout=REQUEST_TIMEOUT)
             response.raise_for_status()
             soup = BeautifulSoup(response.text, "html.parser")
