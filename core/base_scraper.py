@@ -73,7 +73,6 @@ class BaseScraper(ABC):
             data (dict): Dictionnaire avec les informations de chaque offre scrapée
         """
         try:
-            logger.info(f"[{self.name.upper()}] Début du scraping des données pour chacune des offres")
             response = httpx.get(url, headers={"User-agent":self.ua_generateur.get()}, timeout=REQUEST_TIMEOUT)
             response.raise_for_status()
             soup = BeautifulSoup(response.text, "html.parser")
@@ -106,9 +105,12 @@ class BaseScraper(ABC):
         """Fonction de post-traitement à surcharger si besoin spécifique pour certains champs du dictionnaire"""
         pass
     
-    def choix_sitemap(self) -> str:
+    def choix_sitemap(self) -> list[str]:
         """
         Choisi le mode d'extraction de la sitemap en fonction de son type xml ou html
+        
+        Returns:
+            (list[str]): Liste de chaîne de caractères représentants les urls à scraper
         """
         url = next(iter(self.sitemap_url.keys())) if isinstance(self.sitemap_url, dict) else self.sitemap_url
 
@@ -150,7 +152,8 @@ class BaseScraper(ABC):
                 url_filtrees = self.filtre_idf_bureaux(urls)
             else:
                 url_filtrees = urls
-            
+                
+            logger.info(f"[{self.name.upper()}] Début du scraping des données pour chacune des offres")
             for url in url_filtrees[:5]:
                 try:
                     result = self.scrape_listing(url)

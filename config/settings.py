@@ -15,6 +15,7 @@ SELENIUM_OPTIONS = [
     "--headless",
     "--disable-blink-features=AutomationControlled",
     "--disable-gpu",
+    "--enable-unsafe-swiftshader",
     "--no-sandbox",
     "start-maximized",
     "--log-level=1",
