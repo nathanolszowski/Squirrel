@@ -14,7 +14,7 @@ from config.selectors import KNIGHTFRANK_SELECTORS
 
 logger = logging.getLogger(__name__)
 
-class KNIGHTFRANKScraper(RequestsScraper):
+class KNIGHTFRANKScraper(RequestsScraper):#Transformer
     """Scraper pour le site CBRE qui hérite de la classe RequestsScraper"""
     
     def __init__(self, ua_generateur) -> None:

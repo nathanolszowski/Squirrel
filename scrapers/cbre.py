@@ -20,63 +20,25 @@ class CBREScraper(RequestsScraper):
         super().__init__(ua_generateur,"CBRE", SITEMAPS["CBRE"])
         self.selectors = CBRE_SELECTORS
            
-    def scrape_listing(self, url: str) -> dict:
-        """
-        Scrape une annonce CBRE
-        
-        Args:
-            urls (str): Chaîne de caractères représentant l'url à scraper
-        Retruns:
-            data (dict): Dictionnaire avec les informations de chaque offre scrapée
-        """
-        try:
-            logger.info(f"[{self.name.upper()}] Début du scraping des données pour l'offre")
-            response = httpx.get(url, headers={"User-agent":self.ua_generateur.get()}, timeout=REQUEST_TIMEOUT)
-            response.raise_for_status()
-            soup = BeautifulSoup(response.text, "html.parser")
-            
-            # Déterminer le contrat
-            contrat_map = {
-                "a-louer": "Location",
-                "a-vendre": "Vente",
-            }
-            contrat = next((label for key, label in contrat_map.items() if key in url), "N/A")
-                
-            # Déterminer l'actif
-            actif_map = {
-                "bureaux": "Bureaux",
-                "activites": "Locaux d'activité",
-                "entrepots": "Entrepots"
-            }
-            actif = next((label for key, label in actif_map.items() if key in url), "N/A")
-            
-            # Déterminer la référence
-            reference_element = soup.find('li', class_='LS breadcrumb-item active')
-            reference_element = reference_element.find("span")
-            reference = reference_element.get_text(strip=True) if reference_element else "N/A"
-            
-            # Extraction des données
-            data = {
-                "confrere" : self.name,
-                "url": url,
-                "reference" : reference,
-                "contrat": contrat,
-                "actif" : actif,
-                "disponibilite" :self.safe_select_text(soup, self.selectors["disponibilite"]),
-                "surface" : self.safe_select_text(soup, self.selectors["surface"]),
-                "division" : self.safe_select_text(soup, self.selectors["division"]),
-                "adresse" : self.safe_select_text(soup, self.selectors["adresse"]),
-                "contact" : self.safe_select_text(soup, self.selectors["contact"]),
-                "accroche" : self.safe_select_text(soup, self.selectors["accroche"]),
-                "amenagements" : " ".join([self.safe_select_text(soup, self.selectors["amenagements"]),
-                                           self.safe_select_text(soup, self.selectors["prestations"])]),
-                "prix_global" : self.safe_select_text(soup, self.selectors["prix_global"])
-            }
-            return data
-            
-        except Exception as e:
-            logger.error(f"[self.name] Erreur scraping des données pour {url}: {e}")
-            return None
+    def post_traitement_hook(self, data: dict, soup: BeautifulSoup, url: str) -> dict:
+        logger.info("Lancement du post-traitement")
+        #Surcharger la méthode obtenir la reference
+        reference_element = soup.find('li', class_='LS breadcrumb-item active')
+        reference_element = reference_element.find("span")
+        data["reference"] = reference_element.get_text(strip=True) if reference_element else "N/A"
+        #Surcharger la méthode obtenir l'actif
+        actif_map = {
+            "bureaux": "Bureaux",
+            "activites": "Locaux d'activité",
+            "entrepots": "Entrepots"
+        }
+        data["actif"] = next((label for key, label in actif_map.items() if key in url), "N/A")
+        # Surcharger la méthode obtenir le contrat
+        contrat_map = {
+            "a-louer": "Location",
+            "a-vendre": "Vente",
+        }
+        data["contrat"] = next((label for key, label in contrat_map.items() if key in url), "N/A")
         
     def filtre_idf_bureaux(self, urls: list[str]) -> list[str]:
         """

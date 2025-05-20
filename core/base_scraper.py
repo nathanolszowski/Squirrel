@@ -4,8 +4,10 @@ Classe de base abstraite pour tous les scrapers
 """
 
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Optional
 import logging
+import httpx
+from config.settings import REQUEST_TIMEOUT
 from bs4 import BeautifulSoup
 
 logger = logging.getLogger(__name__)
@@ -47,18 +49,6 @@ class BaseScraper(ABC):
         pass
     
     @abstractmethod
-    def scrape_listing(self, url: str) -> dict:
-        """
-        Scrape les données d'une annonce à partir de son url
-        
-        Args:
-            urls (str): Chaîne de caractères représentant l'url à scraper
-        Retruns:
-            data (dict): Dictionnaire de chaînes de caractères avec les informations de chaque offre scrapée
-        """
-        pass
-    
-    @abstractmethod
     def filtre_idf_bureaux(self, urls: list) -> list:
         """
         Filtre les URLs pour supprimer les bureaux hors IDF
@@ -70,7 +60,53 @@ class BaseScraper(ABC):
         """
         pass
     
-    def choix_sitemap(self) -> None:
+    def scrape_listing(self, url: str) -> dict:
+        """
+        Scrape les données d'une annonce depuis une url
+        
+        Hooks à surcharger par les instances si besoin spécifiques :
+            - post_traitement_hook()
+        
+        Args:
+            urls (str): Chaîne de caractères représentant l'url à scraper
+        Retruns:
+            data (dict): Dictionnaire avec les informations de chaque offre scrapée
+        """
+        try:
+            logger.info(f"[{self.name.upper()}] Début du scraping des données pour chacune des offres")
+            response = httpx.get(url, headers={"User-agent":self.ua_generateur.get()}, timeout=REQUEST_TIMEOUT)
+            response.raise_for_status()
+            soup = BeautifulSoup(response.text, "html.parser")
+
+            # Extraction des données
+            data = {
+                "confrere" : self.name,
+                "url": url,
+                "reference" : self.safe_select_text(soup, self.selectors["reference"]),
+                "contrat": self.safe_select_text(soup, self.selectors["contrat"]),
+                "actif" : self.safe_select_text(soup, self.selectors["actif"]),
+                "disponibilite" : self.safe_select_text(soup, self.selectors["disponibilite"]),
+                "surface" : self.safe_select_text(soup, self.selectors["surface"]),
+                "division" : self.safe_select_text(soup, self.selectors["division"]),
+                "adresse" : self.safe_select_text(soup, self.selectors["adresse"]),
+                "contact" : self.safe_select_text(soup, self.selectors["contact"]),
+                "accroche" : self.safe_select_text(soup, self.selectors["accroche"]),
+                "amenagements" : self.safe_select_text(soup, self.selectors["amenagements"]),
+                "prix_global" : self.safe_select_text(soup, self.selectors["prix_global"])
+            }
+            # Fonction de post-traitement si besoin spécifique pour certains champs du dictionnaire
+            self.post_traitement_hook(data, soup, url)
+            return data
+        
+        except Exception as e:
+            logger.error(f"[{self.name}] Erreur scraping des données pour {url}: {e}")
+            return None
+        
+    def post_traitement_hook(self, data: dict, soup: BeautifulSoup, url: str) -> Optional[dict]:
+        """Fonction de post-traitement à surcharger si besoin spécifique pour certains champs du dictionnaire"""
+        pass
+    
+    def choix_sitemap(self) -> str:
         """
         Choisi le mode d'extraction de la sitemap en fonction de son type xml ou html
         """
@@ -93,8 +129,16 @@ class BaseScraper(ABC):
         Returns:
             (str): Chaîne de caractères représentant la valeur du sélécteur requêté sinon la valeur "N/A"
         """
-        el = soup.select_one(selector)
-        return el.get_text(strip=True) if el else "N/A"
+        if selector == "None" :
+            return "N/A"
+        
+        try:
+            el = soup.select_one(selector)
+            return el.get_text(strip=True) if el else "N/A"
+        
+        except Exception as e:
+            logger.error(f"[{self.name}] Erreur dans safe_select_text avec selector='{selector}': {e}")
+            return "N/A"
     
     def run(self) -> None:
         """Exécute le programme complet"""

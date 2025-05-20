@@ -5,6 +5,8 @@ Sélecteurs CSS pour chacun des sites à scraper
 
 BNP_SELECTORS = {
     "reference": "#presentation > div > div.col.s12.offer-hero--left > div.offer-hero--left--middle > div.line.space-between.share-businessid-line.hidden-mobile.hidden-tablet > div.line.mobile-column > div.business-id > p",
+    "contrat": "None",
+    "actif": "None",
     "disponibilite": "#columns-container > div:nth-child(1) > ul > li > p > span",
     "surface": "#presentation > div > div.col.s12.offer-hero--left > div.offer-hero--left--middle > div.surface-block.line.no-padding.flex-column > div.surface > p > span:nth-child(1)",
     "division": "#presentation > div > div.col.s12.offer-hero--left > div.offer-hero--left--middle > div.surface-block.line.no-padding.flex-column > div.surface > p > span.divisible",
@@ -19,6 +21,8 @@ BNP_SELECTORS = {
 
 JLL_SELECTORS = {
     "reference": "#propertySummary > div > div.col-span-12.lg\\:col-span-10 > div > div.flex.items-center.justify-between.gap-4.max-\\[575px\\]\\:flex-col-reverse > div.flex.items-center.justify-center.gap-4.max-\\[575px\\]\\:flex-col-reverse > span",
+    "contrat": "None",
+    "actif": "None",
     "disponibilite": "#propertySummary > div > div.col-span-12.lg\\:col-span-10 > div > div.mt-4.flex.items-start.sm\\:mt-9 > div.flex-1.\\[\\&\\:not\\(\\:last-child\\)\\]\\:mr-11 > ul > li:nth-child(2) > span.text-lg.text-neutral-700",
     "surface": "#propertySummary > div > div.col-span-12.lg\\:col-span-10 > div > div.mt-4.flex.items-start.sm\\:mt-9 > div.flex-1.\\[\\&\\:not\\(\\:last-child\\)\\]\\:mr-11 > ul > li:nth-child(1) > span.text-lg.text-neutral-700 > span > span:nth-child(1)",
     "division": "#propertySummary > div > div.col-span-12.lg\\:col-span-10 > div > div.mt-4.flex.items-start.sm\\:mt-9 > div.flex-1.\\[\\&\\:not\\(\\:last-child\\)\\]\\:mr-11 > ul > li:nth-child(1) > span.text-lg.text-neutral-700 > span > span:nth-child(1) > span",
@@ -29,6 +33,9 @@ JLL_SELECTORS = {
     "prix_global": "#propertySummary > div > div.col-span-12.lg\\:col-span-10 > div > div.mt-4.flex.items-start.sm\\:mt-9 > div.flex-1.\\[\\&\\:not\\(\\:last-child\\)\\]\\:mr-11 > div.mb-6.flex.flex-col.flex-wrap.items-center.justify-between.text-center.sm\\:flex-row.sm\\:text-left > div.flex.items-center.justify-end.text-bronze.\\[\\&_p\\]\\:text-2xl.\\[\\&_p\\]\\:font-semibold > p"
 }
 CBRE_SELECTORS = {
+    "reference": "None",
+    "contrat": "None",
+    "actif": "None",
     "disponibilite": "#contentHolder_availability",
     "surface": "#contentHolder_surface",
     "division": "#contentHolder_surfaceDiv",
@@ -43,6 +50,7 @@ CBRE_SELECTORS = {
 ALEXBOLTON_SELECTORS = {
     "reference": "body > section.listing-header.py-md-4 > div > div > div.col-lg-5.position-relative > div > div.bolton-header-5.bolton-grey.mb-2",
     "contrat" : "body > section.listing-header.py-md-4 > div > div > div.col-lg-5.position-relative > div > div.d-flex.gap-4.mb-4 > div:nth-child(1) > p:nth-child(1)",
+    "actif": "None",    
     "disponibilite": "body > section.listing-header.py-md-4 > div > div > div.col-lg-5.position-relative > div > div.d-flex.gap-4.mb-4 > div:nth-child(2) > p:nth-child(2)",
     "surface": "body > section.listing-header.py-md-4 > div > div > div.col-lg-5.position-relative > div > div.d-flex.gap-4.mb-4 > div:nth-child(1) > p:nth-child(4)",
     "adresse": "body > section.listing-header.py-md-4 > div > div > div.col-lg-5.position-relative > div > div.bolton-header-4.mb-4",
@@ -54,6 +62,7 @@ ALEXBOLTON_SELECTORS = {
 
 CUSHMAN_SELECTORS = {
     "reference": "#js-page > div.c-page__inner > main > div.o-container > article > div.o-grid.u-fxd\\(column\\)\\@phone.u-fxw\\(nowrap\\)\\@phone > div:nth-child(2) > div:nth-child(1) > div > header > p.u-t.u-t--sm.u-t-additional",
+    "contrat": "None",
     "actif" : "#js-page > div.c-page__inner > main > div.o-container > article > div.o-grid.u-fxd\\(column\\)\\@phone.u-fxw\\(nowrap\\)\\@phone > div:nth-child(2) > div:nth-child(1) > div > header > p.c-property__category",
     "contrat": "#js-page > div.c-page__inner > main > div.o-container > article > div.o-grid.u-fxd\\(column\\)\\@phone.u-fxw\\(nowrap\\)\\@phone > div:nth-child(2) > div:nth-child(1) > div > header > p.c-property__category",
     "disponibilite": "js-page > div.c-page__inner > main > div.o-container > article > div.o-grid.u-fxd\\(column\\)\\@phone.u-fxw\\(nowrap\\)\\@phone > div:nth-child(2) > div:nth-child(1) > div > div:nth-child(3) > p:nth-child(3) > span.u-t--tertiary",
@@ -68,26 +77,30 @@ CUSHMAN_SELECTORS = {
 
 KNIGHTFRANK_SELECTORS = {
     "reference": "body > main > section > div.container.p-lg-0.contOMob > div > div.col-xl-7.p-xl-0.p-0 > div:nth-child(1) > div > ol > li:nth-child(5) > a > span",
+    "contrat": "None",
+    "actif": "None",
     "disponibilite": "body > main > section > div.container.p-lg-0.contOMob > div > div.col-xl-7.p-xl-0.p-0 > div.row.pb-4.align-items-center.p24 > div.col-xl-4.col-md-4.col-12.cDisp > div > p",
-    "surface": "",
-    "division": "",
-    "adresse": "",
-    "contact": "",
-    "accroche": "",
-    "amenagements": "",
-    "prix_global": ""
+    "surface": "None",
+    "division": "None",
+    "adresse": "None",
+    "contact": "None",
+    "accroche": "None",
+    "amenagements": "None",
+    "prix_global": "None"
 }
 
 """ Ajouter les sélecteurs pour les autres sites
 EXEMPLE_SELECTORS = {
-    "reference": "",
-    "disponibilite": "",
-    "surface": "",
-    "division": "",
-    "adresse": "",
-    "contact": "",
-    "accroche": "",
-    "amenagements": "",
-    "prix_global": ""
+    "reference": "None",
+    "contrat: "None",
+    "actif": "None",
+    "disponibilite": "None",
+    "surface": "None",
+    "division": "None",
+    "adresse": "None",
+    "contact": "None",
+    "accroche": "None",
+    "amenagements": "None",
+    "prix_global": "None"
 }
 """
