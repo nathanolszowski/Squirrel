@@ -1,7 +1,0 @@
-2025-05-07 14:39:05,916 - utils.logging_config - INFO - Logging initialized. Log file: logs\scraping_2025-05-07_14-39.log
-2025-05-07 14:39:05,916 - __main__ - INFO - Démarrage du programme de scraping. Les logs seront conservés dans ce fichier: logs\scraping_2025-05-07_14-39.log
-2025-05-07 14:39:05,916 - __main__ - INFO - Démarrage du scraper CUSHMAN ...
-2025-05-07 14:39:05,916 - core.base_scraper - INFO - [CUSHMAN] Début du scraping
-2025-05-07 14:39:11,017 - core.requests_scraper - ERROR - [CUSHMAN] Erreur lors de la récupération du sitemap https://immobilier.cushmanwakefield.fr/sitemap.xml: HTTPSConnectionPool(host='immobilier.cushmanwakefield.fr', port=443): Read timed out. (read timeout=5)
-2025-05-07 14:39:11,017 - core.base_scraper - ERROR - [CUSHMAN] Erreur importante lors du scraping: 'NoneType' object is not iterable
-2025-05-07 14:39:11,017 - __main__ - INFO - Le programme de scraping est terminé
