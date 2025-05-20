@@ -8,13 +8,13 @@ import httpx
 import re
 from typing import List
 from bs4 import BeautifulSoup
-from core.requests_scraper import RequestsScraper
-from config.settings import SITEMAPS, REQUEST_TIMEOUT, USER_AGENT
+from core.selenium_scraper import SeleniumScraper
+from config.settings import SITEMAPS, SELENIUM_WAIT_TIME
 from config.selectors import KNIGHTFRANK_SELECTORS
 
 logger = logging.getLogger(__name__)
 
-class KNIGHTFRANKScraper(RequestsScraper):#Transformer
+class KNIGHTFRANKScraper(SeleniumScraper):
     """Scraper pour le site CBRE qui hérite de la classe RequestsScraper"""
     
     def __init__(self, ua_generateur) -> None:
@@ -22,43 +22,8 @@ class KNIGHTFRANKScraper(RequestsScraper):#Transformer
         self.selectors = KNIGHTFRANK_SELECTORS
         self.base_url = "https://www.knightfrank.fr"
            
-    def scrape_listing(self, url: str) -> dict:
-        """
-        Scrape une annonce KNIGHT FRANK en implémentant la méthode de la classe mère RequestsScraper
-        
-        Args:
-            urls (str): Chaîne de caractères représentant l'url à scraper
-        Retruns:
-            data (dict): Dictionnaire avec les informations de chaque offre scrapée
-        """
-        try:
-            logger.info(f"[{self.name.upper()}] Début du scraping des données pour chacune des offres")
-            response = httpx.get(url, headers={"User-agent":self.ua_generateur.get()}, timeout=REQUEST_TIMEOUT)
-            response.raise_for_status()
-            soup = BeautifulSoup(response.text, "html.parser")
-            
-            # Extraction des données
-            data = {
-                "confrere" : self.name,
-                "url": url,
-                "reference" : self.safe_select_text(soup, self.selectors["reference"])
-                #"contrat": contrat,
-                #"actif" : actif,
-                #"disponibilite" :self.safe_select_text(soup, self.selectors["disponibilite"]),
-                #"surface" : self.safe_select_text(soup, self.selectors["surface"]),
-                #"division" : self.safe_select_text(soup, self.selectors["division"]),
-                #"adresse" : self.safe_select_text(soup, self.selectors["adresse"]),
-                #"contact" : self.safe_select_text(soup, self.selectors["contact"]),
-                #"accroche" : self.safe_select_text(soup, self.selectors["accroche"]),
-                #"amenagements" : " ".join([self.safe_select_text(soup, self.selectors["amenagements"]),
-                                           #self.safe_select_text(soup, self.selectors["prestations"])]),
-                #"prix_global" : self.safe_select_text(soup, self.selectors["prix_global"])
-            }
-            return data
-            
-        except Exception as e:
-            logger.error(f"[self.name] Erreur scraping des données pour {url}: {e}")
-            return None
+    def post_traitement_hook(self, data: dict, soup: BeautifulSoup, url: str) -> dict:
+        pass
                     
     def trouver_formater_urls_offres(self, soup) -> list:
         """Permet de formater les urls lors de la méthode get_sitemap_html"""
@@ -76,9 +41,8 @@ class KNIGHTFRANKScraper(RequestsScraper):#Transformer
         """Permet de naviguer entre les différentes pages d'offres"""
         urls =[]
         while url:
-            response = httpx.get(url, headers={"User-agent":self.ua_generateur.get()}, timeout=REQUEST_TIMEOUT)
-            response.raise_for_status()
-            soup = BeautifulSoup(response.content, "html.parser")
+            soup= self.driver.get(url)
+            soup = BeautifulSoup(self.driver.page_source, "html.parser")
             
             urls += self.trouver_formater_urls_offres(soup)
             

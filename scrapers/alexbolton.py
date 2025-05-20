@@ -19,55 +19,19 @@ class ALEXBOLTONScraper(RequestsScraper):
         super().__init__(ua_generateur,"ALEXBOLTON", SITEMAPS["ALEXBOLTON"])
         self.selectors = ALEXBOLTON_SELECTORS# -*- coding: utf-8 -*-
 
-    def scrape_listing(self, url: str) -> dict:
-        """
-        Scrape une annonce Alexbolton
-        
-        Args:
-            urls (str): Chaîne de caractères représentant l'url à scraper
-        Retruns:
-            data (dict): Dictionnaire avec les informations de chaque offre scrapée
-        """
-        try:
-            logger.info(f"[{self.name.upper()}] Début du scraping des données pour chacune des offres")
-            response = httpx.get(url, headers={"User-agent":self.ua_generateur.get()}, timeout=REQUEST_TIMEOUT)
-            response.raise_for_status()
-            soup = BeautifulSoup(response.text, "html.parser")
-            
-            # Déterminer le contrat
-            contrat_map = {
-                "Loyer": "Location",
-                "Prix": "Vente",
-            }
-            contrat = next((label for key, label in contrat_map.items() if key in self.safe_select_text(soup, self.selectors["contrat"])), "N/A")
-            
-            # Déterminer l'accroche
-            accroche = soup.find("div", class_="col-lg-5 position-relative")
-            accroche = accroche.find_all("p")
-            accroche = accroche[8].get_text()
-            
-            # Extraction des données
-            data = {
-                "confrere" : self.name,
-                "url": url,
-                "reference" : self.safe_select_text(soup, self.selectors["reference"]),
-                "contrat": contrat,
-                "actif" : "Bureaux",
-                "disponibilite" : self.safe_select_text(soup, self.selectors["disponibilite"]),
-                "surface" : self.safe_select_text(soup, self.selectors["surface"]),
-                "adresse" : " ".join([self.safe_select_text(soup, self.selectors["nom_immeuble"]),
-                                      self.safe_select_text(soup, self.selectors["adresse"])]),
-                "contact" : self.safe_select_text(soup, self.selectors["contact"]),
-                "accroche" : accroche,
-                "amenagements" : self.safe_select_text(soup, self.selectors["amenagements"]),
-                "prix_global" : self.safe_select_text(soup, self.selectors["prix_global"])
-            }
-            return data
-            
-        except Exception as e:
-            logger.error(f"[self.name] Erreur scraping des données pour {url}: {e}")
-            return None
-        
+    def post_taitement_hook(self, data: dict, soup: BeautifulSoup, url: str) -> dict:
+        logger.info("Lancement du post-traitement spécifique à AlexBolton")
+        # Déterminer le contrat
+        contrat_map = {
+            "Loyer": "Location",
+            "Prix": "Vente",
+        }
+        data["contrat"] = next((label for key, label in contrat_map.items() if key in self.safe_select_text(soup, self.selectors["contrat"])), "N/A")
+        # Déterminer l'accroche
+        accroche = soup.find("div", class_="col-lg-5 position-relative")
+        accroche = accroche.find_all("p")
+        data["accroche"] = accroche[8].get_text()
+
     def filtre_idf_bureaux(self, urls: list[str]) -> list[str]:
         """
         Filtre les URLs pour supprimer les bureaux hors IDF. FYI : AlexBolton ne fait que du Bureaux IDF

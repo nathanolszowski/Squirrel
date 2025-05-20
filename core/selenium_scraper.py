@@ -11,16 +11,17 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 from .base_scraper import BaseScraper
-from config.settings import SELENIUM_OPTIONS
+from config.settings import SELENIUM_OPTIONS, SELENIUM_WAIT_TIME
 
 logger = logging.getLogger(__name__)
 
 class SeleniumScraper(BaseScraper):
     """Classe de base pour les scrapers utilisant Selenium et qui hérite de la classe abstraite BaseScraper"""
     
-    def __init__(self, ua_generateur, name: str, sitemap_url: str) -> None:
+    def __init__(self, ua_generateur, name: str, sitemap_url: str, timeout=SELENIUM_WAIT_TIME) -> None:
         super().__init__(ua_generateur, name, sitemap_url)
         self.driver = None
+        self.timeout = timeout
         self.setup_driver()
     
     def setup_driver(self) -> None:
@@ -65,15 +66,6 @@ class SeleniumScraper(BaseScraper):
         except Exception as e:
             logger.error(f"[{self.name.upper()}] Erreur lors de la récupération du sitemap: {self.sitemap_url} {e}")
             return []
-    
-    def scrape_listing(self, url: str) -> None:
-        """
-        Scrape une annonce individuelle
-        
-        Cette méthode doit être surchargée par les classes enfants
-        pour implémenter la logique spécifique à chaque site
-        """
-        raise NotImplementedError("Les sous-classes doivent implémentées la méthode scrape_listing()")
     
     def __del__(self) -> None:
         """Nettoie les ressources Selenium"""

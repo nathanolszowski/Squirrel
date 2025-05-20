@@ -20,59 +20,21 @@ class JLLScraper(SeleniumScraper):
         super().__init__(ua_generateur,"JLL", SITEMAPS["JLL"])
         self.selectors = JLL_SELECTORS
      
-    def scrape_listing(self, url: str) -> dict:
-        """
-        Scrape une annonce JLL
-        
-        Args:
-            urls (str): Chaîne de caractères représentant l'url à scraper
-        Retruns:
-            data (dict): Dictionnaire avec les informations de chaque offre scrapée
-        """
-        try:
-            logger.info(f"[{self.name.upper()}] Début du scraping des données pour chacune des offres")
-            self.driver.get(url)
-            time.sleep(SELENIUM_WAIT_TIME)
-            
-            soup = BeautifulSoup(self.driver.page_source, "html.parser")
-            
-            # Détermine le type de contrat
-
-            contrat_map = {
-                "a-louer": "Location",
-                "a-vendre": "Vente",
-            }
-            contrat = next((label for key, label in contrat_map.items() if key in url), "N/A")
-            
-            # Déterminer le type d'actif
-            actif_map = {
-                "bureaux": "Bureaux",
-                "local-activite": "Locaux d'activité",
-                "entrepot": "Entrepots"
-            }
-            actif = next((label for key, label in actif_map.items() if key in url), "N/A")   
-                
-            # Extraction des données
-            data = {
-                "confrere" : self.name,
-                "url": url,
-                "reference": self.safe_select_text(soup, self.selectors["reference"]),
-                "contrat": contrat,
-                "actif": actif,
-                "disponibilite": self.safe_select_text(soup, self.selectors["disponibilite"]),
-                "surface": self.safe_select_text(soup, self.selectors["surface"]),
-                "division": self.safe_select_text(soup, self.selectors["division"]),
-                "adresse_complete": self.safe_select_text(soup, self.selectors["adresse"]),
-                "contact": self.safe_select_text(soup, self.selectors["contact"]),
-                "accroche": self.safe_select_text(soup, self.selectors["accroche"]),
-                "amenagements": self.safe_select_text(soup, self.selectors["amenagements"]),
-                "prix_global": self.safe_select_text(soup, self.selectors["prix_global"])
-            }
-            return data
-            
-        except Exception as e:
-            logger.error(f"[self.name] Erreur scraping des données pour {url}: {e}")
-            return None
+    def post_traitement_hook(self, data: dict, soup: BeautifulSoup, url: str) -> dict:
+        logger.info("Lancement du post-traitement spécifique à JLL") 
+        # Détermine le type de contrat
+        contrat_map = {
+            "a-louer": "Location",
+            "a-vendre": "Vente",
+        }
+        data["contrat"] = next((label for key, label in contrat_map.items() if key in url), "N/A")
+        # Déterminer le type d'actif
+        actif_map = {
+            "bureaux": "Bureaux",
+            "local-activite": "Locaux d'activité",
+            "entrepot": "Entrepots"
+        }
+        data["actif"] = next((label for key, label in actif_map.items() if key in url), "N/A")   
 
     def filtre_idf_bureaux(self, urls: list[str]) -> list[str]:
         """

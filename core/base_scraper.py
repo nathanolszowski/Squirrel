@@ -116,7 +116,7 @@ class BaseScraper(ABC):
             logger.info(f"[{self.sitemap_url}] Utilisation de la méthode XML")
             return self.get_sitemap_xml()
         else:
-            logger.info(f"[{self.sitemap_url}] Utilisation de la méthode XML")
+            logger.info(f"[{self.sitemap_url}] Utilisation de la méthode HTML")
             return self.get_sitemap_html()
     
     def safe_select_text(self, soup: BeautifulSoup, selector: str) -> str:

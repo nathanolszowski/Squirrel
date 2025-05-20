@@ -21,55 +21,21 @@ class CUSHMANScraper(RequestsScraper):
         self.selectors = CUSHMAN_SELECTORS
         
         
-    def scrape_listing(self, url: str) -> dict:
-        """
-        Scrape une annonce CUSHMAN
-        
-        Args:
-            urls (str): Chaîne de caractères représentant l'url à scraper
-        Retruns:
-            data (dict): Dictionnaire avec les informations de chaque offre scrapée
-        """
-        try:
-            logger.info(f"[{self.name.upper()}] Début du scraping des données pour chacune des offres")
-            response = httpx.get(url, headers={"User-agent":self.ua_generateur.get()}, timeout=REQUEST_TIMEOUT)
-            response.raise_for_status()
-            soup = BeautifulSoup(response.text, "html.parser")
-            
-            # Déterminer le contrat
-            contrat_map = {
-                "location": "Location",
-                "achat": "Vente"
+    def post_traitement_hook(self, data: dict, soup: BeautifulSoup, url: str) -> dict:
+        logger.info("Lancement du post-traitement spécifique à Cushman")      
+        # Déterminer le contrat
+        contrat_map = {
+            "location": "Location",
+            "achat": "Vente"
+        }
+        data["contrat"] = next((label for key, label in contrat_map.items() if key in url), "N/A")
+        # Déterminer l'actif
+        actif_map = {
+            "Bureaux": "Bureaux",
+            "Activités": "Locaux d'activité",
+            "Entrepôts": "Entrepots"
             }
-            contrat = next((label for key, label in contrat_map.items() if key in url), "N/A")
-            # Déterminer l'actif
-            actif_map = {
-                "Bureaux": "Bureaux",
-                "Activités": "Locaux d'activité",
-                "Entrepôts": "Entrepots"
-            }
-            actif = next((label for key, label in actif_map.items() if key in self.safe_select_text(soup, self.selectors["actif"])), "N/A")
-            
-            # Extraction des données
-            data = {
-                "confrere" : self.name,
-                "url": url,
-                "reference" : self.safe_select_text(soup, self.selectors["reference"]),
-                "contrat": contrat,
-                "actif" : actif,
-                "disponibilite" : self.safe_select_text(soup, self.selectors["disponibilite"]),
-                "surface" : self.safe_select_text(soup, self.selectors["surface"]),
-                "adresse" : self.safe_select_text(soup, self.selectors["adresse"]),
-                "contact" : self.safe_select_text(soup, self.selectors["contact"]),
-                "accroche" : self.safe_select_text(soup, self.selectors["accroche"]),
-                "amenagements" : re.sub(r'(?<!^)([A-Z])', r' \1', self.safe_select_text(soup, self.selectors["amenagements"])),
-                "prix_global" : self.safe_select_text(soup, self.selectors["prix_global"])
-            }
-            return data
-            
-        except Exception as e:
-            logger.error(f"[self.name] Erreur scraping des données pour {url}: {e}")
-            return None
+        data["actif"] = next((label for key, label in actif_map.items() if key in data["actif"]), "N/A")
 
     def filtre_idf_bureaux(self, urls: list[str]) -> list[str]:
         """
