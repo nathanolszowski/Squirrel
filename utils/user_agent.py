@@ -214,6 +214,10 @@ class Rotator:
         # Add higher weight for higher browser versions
         if user_agent.browser_version:
             weight += user_agent.browser_version * 10
+        
+        # Add higher weight for higher browser versions specially for chrome version 50 and later
+        if user_agent.browser == "Chrome" and user_agent.browser_version > 50:
+            weight += 200
 
         # Add higher weight based on the OS type
         if user_agent.os == "Windows":

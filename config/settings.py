@@ -24,9 +24,9 @@ SELENIUM_OPTIONS = [
 
 # URLs des sitemaps
 SITEMAPS = {
-    "BNP": {"Bureaux" : "https://bnppre.fr/sitemaps/bnppre/sitemap-bureaux.xml", 
-            "Entrepôt" : "https://bnppre.fr/sitemaps/bnppre/sitemap-entrepots.xml", 
-            "Locaux" : "https://bnppre.fr/sitemaps/bnppre/sitemap-locaux.xml"},
+    "BNP": {"Bureaux" : "https://www.bnppre.fr/sitemaps/bnppre/sitemap-bureaux.xml", 
+            "Entrepôt" : "https://www.bnppre.fr/sitemaps/bnppre/sitemap-entrepots.xml", 
+            "Locaux" : "https://www.bnppre.fr/sitemaps/bnppre/sitemap-locaux.xml"},
     "JLL": "https://immobilier.jll.fr/sitemap-properties.xml",
     "CBRE": "https://immobilier.cbre.fr/sitemap.xml",
     "ALEXBOLTON" : "https://www.alexbolton.fr/sitemap.xml",

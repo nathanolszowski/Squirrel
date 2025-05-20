@@ -112,7 +112,9 @@ class BaseScraper(ABC):
         Returns:
             (list[str]): Liste de chaîne de caractères représentants les urls à scraper
         """
-        url = next(iter(self.sitemap_url.keys())) if isinstance(self.sitemap_url, dict) else self.sitemap_url
+        logger.info("Choix de la méthode d'extraction")
+        url = next(iter(self.sitemap_url.values())) if isinstance(self.sitemap_url, dict) else self.sitemap_url
+        
 
         if url.endswith(".xml"):
             logger.info(f"[{self.sitemap_url}] Utilisation de la méthode XML")
