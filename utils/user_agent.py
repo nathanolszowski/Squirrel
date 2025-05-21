@@ -182,11 +182,10 @@ class Rotator:
         Args:
             user-agents ListUserAgent: Représente un objet ListUserAgent qui est une liste d'objet UserAgent
         """
-        # Add User-Agent strings to the UserAgent container
         logger.info("Initialisation du sélecteur d'user-agent")
         self.user_agents = user_agents
         
-    # Add weight for each User-Agent
+    # Créér une note (un poids) pour chaque user-agent
     def weigh_user_agent(self, user_agent: UserAgent) -> int:
         """
         Notation d'un user-agent selon ses caractéristiques
@@ -198,12 +197,12 @@ class Rotator:
         """
         weight = 1000
 
-        # Add higher weight for less used User-Agents
+        # Augmente la note pour les user-agents les moins utilisés
         if user_agent.last_used:
             _seconds_since_last_use = time() - user_agent.last_used
             weight += _seconds_since_last_use
 
-        # Add higher weight based on the browser
+        # Augmente la note par rapport au navigateur utilisé
         if user_agent.browser == "Chrome":
             weight += 100
         if user_agent.browser == "Firefox" or "Edge":
@@ -211,15 +210,15 @@ class Rotator:
         if user_agent.browser == "Chrome Mobile" or "Firefox Mobile":
             weight += 0
 
-        # Add higher weight for higher browser versions
+        # Augmente la note pour les navigateurs avec une version récente
         if user_agent.browser_version:
             weight += user_agent.browser_version * 10
         
-        # Add higher weight for higher browser versions specially for chrome version 50 and later
+        # Augmente la note pour les navigateurs qui utilisent une version 50 ou supérieure de Chrome 
         if user_agent.browser == "Chrome" and user_agent.browser_version > 50:
             weight += 200
 
-        # Add higher weight based on the OS type
+        # Augmente la note pour based on the OS type
         if user_agent.os == "Windows":
             weight += 150
         if user_agent.os == "Mac OS X":
@@ -243,14 +242,12 @@ class Rotator:
         for user_agent in self.user_agents :
             user_agent_weights.append(self.weigh_user_agent(user_agent))
         logger.info("Les user-agents ont été notés")
-
         # Sélectionne un user-agent
         user_agent = random.choices(
             self.user_agents,
             weights=user_agent_weights,
             k=1,
         )[0]
-
         # Met à jour l'attribut de dernière utilisation
         user_agent.last_used = time()
         logger.info(f"Un nouvel user_agent a été sélectionné {user_agent}")
