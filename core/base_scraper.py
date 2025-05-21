@@ -73,7 +73,8 @@ class BaseScraper(ABC):
             data (dict): Dictionnaire avec les informations de chaque offre scrapée
         """
         try:
-            response = httpx.get(url, headers={"User-agent":self.ua_generateur.get()}, timeout=REQUEST_TIMEOUT)
+            with httpx.Client(follow_redirects=True) as client:
+                response = client.get(url, headers={"User-agent":self.ua_generateur.get()}, timeout=REQUEST_TIMEOUT)
             response.raise_for_status()
             soup = BeautifulSoup(response.text, "html.parser")
 
