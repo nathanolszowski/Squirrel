@@ -4,10 +4,9 @@ Scraper pour JLL
 """
 
 import logging
-import time
 from bs4 import BeautifulSoup
 from core.selenium_scraper import SeleniumScraper
-from config.settings import DEPARTMENTS_IDF, SITEMAPS, SELENIUM_WAIT_TIME
+from config.settings import DEPARTMENTS_IDF, SITEMAPS
 from config.selectors import JLL_SELECTORS
 
 

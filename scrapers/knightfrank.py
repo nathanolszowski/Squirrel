@@ -4,12 +4,11 @@ Scraper pour KNIGHT FRANK
 """
 
 import logging
-import httpx
 import re
 from typing import List
 from bs4 import BeautifulSoup
 from core.selenium_scraper import SeleniumScraper
-from config.settings import SITEMAPS, SELENIUM_WAIT_TIME
+from config.settings import SITEMAPS
 from config.selectors import KNIGHTFRANK_SELECTORS
 
 logger = logging.getLogger(__name__)

@@ -4,10 +4,9 @@ Scraper pour BNP Paribas Real Estate
 """
 
 import logging
-import httpx
 from bs4 import BeautifulSoup
 from core.requests_scraper import RequestsScraper
-from config.settings import DEPARTMENTS_IDF, SITEMAPS, REQUEST_TIMEOUT
+from config.settings import DEPARTMENTS_IDF, SITEMAPS
 from config.selectors import BNP_SELECTORS
 
 logger = logging.getLogger(__name__)

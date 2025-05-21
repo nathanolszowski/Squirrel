@@ -8,15 +8,15 @@ Liste des sites d'agences disponibles :
 - JLL
 - AlexBolton
 - Cushman & Wakefield
+- Knight Frank
 
 ## Etat du projet et amélioration à venir
 
 1. Priorité 1 :
 - Implémenter les scrapers dans la liste des plus grosses agences (ArthurLoyd, KnightFrank, Savills)
-- Changer la librairie Requests par httpx ?
 - Gérer les doublons d'offres
 - Modifier le cache d'user-agent pour qu'il ne prenne que les browsers chrome/mozilla/opéra (quelques erreurs objectification en UserAgent)
-- Travail sur la détéctabilité du scraper : cookies, user-agent(en cours), TLSfingerprint, Timing de requêtes et Javascriptfingerprint
+- Travail sur la détéctabilité du scraper en fonction du besoin : cookies, TLSfingerprint, Timing de requêtes et Javascriptfingerprint
 
 2. Priorité 2 :
 - Système de cache pour éviter de re-scraper les mêmes pages trop souvent
@@ -47,7 +47,6 @@ test_squirrel/
 │   └── ...
 ├── utils/
 │   └── export.py             # Fonctions d'export JSON (créé un nouveau dossier exports à la racine)
-│   └── liste_user_agent.py        # Fonctions pour récupérer une liste à jour d'user-agents de manière automatique
 │   └── user_agent.py         # Génération de l'user-agent
 │   └── logging_config     # Initialisation du logger (créé un nouveau dossier logs à la racine)
 └── main.py             # Point d'entrée
@@ -99,7 +98,7 @@ Format de sortie JSON :
 - Support de plusieurs sites d'annonces (BNP, JLL, etc.)
 - Export des données en JSON
 - Logging détaillé
-- Gestion des user-agent
+- Gestion des user-agents
 
 ## Ajouter un nouveau scraper
 

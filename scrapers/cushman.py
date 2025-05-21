@@ -4,11 +4,10 @@ Scraper pour CUSHMAN
 """
 
 import logging
-import httpx
 import re
 from bs4 import BeautifulSoup
 from core.requests_scraper import RequestsScraper
-from config.settings import DEPARTMENTS_IDF, SITEMAPS, REQUEST_TIMEOUT, USER_AGENT
+from config.settings import DEPARTMENTS_IDF, SITEMAPS
 from config.selectors import CUSHMAN_SELECTORS
 
 logger = logging.getLogger(__name__)

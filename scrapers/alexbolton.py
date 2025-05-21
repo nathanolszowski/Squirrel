@@ -4,10 +4,9 @@ Scraper pour Alex Bolton
 """
 
 import logging
-import httpx
 from bs4 import BeautifulSoup
 from core.requests_scraper import RequestsScraper
-from config.settings import SITEMAPS, REQUEST_TIMEOUT
+from config.settings import SITEMAPS
 from config.selectors import ALEXBOLTON_SELECTORS
 
 logger = logging.getLogger(__name__)
