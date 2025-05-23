@@ -26,6 +26,7 @@ class RequestsScraper(BaseScraper):
         try:
             urls = []
             if isinstance(self.sitemap_url, dict):
+                logger.info("Récupération des urls depuis plusieurs sitemaps XML")
                 for actif, url in self.sitemap_url.items():
                     with httpx.Client(follow_redirects=True) as client:
                         response = client.get(url, headers={"User-agent":self.ua_generateur.get()}, timeout=REQUEST_TIMEOUT)
@@ -36,13 +37,13 @@ class RequestsScraper(BaseScraper):
                     urls.extend([url.find("loc").text for url in soup.find_all("url")])
                 logger.info(f"[{self.name}] Trouvé {len(urls)} URLs dans les sitemaps")
             else:
+                logger.info("Récupération des urls depuis la XML")
                 with httpx.Client(follow_redirects=True) as client:
-                    response = client.get(url, headers={"User-agent":self.ua_generateur.get()}, timeout=REQUEST_TIMEOUT)
+                    response = client.get(self.sitemap_url, headers={"User-agent":self.ua_generateur.get()}, timeout=REQUEST_TIMEOUT)
                 response.raise_for_status()
                 soup = BeautifulSoup(response.content, "xml")
-                    
                 # Récupérer toutes les URLs du sitemap
-                urls = [url.find("loc").text for url in soup.find_all("url")]
+                urls = [self.sitemap_url.find("loc").text for self.sitemap_url in soup.find_all("url")]
                 logger.info(f"[{self.name}] Trouvé {len(urls)} URLs dans le sitemap")
             return urls
     
