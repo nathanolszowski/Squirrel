@@ -89,10 +89,24 @@ KNIGHTFRANK_SELECTORS = {
     "prix_global": "None"
 }
 
+ARTHURLOYD_SELECTORS = {
+    "reference": "None",
+    "contrat": "None",
+    "actif": "None",
+    "disponibilite": "None",
+    "surface": "None",
+    "division": "None",
+    "adresse": "None",
+    "contact": "None",
+    "accroche": "None",
+    "amenagements": "None",
+    "prix_global": "None"
+}
+
 """ Ajouter les sélecteurs pour les autres sites
 EXEMPLE_SELECTORS = {
     "reference": "None",
-    "contrat: "None",
+    "contrat": "None",
     "actif": "None",
     "disponibilite": "None",
     "surface": "None",
