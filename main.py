@@ -4,12 +4,13 @@ Point d'entrée principal du scraper
 """
 
 import logging
-from scrapers.bnp import BNPScraper
+#from scrapers.bnp import BNPScraper
 #from scrapers.jll import JLLScraper
 #from scrapers.cbre import CBREScraper
 #from scrapers.alexbolton import ALEXBOLTONScraper
 #from scrapers.cushman import CUSHMANScraper
 #from scrapers.knightfrank import KNIGHTFRANKScraper
+from scrapers.arthurloyd import ARTHURLOYDScraper
 from utils.export import export_json
 from utils.logging_config import setup_logging
 from utils.user_agent import Rotator, ListUserAgent
@@ -28,12 +29,13 @@ def main():
     
     # Liste des scrapers à exécuter
     scrapers = [
-        BNPScraper(ua_generateur)
-        #JLLScraper(ua_generateur)
+        #BNPScraper(ua_generateur)
+        #JLLScraper(ua_generateur),
         #CBREScraper(ua_generateur),
         #ALEXBOLTONScraper(ua_generateur),
         #CUSHMANScraper(ua_generateur),
         #KNIGHTFRANKScraper(ua_generateur)
+        ARTHURLOYDScraper(ua_generateur)
         # Ajouter les autres scrapers ici
     ]
     

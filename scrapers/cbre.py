@@ -49,15 +49,15 @@ class CBREScraper(RequestsScraper):
             filtered_urls (list[str]): Liste de chaînes de caractères représentant les urls à scraper après filtrage des urls bureaux régions
         """
         logger.info("Filtrage des offres")
-        filtered_urls = []
+        urls_filtrees = []
         pattern = re.compile(r"https://immobilier.cbre.fr/offre/(a-louer|a-vendre)/bureaux/(\d+)")
         for url in urls:
             if url.startswith("https://immobilier.cbre.fr/offre/"):
                 if "bureaux" in url:
                     match = pattern.match(url)
                     if match and match.group(2)[:2] in DEPARTMENTS_IDF:
-                        filtered_urls.append(url)
+                        urls_filtrees.append(url)
                 else:
-                    filtered_urls.append(url)
-        logger.info(f"[{self.name.upper()}] Trouvé {len(filtered_urls)} URLs filtrées sans bureaux région")
-        return filtered_urls
+                    urls_filtrees.append(url)
+        logger.info(f"[{self.name.upper()}] Trouvé {len(urls_filtrees)} URLs filtrées sans bureaux région")
+        return urls_filtrees

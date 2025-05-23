@@ -22,7 +22,15 @@ class KNIGHTFRANKScraper(SeleniumScraper):
         self.base_url = "https://www.knightfrank.fr"
            
     def post_traitement_hook(self, data: dict, soup: BeautifulSoup, url: str) -> dict:
-        pass
+        # Surcharger la méthode obtenir le contrat
+        contrat_map = {
+            "location": "Location",
+            "vente": "Vente",
+        }
+        data["contrat"] = next((label for key, label in contrat_map.items() if key in url), "N/A")
+        # Surcharger la méthode obtenir l'actif
+        data["actif"] = "Bureaux"
+        # Déterminer l'adresse
                     
     def trouver_formater_urls_offres(self, soup) -> list:
         """Permet de formater les urls lors de la méthode get_sitemap_html"""

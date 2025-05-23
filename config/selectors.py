@@ -80,27 +80,28 @@ KNIGHTFRANK_SELECTORS = {
     "contrat": "None",
     "actif": "None",
     "disponibilite": "body > main > section > div.container.p-lg-0.contOMob > div > div.col-xl-7.p-xl-0.p-0 > div.row.pb-4.align-items-center.p24 > div.col-xl-4.col-md-4.col-12.cDisp > div > p",
-    "surface": "None",
-    "division": "None",
+    "surface": "body > main > section > div.container.p-lg-0.contOMob > div > div.col-xl-7.p-xl-0.p-0 > div.row.pb-4.align-items-center.p24 > div.col-xl-4.col-md-4.col-auto.pe-0 > div > p.valeur-offre",
+    "division": "body > main > section > div.container.p-lg-0.contOMob > div > div.col-xl-7.p-xl-0.p-0 > div.row.pb-4.align-items-center.p24 > div.col-xl-4.col-md-4.col-auto.pe-0 > div > p.post-text-offre > span",
     "adresse": "None",
-    "contact": "None",
-    "accroche": "None",
-    "amenagements": "None",
-    "prix_global": "None"
+    "contact": "body > main > section > div.container.p-lg-0.contOMob > div > div.d-none.col-xl-3.offset-xl-1.p-xl-0.pt-xl-4.pt-4.d-xl-flex.relative.p24 > div > div.blocAgent > div > div.offset-1.col-7.p-0.d-flex.flex-column.justify-content-center.ml-3 > p",
+    "accroche": "body > main > section > div.container.p-lg-0.contOMob > div > div.col-xl-7.p-xl-0.p-0 > div:nth-child(4) > div > p.offreDesc",
+    "amenagements": "body > main > section > div.container.p-lg-0.contOMob > div > div.col-xl-7.p-xl-0.p-0 > div:nth-child(8) > div > div > ul",
+    "prix_global": "body > main > section > div.container.p-lg-0.contOMob > div > div.col-xl-7.p-xl-0.p-0 > div.row.pb-4.align-items-center.p24 > div.col-xl-4.col-md-4.col-auto.ps-0 > div > p.valeur-offre"
 }
 
 ARTHURLOYD_SELECTORS = {
-    "reference": "None",
+    "reference": "#advisor-brick-wrapper > div > div:nth-child(1) > div.offer-informations.d-flex.align-items-center.justify-content-between > div.reference > b",
     "contrat": "None",
     "actif": "None",
-    "disponibilite": "None",
-    "surface": "None",
-    "division": "None",
-    "adresse": "None",
-    "contact": "None",
-    "accroche": "None",
-    "amenagements": "None",
-    "prix_global": "None"
+    "disponibilite": "#advisor-brick-wrapper > div > div:nth-child(1) > div:nth-child(3) > div > ul > li:nth-child(2) > span:nth-child(2)",
+    "surface": "#details-desktop > div > div.col-xl-2.d-none.d-xl-block.text-end > div > div > a > div.max-surface > span",
+    "division": "#details-desktop > div > div.col-xl-2.d-none.d-xl-block.text-end > div > div > a > div.d-flex.justify-content-end.min-surface > div:nth-child(1) > span.surface",
+    "adresse": "#localisation > div",
+    "titre": "#advisor-brick-wrapper > div > div:nth-child(1) > div.offer-title",
+    "contact": "#advisor-brick-wrapper > div > div.advisor-card > div > div > div.advisor-informations > div > div:nth-child(1) > div:nth-child(1) > span",
+    "accroche": "#description > div > div > div > div > div:nth-child(2) > p",
+    "amenagements": "#amenities > section > div > div > div:nth-child(1) > div > ul",
+    "prix_global": "#advisor-brick-wrapper > div > div:nth-child(1) > div:nth-child(3) > div > ul > li:nth-child(3) > span.price"
 }
 
 """ Ajouter les sélecteurs pour les autres sites

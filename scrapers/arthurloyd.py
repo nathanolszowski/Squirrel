@@ -20,7 +20,21 @@ class ARTHURLOYDScraper(RequestsScraper):
         self.selectors = ARTHURLOYD_SELECTORS
            
     def post_traitement_hook(self, data: dict, soup: BeautifulSoup, url: str) -> dict:
-        pass
+        #Surcharger la méthode obtenir contrat
+        contrat_map = {
+            "location": "Location",
+            "vente": "Vente",
+        }
+        data["contrat"] = next((label for key, label in contrat_map.items() if key in url), "N/A")
+        #Surcharger la méthode obtenir l'actif
+        actif_map = {
+            "bureau": "Bureaux",
+            "activite-entrepots": "Locaux d'activité",
+            "logistique": "Entrepots"
+        }
+        data["actif"] = next((label for key, label in actif_map.items() if key in url), "N/A")
+        # Déterminer l'adresse
+        data["adresse"] = f"{self.safe_select_text(soup, self.selectors["titre"])}, {data["adresse"]}"
         
     def filtre_idf_bureaux(self, urls: list[str]) -> list[str]:
         """
@@ -29,18 +43,17 @@ class ARTHURLOYDScraper(RequestsScraper):
         Args:
             urls (list[str]): Liste de chaînes de caractères représentant les urls à scraper
         Returns:
-            filtered_urls (list[str]): Liste de chaînes de caractères représentant les urls à scraper après filtrage des urls bureaux régions
+            filtered_urls (list[str]): Liste de chaînes de caractères représentant les urls à scraper après filtrage
         """
-        logger.info("Filtrage des offres")
-        filtered_urls = []
-        pattern = re.compile(r"https://immobilier.cbre.fr/offre/(a-louer|a-vendre)/bureaux/(\d+)")
-        for url in urls:
-            if url.startswith("https://immobilier.cbre.fr/offre/"):
-                if "bureaux" in url:
-                    match = pattern.match(url)
-                    if match and match.group(2)[:2] in DEPARTMENTS_IDF:
-                        filtered_urls.append(url)
-                else:
-                    filtered_urls.append(url)
-        logger.info(f"[{self.name.upper()}] Trouvé {len(filtered_urls)} URLs filtrées sans bureaux région")
-        return filtered_urls
+        logger.info("Filtrage des urls Arthur Loyd")
+        motifs_url = [
+            "bureau-location/ile-de-france/",
+            "bureau-vente/ile-de-france/",
+            "locaux-activite-entrepots-location/",
+            "locaux-activite-entrepots-vente/",
+            "logistique-location/",
+            "logistique-vente/"
+        ]
+        urls_filtrees = [url for url in urls if any(motif in url for motif in motifs_url)]
+        logger.info(f"[{self.name.upper()}] Trouvé {len(urls_filtrees)} URLs filtrées sans bureaux région avec la logistique et l'activité")
+        return urls_filtrees
