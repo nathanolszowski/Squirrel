@@ -49,6 +49,16 @@ class BaseScraper(ABC):
         pass
     
     @abstractmethod
+    def get_sitemap_api(self) -> List[str]:
+        """
+        Récupère les URLs depuis le ou les sitemaps API
+        
+        Returns:
+            urls (List[str]): Liste de chaînes de caractères représentant les urls à scraper
+        """
+        pass
+    
+    @abstractmethod
     def filtre_idf_bureaux(self, urls: list) -> list:
         """
         Filtre les URLs pour supprimer les bureaux hors IDF
@@ -116,10 +126,12 @@ class BaseScraper(ABC):
         logger.info("Choix de la méthode d'extraction")
         url = next(iter(self.sitemap_url.values())) if isinstance(self.sitemap_url, dict) else self.sitemap_url
         
-
         if url.endswith(".xml"):
             logger.info(f"[{self.sitemap_url}] Utilisation de la méthode XML")
             return self.get_sitemap_xml()
+        elif "searchapi" in url: #validation à améliorer pour cas plus génériques
+            logger.info(f"[{self.sitemap_url}] Utilisation de la méthode API")
+            return self.get_sitemap_api()
         else:
             logger.info(f"[{self.sitemap_url}] Utilisation de la méthode HTML")
             return self.get_sitemap_html()

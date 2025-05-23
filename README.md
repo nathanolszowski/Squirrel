@@ -14,7 +14,7 @@ Liste des sites d'agences disponibles :
 ## Etat du projet et amélioration à venir
 
 1. Priorité 1 :
-- Implémenter les scrapers dans la liste des plus grosses agences (Savills)
+- Implémenter les scrapers dans la liste des plus grosses agences (Savills, Immprove ex-Evolis)
 - Gérer les doublons d'offres :
    - ajout des données de localisation si disponibles (long/lat)
    - comparer lat/long, adresse, accroche, titre et surface totale

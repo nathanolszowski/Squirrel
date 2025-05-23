@@ -33,7 +33,8 @@ SITEMAPS = {
     "CUSHMAN" : "https://immobilier.cushmanwakefield.fr/sitemap.xml",
     "KNIGHTFRANK" : {"Location" : "https://www.knightfrank.fr/resultat?nature=1&localisation=75%7C77%7C78%7C91%7C92%7C93%7C94%7C95%7C&typeOffre=1", 
                     "Vente" : "https://www.knightfrank.fr/resultat?nature=2&localisation=75%7C77%7C78%7C91%7C92%7C93%7C94%7C95%7C&typeOffre=1"},
-    "ARTHURLOYD" : "https://www.arthur-loyd.com/sitemap-offer.xml"
+    "ARTHURLOYD" : "https://www.arthur-loyd.com/sitemap-offer.xml",
+    "SAVILLS": "https://livev6-searchapi.savills.com/Data/SearchByUrl"
     # Ajouter les autres sitemaps ici
 }
 

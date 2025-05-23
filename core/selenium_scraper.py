@@ -78,3 +78,6 @@ class SeleniumScraper(BaseScraper):
 
     def get_sitemap_html(self) -> None:
         pass
+    
+    def get_sitemap_api(self) -> List[str]:
+        pass

@@ -4,10 +4,9 @@ Scraper pour ARTHURLOYD
 """
 
 import logging
-import re
 from bs4 import BeautifulSoup
 from core.requests_scraper import RequestsScraper
-from config.settings import DEPARTMENTS_IDF, SITEMAPS
+from config.settings import SITEMAPS
 from config.selectors import ARTHURLOYD_SELECTORS
 
 logger = logging.getLogger(__name__)

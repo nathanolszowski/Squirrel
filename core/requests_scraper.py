@@ -53,3 +53,6 @@ class RequestsScraper(BaseScraper):
     
     def get_sitemap_html(self) -> List[str]:
         pass
+
+    def get_sitemap_api(self) -> List[str]:
+        pass
