@@ -9,19 +9,23 @@ Liste des sites d'agences disponibles :
 - AlexBolton
 - Cushman & Wakefield
 - Knight Frank
+- ArthurLoyd
 
 ## Etat du projet et amélioration à venir
 
 1. Priorité 1 :
-- Implémenter les scrapers dans la liste des plus grosses agences (ArthurLoyd, KnightFrank, Savills)
-- Gérer les doublons d'offres
+- Implémenter les scrapers dans la liste des plus grosses agences (Savills)
+- Gérer les doublons d'offres :
+   - ajout des données de localisation si disponibles (long/lat)
+   - comparer lat/long, adresse, accroche, titre et surface totale
 - Modifier le cache d'user-agent pour qu'il ne prenne que les browsers chrome/mozilla/opéra (quelques erreurs objectification en UserAgent)
 - Travail sur la détéctabilité du scraper en fonction du besoin : cookies, TLSfingerprint, Timing de requêtes et Javascriptfingerprint
 
 2. Priorité 2 :
-- Système de cache pour éviter de re-scraper les mêmes pages trop souvent
+- Système de cache pour éviter de re-scraper les mêmes pages trop souvent ?
 - Mise en place de retry mechanisms pour les requêtes échouées
-- Repérage d'un trop grand nombre de N/A sur certaines valeurs
+- Repérage d'un trop grand nombre de N/A sur certaines valeurs pour surveiller la présence du bon sélecteur
+- Travail sur les offres de coworking
 
 3. Priorité 3 :
 - Travail sur la factorisation du code et la vitesse de scraping
@@ -47,8 +51,8 @@ test_squirrel/
 │   └── ...
 ├── utils/
 │   └── export.py             # Fonctions d'export JSON (créé un nouveau dossier exports à la racine)
-│   └── user_agent.py         # Génération de l'user-agent
-│   └── logging_config     # Initialisation du logger (créé un nouveau dossier logs à la racine)
+│   └── user_agent.py         # Générateur d'user-agents
+│   └── logging_config        # Initialisation du logger (créé un nouveau dossier logs à la racine)
 └── main.py             # Point d'entrée
 ```
 
@@ -94,7 +98,7 @@ Format de sortie JSON :
 
 ## Fonctionnalités
 
-- Extraction des annonces de bureaux en Île-de-France, locaux d'activités et entrepôts en France
+- Extraction des annonces de bureaux en Île-de-France, locaux d'activités et logistique en France
 - Support de plusieurs sites d'annonces (BNP, JLL, etc.)
 - Export des données en JSON
 - Logging détaillé
