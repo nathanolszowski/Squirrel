@@ -19,6 +19,7 @@ class SAVILLSScraper(RequestsScraper):
         super().__init__(ua_generateur,"SAVILLS", SITEMAPS["SAVILLS"])
         #self.selectors = SAVILLS_SELECTORS
         self.base_url = "https://search.savills.com"
+        self.api_url = "https://livev6-searchapi.savills.com/Data/SearchByUrl"
     
     def get_sitemap_api(self):
         header_search_url = {
