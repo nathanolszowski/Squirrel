@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 class BaseScraper(ABC):
     """Classe de base abstraite pour tous les scrapers"""
     
-    def __init__(self, ua_generateur, name: str, sitemap_url: str) -> None:
+    def __init__(self, ua_generateur, name: str, sitemap: list) -> None:
         """
         Initialise un nouveau scraper
         
@@ -25,7 +25,8 @@ class BaseScraper(ABC):
         """
         self.ua_generateur = ua_generateur
         self.name = name
-        self.sitemap_url = sitemap_url
+        self.format_sitemap = sitemap[0]
+        self.sitemap_url = sitemap[1]
         self.results = []
     
     @abstractmethod
@@ -124,17 +125,18 @@ class BaseScraper(ABC):
             (list[str]): Liste de chaîne de caractères représentants les urls à scraper
         """
         logger.info("Choix de la méthode d'extraction")
-        url = next(iter(self.sitemap_url.values())) if isinstance(self.sitemap_url, dict) else self.sitemap_url
         
-        if url.endswith(".xml"):
+        if self.format_sitemap == "XML":
             logger.info(f"[{self.sitemap_url}] Utilisation de la méthode XML")
             return self.get_sitemap_xml()
-        elif "searchapi" in url: #validation à améliorer pour cas plus génériques
+        elif self.format_sitemap == "API":
             logger.info(f"[{self.sitemap_url}] Utilisation de la méthode API")
             return self.get_sitemap_api()
-        else:
+        elif self.format_sitemap == "URL":
             logger.info(f"[{self.sitemap_url}] Utilisation de la méthode HTML")
             return self.get_sitemap_html()
+        else:
+            raise ValueError(f"Le format de la sitemap : {self.format_sitemap} n'est pas supporté")
     
     def safe_select_text(self, soup: BeautifulSoup, selector: str) -> str:
         """

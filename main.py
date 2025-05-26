@@ -10,7 +10,8 @@ import logging
 #from scrapers.alexbolton import ALEXBOLTONScraper
 #from scrapers.cushman import CUSHMANScraper
 #from scrapers.knightfrank import KNIGHTFRANKScraper
-from scrapers.arthurloyd import ARTHURLOYDScraper
+#from scrapers.arthurloyd import ARTHURLOYDScraper
+from scrapers.savills import SAVILLSScraper
 from utils.export import export_json
 from utils.logging_config import setup_logging
 from utils.user_agent import Rotator, ListUserAgent
@@ -34,8 +35,9 @@ def main():
         #CBREScraper(ua_generateur),
         #ALEXBOLTONScraper(ua_generateur),
         #CUSHMANScraper(ua_generateur),
-        #KNIGHTFRANKScraper(ua_generateur)
-        ARTHURLOYDScraper(ua_generateur)
+        #KNIGHTFRANKScraper(ua_generateur),
+        #ARTHURLOYDScraper(ua_generateur)
+        SAVILLSScraper(ua_generateur)
         # Ajouter les autres scrapers ici
     ]
     
