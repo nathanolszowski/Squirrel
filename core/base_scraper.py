@@ -169,18 +169,21 @@ class BaseScraper(ABC):
                 url_filtrees = self.filtre_idf_bureaux(urls)
             else:
                 url_filtrees = urls
-                
-            logger.info(f"[{self.name.upper()}] Début du scraping des données pour chacune des offres")
-            for url in url_filtrees[:5]:
-                try:
-                    result = self.scrape_listing(url)
-                    if result:
-                        self.results.append(result)
-                except Exception as e:
-                    logger.error(f"[{self.name.upper()}] Erreur lors de la récupération de {url}: {e}")
             
-            logger.info(f"[{self.name.upper()}] Fin du scraping. {len(self.results)} résultats collectés.")
-            return self.results
+            if self.format_sitemap == "API":
+                return urls
+            else:
+                logger.info(f"[{self.name.upper()}] Début du scraping des données pour chacune des offres")
+                for url in url_filtrees[:5]:
+                    try:
+                        result = self.scrape_listing(url)
+                        if result:
+                            self.results.append(result)
+                    except Exception as e:
+                        logger.error(f"[{self.name.upper()}] Erreur lors de la récupération de {url}: {e}")
+                
+                logger.info(f"[{self.name.upper()}] Fin du scraping. {len(self.results)} résultats collectés.")
+                return self.results
             
         except Exception as e:
             logger.error(f"[{self.name.upper()}] Erreur importante lors du scraping : {e}")

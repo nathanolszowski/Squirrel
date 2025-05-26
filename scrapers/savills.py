@@ -8,18 +8,18 @@ import httpx
 from bs4 import BeautifulSoup
 from core.requests_scraper import RequestsScraper
 from config.settings import SITEMAPS, REQUEST_TIMEOUT
-#from config.selectors import SAVILLS_SELECTORS
 
 logger = logging.getLogger(__name__)
 
 class SAVILLSScraper(RequestsScraper):
-    """Scraper pour le site ARTHURLOYD qui hérite de la classe RequestsScraper"""
+    """Scraper pour le site SAVILLS qui hérite de la classe RequestsScraper"""
     
     def __init__(self, ua_generateur) -> None:
         super().__init__(ua_generateur,"SAVILLS", SITEMAPS["SAVILLS"])
-        #self.selectors = SAVILLS_SELECTORS
+
         self.base_url = "https://search.savills.com"
         self.api_url = "https://livev6-searchapi.savills.com/Data/SearchByUrl"
+        self.property_url = "https://search.savills.com/fr/fr/bien-immobilier-details/"
     
     def get_sitemap_api(self):
         header_search_url = {
@@ -28,23 +28,40 @@ class SAVILLSScraper(RequestsScraper):
             'origin': self.base_url,
             'user-agent': self.ua_generateur.get()
         }
-        json_data_search_url = {
-            'url': '/fr/fr/liste?SearchList=Id_16+Category_RegionCountyCountry&Tenure=GRS_T_R&SortOrder=SO_PCDD&Currency=EUR&Period=Year&CommercialPropertyType=GRS_CPT_O&Receptions=-1&CommercialSizeUnit=SquareMeter&LandAreaUnit=SquareMeter&AvailableSizeUnit=SquareMeter&Category=GRS_CAT_COM&Shapes=W10&Page=1',
-        }
-        response = httpx.get(self.sitemap_url, headers=header_search_url, json=json_data_search_url, timeout=REQUEST_TIMEOUT)
-        nb_pages_resultats = response.json()["Results"]["PagingInfo"]["PageCount"]
-        ids = []
-        for nb in nb_pages_resultats:
-            json_data_search_url = {
-                'url': f'/fr/fr/liste?SearchList=Id_16+Category_RegionCountyCountry&Tenure=GRS_T_R&SortOrder=SO_PCDD&Currency=EUR&Period=Year&CommercialPropertyType=GRS_CPT_O&Receptions=-1&CommercialSizeUnit=SquareMeter&LandAreaUnit=SquareMeter&AvailableSizeUnit=SquareMeter&Category=GRS_CAT_COM&Shapes=W10&Page={nb}',
-            }
-            response = httpx.get(self.sitemap_url, headers=header_search_url, json=json_data_search_url, timeout=REQUEST_TIMEOUT)
-            properties = response.json()["Results"]["Properties"]
-            ids = [prop["ExternalPropertyID"] for prop in properties if "ExternalPropertyID" in prop]
-        return ids
-           
-    def post_traitement_hook(self, data: dict, soup: BeautifulSoup, url: str) -> dict:
-        pass
+        liste = []
+        for actif, url in self.sitemap_url.items():
+            page = 1
+            pages_resultats = 1
+            while page <= pages_resultats:
+                params = f"{url}&Page={page}"
+                params_url = {
+                    'url': params,
+                }
+                try:
+                    response = httpx.post(self.api_url, headers=header_search_url, json=params_url, timeout=REQUEST_TIMEOUT)
+                except Exception as e:
+                    logger.error(f"[{self.name}] Erreur scraping des données pour {url}: {e}")
+                    return None
+                pages_resultats = response.json()["Results"]["PagingInfo"]["PageCount"]
+                properties = response.json()["Results"]["Properties"]
+                
+                for property in properties:
+                    prop = {
+                        "confrere" : self.name,
+                        "url" : self.property_url + property["ExternalPropertyIDFormatted"],
+                        "reference" : property["ExternalPropertyIDFormatted"],
+                        "actif": property["PropertyTypes"]["Caption"],
+                        "disponibilite": "",
+                        "surface": property["SizeFormatted"],
+                        "adresse" : property["AddressLine2"],
+                        "contact": property["PrimaryAgent"]["AgentName"],
+                        "accroche" : property["LongDescription"]["Body"],
+                        "amenagements": "",
+                        "prix_global": property["DisplayPriceText"]
+                    }
+                    liste.append(prop)
+                page += 1
+        return liste
         
     def filtre_idf_bureaux(self, urls: list[str]) -> list[str]:
         """
