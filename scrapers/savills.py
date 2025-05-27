@@ -51,12 +51,12 @@ class SAVILLSScraper(RequestsScraper):
                         "url" : self.property_url + property["ExternalPropertyIDFormatted"],
                         "reference" : property["ExternalPropertyIDFormatted"],
                         "actif": property["PropertyTypes"]["Caption"],
-                        "disponibilite": "",
+                        "disponibilite": property["ByUnit"][0]["Disponibilité"],
                         "surface": property["SizeFormatted"],
                         "adresse" : property["AddressLine2"],
                         "contact": property["PrimaryAgent"]["AgentName"],
-                        "accroche" : property["LongDescription"]["Body"],
-                        "amenagements": "",
+                        "accroche" : property["Description"],
+                        "amenagements": property["LongDescription"]["Body"],
                         "prix_global": property["DisplayPriceText"]
                     }
                     liste.append(prop)

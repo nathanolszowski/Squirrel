@@ -10,11 +10,11 @@ Liste des sites d'agences disponibles :
 - Cushman & Wakefield
 - Knight Frank
 - ArthurLoyd
+- Savills
 
 ## Etat du projet et amélioration à venir
 
 1. Priorité 1 :
-- Implémenter les scrapers dans la liste des plus grosses agences (Savills, Immprove ex-Evolis)
 - Gérer les doublons d'offres :
    - ajout des données de localisation si disponibles (long/lat)
    - comparer lat/long, adresse, accroche, titre et surface totale
@@ -29,15 +29,14 @@ Liste des sites d'agences disponibles :
 
 3. Priorité 3 :
 - Travail sur la factorisation du code et la vitesse de scraping
-- Parallélisation des scraping avec asyncio ou multiprocessing (asyncio + aiohttp)
+- Parallélisation des scraping avec asyncio (asyncio + aiohttp)
 - Tests unitaires et d'intégration ?
-- Documentation détaillée du code avec docstrings
 - Barre de progression des traitements
 
 ## Structure du projet
 
 ```
-test_squirrel/
+Squirrel/
 ├── config/
 │   ├── settings.py      # Configuration globale
 │   └── selectors.py     # Sélecteurs CSS par site
@@ -108,13 +107,13 @@ Format de sortie JSON :
 
 1. Créer un nouveau fichier dans le dossier `scrapers/`
 2. Hériter de `RequestsScraper` ou `SeleniumScraper`
-3. Implémenter la méthode `scrape_listing()`
+3. Implémenter la méthode `post_traitement_hook()` si besoin spécifique du scraper
 4. Ajouter les sélecteurs dans `config/selectors.py`
 5. Ajouter le sitemap dans `config/settings.py`
 6. Instancier le scraper dans `main.py`
 
 ## Maintenance
 
-- Les sélecteurs CSS sont centralisés dans `config/selectors.py`
+- Les sélecteurs sont centralisés dans `config/selectors.py`
 - La configuration globale est dans `config/settings.py`
 - Les logs permettent de suivre l'exécution et diagnostiquer les erreurs
