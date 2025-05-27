@@ -7,8 +7,8 @@ Configuration globale pour les scrapers
 DEPARTMENTS_IDF = ["75", "77", "78", "91", "92", "93", "94", "95"]
 
 # Timeouts et délais
-REQUEST_TIMEOUT = 5  # secondes
-SELENIUM_WAIT_TIME = 10  # secondes
+REQUEST_TIMEOUT = 40  # secondes
+SELENIUM_WAIT_TIME = 30  # secondes
 
 # Configuration Selenium
 SELENIUM_OPTIONS = [

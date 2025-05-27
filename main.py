@@ -4,10 +4,10 @@ Point d'entrée principal du scraper
 """
 
 import logging
-#from scrapers.bnp import BNPScraper
+from scrapers.bnp import BNPScraper
 #from scrapers.jll import JLLScraper
 #from scrapers.cbre import CBREScraper
-from scrapers.alexbolton import ALEXBOLTONScraper
+#from scrapers.alexbolton import ALEXBOLTONScraper
 #from scrapers.cushman import CUSHMANScraper
 #from scrapers.knightfrank import KNIGHTFRANKScraper
 #from scrapers.arthurloyd import ARTHURLOYDScraper
@@ -25,7 +25,7 @@ def main():
     logging.getLogger("httpx").setLevel(logging.WARNING)
     logger.info(f"Démarrage du programme de scraping. Les logs seront conservés dans ce fichier: {log_file}")
     
-    proxy = "http://zfqxbelefdh8k61-country-fr-session-1w53c1lp3y-lifetime-5:2miqjvw2r3u14nf@rp.scrapegw.com:6060"
+    proxy = "http://zfqxbelefdh8k61-country-fr-session-bdmhqtxcyt-lifetime-1:2miqjvw2r3u14nf@rp.scrapegw.com:6060"
 
     ua_liste = ListUserAgent(proxy)
     ua_generateur = Rotator(ua_liste.obtenir_liste())
@@ -34,10 +34,10 @@ def main():
     
     # Liste des scrapers à exécuter
     scrapers = [
-        #BNPScraper(ua_generateur, proxy),
+        BNPScraper(ua_generateur, proxy)
         #JLLScraper(ua_generateur, proxy),
         #CBREScraper(ua_generateur, proxy),
-        ALEXBOLTONScraper(ua_generateur, proxy)
+        #ALEXBOLTONScraper(ua_generateur, proxy)
         #CUSHMANScraper(ua_generateur, proxy),
         #KNIGHTFRANKScraper(ua_generateur, proxy),
         #ARTHURLOYDScraper(ua_generateur, proxy),
