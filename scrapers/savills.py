@@ -38,7 +38,7 @@ class SAVILLSScraper(RequestsScraper):
                     'url': params,
                 }
                 try:
-                    response = httpx.post(self.api_url, headers=header_search_url, json=params_url, timeout=REQUEST_TIMEOUT)
+                    response = httpx.post(self.api_url, proxy= self.proxy, headers=header_search_url, json=params_url, timeout=REQUEST_TIMEOUT)
                 except Exception as e:
                     logger.error(f"[{self.name}] Erreur scraping des données pour {url}: {e}")
                     return None

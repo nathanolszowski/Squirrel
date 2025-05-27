@@ -14,8 +14,8 @@ logger = logging.getLogger(__name__)
 class ALEXBOLTONScraper(RequestsScraper):
     """Scraper pour le site ALEXBOLTON qui hérite de la classe RequestsScraper"""
     
-    def __init__(self, ua_generateur) -> None:
-        super().__init__(ua_generateur,"ALEXBOLTON", SITEMAPS["ALEXBOLTON"])
+    def __init__(self, ua_generateur, proxy) -> None:
+        super().__init__(ua_generateur, proxy,"ALEXBOLTON", SITEMAPS["ALEXBOLTON"])
         self.selectors = ALEXBOLTON_SELECTORS# -*- coding: utf-8 -*-
 
     def post_taitement_hook(self, data: dict, soup: BeautifulSoup, url: str) -> dict:

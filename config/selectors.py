@@ -53,8 +53,10 @@ ALEXBOLTON_SELECTORS = {
     "actif": "None",    
     "disponibilite": "body > section.listing-header.py-md-4 > div > div > div.col-lg-5.position-relative > div > div.d-flex.gap-4.mb-4 > div:nth-child(2) > p:nth-child(2)",
     "surface": "body > section.listing-header.py-md-4 > div > div > div.col-lg-5.position-relative > div > div.d-flex.gap-4.mb-4 > div:nth-child(1) > p:nth-child(4)",
+    "division": "None",
     "adresse": "body > section.listing-header.py-md-4 > div > div > div.col-lg-5.position-relative > div > div.bolton-header-4.mb-4",
     "nom_immeuble" : "body > section.listing-header.py-md-4 > div > div > div.col-lg-5.position-relative > div > h1",
+    "accroche": "None",
     "contact": "body > section.listing-details.bolton-bg-grey.u-py-80.u-py-mobile-24 > div > div > div.col-lg-4.position-relative > div > h3",
     "amenagements": "body > section.listing-details.bolton-bg-grey.u-py-80.u-py-mobile-24 > div > div > div.col-lg-8 > div.d-flex > div > div.listing-details-description.mb-3",
     "prix_global": "body > section.listing-header.py-md-4 > div > div > div.col-lg-5.position-relative > div > div.d-flex.gap-4.mb-4 > div:nth-child(1) > p:nth-child(2)"

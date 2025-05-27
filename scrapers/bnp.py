@@ -14,8 +14,8 @@ logger = logging.getLogger(__name__)
 class BNPScraper(RequestsScraper):
     """Scraper pour le site BNP Paribas Real Estate qui hérite de la classe RequestsScraper"""
     
-    def __init__(self, ua_generateur) -> None:
-        super().__init__(ua_generateur, "BNP", SITEMAPS["BNP"])
+    def __init__(self, ua_generateur, proxy) -> None:
+        super().__init__(ua_generateur, proxy, "BNP", SITEMAPS["BNP"])
         self.selectors = BNP_SELECTORS
 
     def post_taitement_hook(self, data: dict, soup: BeautifulSoup, url: str) -> dict:

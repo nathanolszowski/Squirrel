@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 class BaseScraper(ABC):
     """Classe de base abstraite pour tous les scrapers"""
     
-    def __init__(self, ua_generateur, name: str, sitemap: list) -> None:
+    def __init__(self, ua_generateur, proxy, name: str, sitemap: list) -> None:
         """
         Initialise un nouveau scraper
         
@@ -24,6 +24,7 @@ class BaseScraper(ABC):
             sitemap_url (str): URL de la sitemap XML ou HTML
         """
         self.ua_generateur = ua_generateur
+        self.proxy = proxy
         self.name = name
         self.format_sitemap = sitemap[0]
         self.sitemap_url = sitemap[1]
@@ -84,8 +85,8 @@ class BaseScraper(ABC):
             data (dict): Dictionnaire avec les informations de chaque offre scrapée
         """
         try:
-            with httpx.Client(follow_redirects=True) as client:
-                response = client.get(url, headers={"User-agent":self.ua_generateur.get()}, timeout=REQUEST_TIMEOUT)
+            with httpx.Client(proxies=self.proxy, headers={"User-agent":self.ua_generateur.get()}, timeout=REQUEST_TIMEOUT, follow_redirects=True) as client:
+                response = client.get(url)
             response.raise_for_status()
             soup = BeautifulSoup(response.text, "html.parser")
 
@@ -174,7 +175,7 @@ class BaseScraper(ABC):
                 return urls
             else:
                 logger.info(f"[{self.name.upper()}] Début du scraping des données pour chacune des offres")
-                for url in url_filtrees[:5]:
+                for url in url_filtrees:
                     try:
                         result = self.scrape_listing(url)
                         if result:

@@ -15,8 +15,8 @@ logger = logging.getLogger(__name__)
 class CBREScraper(RequestsScraper):
     """Scraper pour le site CBRE qui hérite de la classe RequestsScraper"""
     
-    def __init__(self, ua_generateur) -> None:
-        super().__init__(ua_generateur,"CBRE", SITEMAPS["CBRE"])
+    def __init__(self, ua_generateur, proxy) -> None:
+        super().__init__(ua_generateur, proxy, "CBRE", SITEMAPS["CBRE"])
         self.selectors = CBRE_SELECTORS
            
     def post_traitement_hook(self, data: dict, soup: BeautifulSoup, url: str) -> dict:

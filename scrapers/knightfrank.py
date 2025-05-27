@@ -16,8 +16,8 @@ logger = logging.getLogger(__name__)
 class KNIGHTFRANKScraper(SeleniumScraper):
     """Scraper pour le site CBRE qui hérite de la classe RequestsScraper"""
     
-    def __init__(self, ua_generateur) -> None:
-        super().__init__(ua_generateur, "KNIGHTFRANK", SITEMAPS["KNIGHTFRANK"])
+    def __init__(self, ua_generateur, proxy) -> None:
+        super().__init__(ua_generateur, proxy, "KNIGHTFRANK", SITEMAPS["KNIGHTFRANK"])
         self.selectors = KNIGHTFRANK_SELECTORS
         self.base_url = "https://www.knightfrank.fr"
            

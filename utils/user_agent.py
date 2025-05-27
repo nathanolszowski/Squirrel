@@ -55,9 +55,10 @@ class UserAgent:
 class ListUserAgent:
     """Initialise et gère la liste d'user-agents"""
     
-    def __init__(self, fichier_cache=FICHIER_CACHE_USER_AGENT, activer_maj=USER_AGENT_MAJ):
+    def __init__(self, proxy, fichier_cache=FICHIER_CACHE_USER_AGENT, activer_maj=USER_AGENT_MAJ):
         self.fichier_cache = fichier_cache
         self.activer_maj = activer_maj
+        self.proxy = proxy
         self.url_actuelle_user_agents = self.obtenir_url_actualise_user_agents()
         self.liste_user_agents = [UserAgent(ua) for ua in self.obtenir_liste_user_agents()]
     
@@ -75,7 +76,7 @@ class ListUserAgent:
         logger.info("Récupération de l'url vers la dernière liste à jour d'user-agents")
         url_usergantsio = "https://useragents.io/sitemaps/useragents.xml"
         try:
-            request = httpx.get(url_usergantsio, timeout=5)
+            request = httpx.get(url_usergantsio, proxy=self.proxy, timeout=5)
             soup = BeautifulSoup(request.text, "xml")
             url_actuelle_user_agents = soup.find_all("sitemap")[-1]
             url_actuelle_user_agents = url_actuelle_user_agents.find("loc").text
@@ -95,7 +96,7 @@ class ListUserAgent:
         """
         logger.info("Récupération de la liste d'user-agents")
         try:
-            liste_agents = httpx.get(self.url_actuelle_user_agents)
+            liste_agents = httpx.get(self.url_actuelle_user_agents, proxy=self.proxy, timeout=5)
             sitemap_actuelle = BeautifulSoup(liste_agents.text, "xml")
             user_agents_liens = [url.find("loc").text for url in sitemap_actuelle.find_all("url")]
         except httpx.HTTPError as e:
@@ -105,7 +106,7 @@ class ListUserAgent:
         user_agents_string=[]
         for url in user_agents_liens :
             try:
-                response = httpx.get(url, timeout=5)
+                response = httpx.get(url, proxy=self.proxy, timeout=5)
                 soup = BeautifulSoup(response.content, "html.parser")
                 user_agents_string.append(soup.select_one("body > div:nth-child(1) > main > h1").get_text())
             except httpx.HTTPError as e:
@@ -241,7 +242,6 @@ class Rotator:
         user_agent_weights = []
         for user_agent in self.user_agents :
             user_agent_weights.append(self.weigh_user_agent(user_agent))
-        logger.info("Les user-agents ont été notés")
         # Sélectionne un user-agent
         user_agent = random.choices(
             self.user_agents,

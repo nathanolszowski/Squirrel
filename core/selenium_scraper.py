@@ -18,8 +18,8 @@ logger = logging.getLogger(__name__)
 class SeleniumScraper(BaseScraper):
     """Classe de base pour les scrapers utilisant Selenium et qui hérite de la classe abstraite BaseScraper"""
     
-    def __init__(self, ua_generateur, name: str, sitemap_url: str, timeout=SELENIUM_WAIT_TIME) -> None:
-        super().__init__(ua_generateur, name, sitemap_url)
+    def __init__(self, ua_generateur, proxy, name: str, sitemap_url: str, timeout=SELENIUM_WAIT_TIME) -> None:
+        super().__init__(ua_generateur, proxy, name, sitemap_url)
         self.driver = None
         self.timeout = timeout
         self.setup_driver()
@@ -30,6 +30,7 @@ class SeleniumScraper(BaseScraper):
         for option in SELENIUM_OPTIONS:
             options.add_argument(option)
         options.add_argument(f"user-agent={self.ua_generateur.get()}")
+        options.add_argument(f"--proxy-server={self.proxy}")
         
         try:
             self.driver = webdriver.Chrome(
@@ -79,5 +80,5 @@ class SeleniumScraper(BaseScraper):
     def get_sitemap_html(self) -> None:
         pass
     
-    def get_sitemap_api(self) -> List[str]:
+    def get_sitemap_api(self) -> list[str]:
         pass

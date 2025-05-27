@@ -15,8 +15,8 @@ logger = logging.getLogger(__name__)
 class CUSHMANScraper(RequestsScraper):
     """Scraper pour le site CUSHMAN qui hérite de la classe RequestsScraper"""
     
-    def __init__(self, ua_generateur) -> None:
-        super().__init__(ua_generateur, "CUSHMAN", SITEMAPS["CUSHMAN"])
+    def __init__(self, ua_generateur, proxy) -> None:
+        super().__init__(ua_generateur, proxy, "CUSHMAN", SITEMAPS["CUSHMAN"])
         self.selectors = CUSHMAN_SELECTORS
         
         

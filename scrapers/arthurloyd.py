@@ -14,8 +14,8 @@ logger = logging.getLogger(__name__)
 class ARTHURLOYDScraper(RequestsScraper):
     """Scraper pour le site ARTHURLOYD qui hérite de la classe RequestsScraper"""
     
-    def __init__(self, ua_generateur) -> None:
-        super().__init__(ua_generateur,"ARTHURLOYD", SITEMAPS["ARTHURLOYD"])
+    def __init__(self, ua_generateur, proxy) -> None:
+        super().__init__(ua_generateur, proxy,"ARTHURLOYD", SITEMAPS["ARTHURLOYD"])
         self.selectors = ARTHURLOYD_SELECTORS
            
     def post_traitement_hook(self, data: dict, soup: BeautifulSoup, url: str) -> dict:

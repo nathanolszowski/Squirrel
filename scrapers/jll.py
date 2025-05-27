@@ -15,8 +15,8 @@ logger = logging.getLogger(__name__)
 class JLLScraper(SeleniumScraper):
     """Scraper pour le site JLL qui hérite de la classe SeleniumScraper"""
     
-    def __init__(self, ua_generateur) -> None:
-        super().__init__(ua_generateur,"JLL", SITEMAPS["JLL"])
+    def __init__(self, ua_generateur, proxy) -> None:
+        super().__init__(ua_generateur, proxy, "JLL", SITEMAPS["JLL"])
         self.selectors = JLL_SELECTORS
      
     def post_traitement_hook(self, data: dict, soup: BeautifulSoup, url: str) -> dict:
