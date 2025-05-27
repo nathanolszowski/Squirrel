@@ -48,3 +48,5 @@ USER_AGENT_MAJ = False
 
 # Nom ou chemin du fichier cache des user-agents
 FICHIER_CACHE_USER_AGENT = "user_agent.json"
+# https://www.knightfrank.fr/resultat?nature=1&localisation=75%7C77%7C78%7C91%7C92%7C93%7C94%7C95%7C&typeOffre=1
+# https://www.knightfrank.fr/resultat?nature=2&localisation=75%7C77%7C78%7C91%7C92%7C93%7C94%7C95%7C&typeOffre=1

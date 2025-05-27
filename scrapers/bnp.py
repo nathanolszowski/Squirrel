@@ -19,7 +19,6 @@ class BNPScraper(RequestsScraper):
         self.selectors = BNP_SELECTORS
 
     def post_taitement_hook(self, data: dict, soup: BeautifulSoup, url: str) -> dict:
-        logger.info("Lancement du post-traitement spécifique à BNP")
         # Détermine le type de contrat
         if 'a-louer' in url:
             data["contrat"] = "Location"

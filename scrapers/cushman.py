@@ -20,8 +20,7 @@ class CUSHMANScraper(RequestsScraper):
         self.selectors = CUSHMAN_SELECTORS
         
         
-    def post_traitement_hook(self, data: dict, soup: BeautifulSoup, url: str) -> dict:
-        logger.info("Lancement du post-traitement spécifique à Cushman")      
+    def post_traitement_hook(self, data: dict, soup: BeautifulSoup, url: str) -> dict:   
         # Déterminer le contrat
         contrat_map = {
             "location": "Location",

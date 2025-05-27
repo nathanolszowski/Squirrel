@@ -53,11 +53,14 @@ class SeleniumScraper(BaseScraper):
             urls = []
             if isinstance(self.sitemap_url, dict):
                 for actif, url in self.sitemap_url.items():
+                    logger.info("Récupération depuis les sitemaps XML")
                     self.driver.get(url)
                     soup = BeautifulSoup(self.driver.page_source, "xml")
                     urls.extend([url.find("loc").text for url in soup.find_all("url")])
                 logger.info(f"[{self.name}{actif}] Trouvé {len(urls)} URLs dans les sitemaps")
             else:
+                logger.info("Récupération depuis la sitemap XML")
+                print(self.sitemap_url)
                 self.driver.get(self.sitemap_url)
                 soup = BeautifulSoup(self.driver.page_source, "xml")
                 urls = [url.find("loc").text for url in soup.find_all("url")]

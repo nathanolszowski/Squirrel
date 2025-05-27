@@ -19,7 +19,6 @@ class ALEXBOLTONScraper(RequestsScraper):
         self.selectors = ALEXBOLTON_SELECTORS# -*- coding: utf-8 -*-
 
     def post_taitement_hook(self, data: dict, soup: BeautifulSoup, url: str) -> dict:
-        logger.info("Lancement du post-traitement spécifique à AlexBolton")
         # Déterminer le contrat
         contrat_map = {
             "Loyer": "Location",

@@ -35,14 +35,15 @@ class KNIGHTFRANKScraper(SeleniumScraper):
     def trouver_formater_urls_offres(self, soup) -> list:
         """Permet de formater les urls lors de la méthode get_sitemap_html"""
         div_parent = soup.select_one("#listCards > div")
+        print(div_parent)
         if not div_parent:
             print("Pas d'élément listCards trouvé")
             return []
-
-        offres = div_parent.find_all("div", class_=re.compile("cardOffreListe"))
-        liens = [offre.find("a", class_="infosCard") for offre in offres if offre.find("a", class_="infosCard")]
-        hrefs = [self.base_url + lien['href'] for lien in liens if liens and lien.has_attr('href')]
-        return hrefs
+        else :
+            offres = div_parent.find_all("div", class_=re.compile("cardOffreListe"))
+            liens = [offre.find("a", class_="infosCard") for offre in offres if offre.find("a", class_="infosCard")]
+            hrefs = [self.base_url + lien['href'] for lien in liens if liens and lien.has_attr('href')]
+            return hrefs
     
     def navigation_page(self, url):
         """Permet de naviguer entre les différentes pages d'offres"""
@@ -53,9 +54,9 @@ class KNIGHTFRANKScraper(SeleniumScraper):
             
             urls += self.trouver_formater_urls_offres(soup)
             
-            div_parent = soup.select_one("body > main > section > div.container.pagination.py-5 > div")
-            if div_parent:
-                suivant = div_parent.find_all("a", attrs={"aria-label": "Next"})
+            div_parent_page = soup.select_one("body > main > section > div.container.pagination.py-5 > div")
+            if div_parent_page:
+                suivant = div_parent_page.find_all("a", attrs={"aria-label": "Next"})
                 if suivant:
                     href = suivant[0].get("href")
                     url = self.base_url + href
@@ -74,10 +75,12 @@ class KNIGHTFRANKScraper(SeleniumScraper):
         try:
             urls = []
             if isinstance(self.sitemap_url, dict):
+                logger.info("Récupération des urls depuis les sitemap HTML")
                 for contrat, url in self.sitemap_url.items():
-                    urls += self.navigation_page(url)
+                    urls+=self.navigation_page(url)
                 logger.info(f"[{self.name}] Trouvé {len(urls)} URLs dans les sitemaps")
             else:
+                logger.info("Récupération des urls depuis la sitemap HTML")
                 urls = self.navigation_page(self.sitemap_url)
                 logger.info(f"[{self.name}] Trouvé {len(urls)} URLs dans les sitemaps")
             return urls

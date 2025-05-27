@@ -20,7 +20,6 @@ class JLLScraper(SeleniumScraper):
         self.selectors = JLL_SELECTORS
      
     def post_traitement_hook(self, data: dict, soup: BeautifulSoup, url: str) -> dict:
-        logger.info("Lancement du post-traitement spécifique à JLL") 
         # Détermine le type de contrat
         contrat_map = {
             "a-louer": "Location",

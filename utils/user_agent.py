@@ -238,7 +238,6 @@ class Rotator:
             (str): Retourne un user-agent qui aura été choisi selon sa notation et sa dernière date d'utilisation
         """
         # Note tous les user-agents
-        logger.info("Récupération d'un user_agent")
         user_agent_weights = []
         for user_agent in self.user_agents :
             user_agent_weights.append(self.weigh_user_agent(user_agent))

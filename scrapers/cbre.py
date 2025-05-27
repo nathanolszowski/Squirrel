@@ -20,7 +20,6 @@ class CBREScraper(RequestsScraper):
         self.selectors = CBRE_SELECTORS
            
     def post_traitement_hook(self, data: dict, soup: BeautifulSoup, url: str) -> dict:
-        logger.info("Lancement du post-traitement spécifique à CBRE")
         #Surcharger la méthode obtenir la reference
         reference_element = soup.find('li', class_='LS breadcrumb-item active')
         reference_element = reference_element.find("span")
