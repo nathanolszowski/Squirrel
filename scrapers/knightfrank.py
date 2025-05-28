@@ -13,25 +13,28 @@ from config.selectors import KNIGHTFRANK_SELECTORS
 
 logger = logging.getLogger(__name__)
 
+
 class KNIGHTFRANKScraper(SeleniumScraper):
     """Scraper pour le site CBRE qui hérite de la classe RequestsScraper"""
-    
+
     def __init__(self, ua_generateur, proxy) -> None:
         super().__init__(ua_generateur, proxy, "KNIGHTFRANK", SITEMAPS["KNIGHTFRANK"])
         self.selectors = KNIGHTFRANK_SELECTORS
         self.base_url = "https://www.knightfrank.fr"
-           
+
     def post_traitement_hook(self, data: dict, soup: BeautifulSoup, url: str) -> dict:
         # Surcharger la méthode obtenir le contrat
         contrat_map = {
             "location": "Location",
             "vente": "Vente",
         }
-        data["contrat"] = next((label for key, label in contrat_map.items() if key in url), "N/A")
+        data["contrat"] = next(
+            (label for key, label in contrat_map.items() if key in url), "N/A"
+        )
         # Surcharger la méthode obtenir l'actif
         data["actif"] = "Bureaux"
         # Déterminer l'adresse
-                    
+
     def trouver_formater_urls_offres(self, soup) -> list:
         """Permet de formater les urls lors de la méthode get_sitemap_html"""
         div_parent = soup.select_one("#listCards > div")
@@ -39,22 +42,32 @@ class KNIGHTFRANKScraper(SeleniumScraper):
         if not div_parent:
             print("Pas d'élément listCards trouvé")
             return []
-        else :
+        else:
             offres = div_parent.find_all("div", class_=re.compile("cardOffreListe"))
-            liens = [offre.find("a", class_="infosCard") for offre in offres if offre.find("a", class_="infosCard")]
-            hrefs = [self.base_url + lien['href'] for lien in liens if liens and lien.has_attr('href')]
+            liens = [
+                offre.find("a", class_="infosCard")
+                for offre in offres
+                if offre.find("a", class_="infosCard")
+            ]
+            hrefs = [
+                self.base_url + lien["href"]
+                for lien in liens
+                if liens and lien.has_attr("href")
+            ]
             return hrefs
-    
+
     def navigation_page(self, url):
         """Permet de naviguer entre les différentes pages d'offres"""
-        urls =[]
+        urls = []
         while url:
-            soup= self.driver.get(url)
+            soup = self.driver.get(url)
             soup = BeautifulSoup(self.driver.page_source, "html.parser")
-            
+
             urls += self.trouver_formater_urls_offres(soup)
-            
-            div_parent_page = soup.select_one("body > main > section > div.container.pagination.py-5 > div")
+
+            div_parent_page = soup.select_one(
+                "body > main > section > div.container.pagination.py-5 > div"
+            )
             if div_parent_page:
                 suivant = div_parent_page.find_all("a", attrs={"aria-label": "Next"})
                 if suivant:
@@ -63,11 +76,11 @@ class KNIGHTFRANKScraper(SeleniumScraper):
                 else:
                     url = None
         return urls
-    
+
     def get_sitemap_html(self) -> List[str]:
         """
         Navigue de la première à la dernière page en implémentant la méthode de la classe abstraite BaseScraper
-        
+
         Returns:
             urls (List[str]): Liste de chaînes de caractères représentant les urls à scraper
         """
@@ -77,7 +90,7 @@ class KNIGHTFRANKScraper(SeleniumScraper):
             if isinstance(self.sitemap_url, dict):
                 logger.info("Récupération des urls depuis les sitemap HTML")
                 for contrat, url in self.sitemap_url.items():
-                    urls+=self.navigation_page(url)
+                    urls += self.navigation_page(url)
                 logger.info(f"[{self.name}] Trouvé {len(urls)} URLs dans les sitemaps")
             else:
                 logger.info("Récupération des urls depuis la sitemap HTML")
@@ -86,9 +99,11 @@ class KNIGHTFRANKScraper(SeleniumScraper):
             return urls
 
         except Exception as e:
-            logger.error(f"[{self.name}] Erreur lors de la récupération du sitemap {self.sitemap_url}: {e}")
+            logger.error(
+                f"[{self.name}] Erreur lors de la récupération du sitemap {self.sitemap_url}: {e}"
+            )
             return None
 
-    #Obligé de l'appeler car classe abstraite
+    # Obligé de l'appeler car classe abstraite
     def filtre_idf_bureaux(self, urls: list) -> List[str]:
         return urls

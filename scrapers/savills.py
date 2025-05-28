@@ -11,22 +11,23 @@ from config.settings import SITEMAPS, REQUEST_TIMEOUT
 
 logger = logging.getLogger(__name__)
 
+
 class SAVILLSScraper(RequestsScraper):
     """Scraper pour le site SAVILLS qui hérite de la classe RequestsScraper"""
-    
+
     def __init__(self, ua_generateur) -> None:
-        super().__init__(ua_generateur,"SAVILLS", SITEMAPS["SAVILLS"])
+        super().__init__(ua_generateur, "SAVILLS", SITEMAPS["SAVILLS"])
 
         self.base_url = "https://search.savills.com"
         self.api_url = "https://livev6-searchapi.savills.com/Data/SearchByUrl"
         self.property_url = "https://search.savills.com/fr/fr/bien-immobilier-details/"
-    
+
     def get_sitemap_api(self):
         header_search_url = {
-            'gpscountrycode': 'fr',
-            'gpslanguagecode': 'fr',
-            'origin': self.base_url,
-            'user-agent': self.ua_generateur.get()
+            "gpscountrycode": "fr",
+            "gpslanguagecode": "fr",
+            "origin": self.base_url,
+            "user-agent": self.ua_generateur.get(),
         }
         liste = []
         for actif, url in self.sitemap_url.items():
@@ -35,34 +36,43 @@ class SAVILLSScraper(RequestsScraper):
             while page <= pages_resultats:
                 params = f"{url}&Page={page}"
                 params_url = {
-                    'url': params,
+                    "url": params,
                 }
                 try:
-                    response = httpx.post(self.api_url, proxy= self.proxy, headers=header_search_url, json=params_url, timeout=REQUEST_TIMEOUT)
+                    response = httpx.post(
+                        self.api_url,
+                        proxy=self.proxy,
+                        headers=header_search_url,
+                        json=params_url,
+                        timeout=REQUEST_TIMEOUT,
+                    )
                 except Exception as e:
-                    logger.error(f"[{self.name}] Erreur scraping des données pour {url}: {e}")
+                    logger.error(
+                        f"[{self.name}] Erreur scraping des données pour {url}: {e}"
+                    )
                     return None
                 pages_resultats = response.json()["Results"]["PagingInfo"]["PageCount"]
                 properties = response.json()["Results"]["Properties"]
-                
+
                 for property in properties:
                     prop = {
-                        "confrere" : self.name,
-                        "url" : self.property_url + property["ExternalPropertyIDFormatted"],
-                        "reference" : property["ExternalPropertyIDFormatted"],
+                        "confrere": self.name,
+                        "url": self.property_url
+                        + property["ExternalPropertyIDFormatted"],
+                        "reference": property["ExternalPropertyIDFormatted"],
                         "actif": property["PropertyTypes"]["Caption"],
                         "disponibilite": property["ByUnit"][0]["Disponibilité"],
                         "surface": property["SizeFormatted"],
-                        "adresse" : property["AddressLine2"],
+                        "adresse": property["AddressLine2"],
                         "contact": property["PrimaryAgent"]["AgentName"],
-                        "accroche" : property["Description"],
+                        "accroche": property["Description"],
                         "amenagements": property["LongDescription"]["Body"],
-                        "prix_global": property["DisplayPriceText"]
+                        "prix_global": property["DisplayPriceText"],
                     }
                     liste.append(prop)
                 page += 1
         return liste
-        
+
     def filtre_idf_bureaux(self, urls: list[str]) -> list[str]:
         """
         Filtre les URLs pour supprimer les bureaux hors IDF

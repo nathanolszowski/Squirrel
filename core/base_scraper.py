@@ -12,13 +12,14 @@ from bs4 import BeautifulSoup
 
 logger = logging.getLogger(__name__)
 
+
 class BaseScraper(ABC):
     """Classe de base abstraite pour tous les scrapers"""
-    
+
     def __init__(self, ua_generateur, proxy, name: str, sitemap: list) -> None:
         """
         Initialise un nouveau scraper
-        
+
         Args:
             name (str): Nom du scraper (ex: 'bnp', 'jll')
             sitemap_url (str): URL de la sitemap XML ou HTML
@@ -29,37 +30,37 @@ class BaseScraper(ABC):
         self.format_sitemap = sitemap[0]
         self.sitemap_url = sitemap[1]
         self.results = []
-    
+
     @abstractmethod
     def get_sitemap_xml(self) -> List[str]:
         """
         Récupère les URLs depuis le ou les sitemaps XML
-        
+
         Returns:
             urls (List[str]): Liste de chaînes de caractères représentant les urls à scraper
         """
         pass
-    
+
     @abstractmethod
     def get_sitemap_html(self) -> List[str]:
         """
         Récupère les URLs depuis le ou les sitemaps HTML
-        
+
         Returns:
             urls (List[str]): Liste de chaînes de caractères représentant les urls à scraper
         """
         pass
-    
+
     @abstractmethod
     def get_sitemap_api(self) -> List[str]:
         """
         Récupère les URLs depuis le ou les sitemaps API
-        
+
         Returns:
             urls (List[str]): Liste de chaînes de caractères représentant les urls à scraper
         """
         pass
-    
+
     @abstractmethod
     def filtre_idf_bureaux(self, urls: list) -> list:
         """
@@ -71,62 +72,80 @@ class BaseScraper(ABC):
             filtered_urls (list[str]): Liste de chaînes de caractères représentant les urls à scraper après filtrage des urls bureaux régions
         """
         pass
-    
+
     def scrape_listing(self, url: str) -> dict:
         """
         Scrape les données d'une annonce depuis une url
-        
+
         Hooks à surcharger par les instances si besoin spécifiques :
             - post_traitement_hook()
-        
+
         Args:
             urls (str): Chaîne de caractères représentant l'url à scraper
         Retruns:
             data (dict): Dictionnaire avec les informations de chaque offre scrapée
         """
         try:
-            with httpx.Client(proxy=self.proxy, headers={"User-agent":self.ua_generateur.get()}, timeout=REQUEST_TIMEOUT, follow_redirects=True) as client:
+            with httpx.Client(
+                proxy=self.proxy,
+                headers={"User-agent": self.ua_generateur.get()},
+                timeout=REQUEST_TIMEOUT,
+                follow_redirects=True,
+            ) as client:
                 response = client.get(url)
             response.raise_for_status()
             soup = BeautifulSoup(response.text, "html.parser")
 
             # Extraction des données
             data = {
-                "confrere" : self.name,
+                "confrere": self.name,
                 "url": url,
-                "reference" : self.safe_select_text(soup, self.selectors["reference"]),
+                "reference": self.safe_select_text(soup, self.selectors["reference"]),
                 "contrat": self.safe_select_text(soup, self.selectors["contrat"]),
-                "actif" : self.safe_select_text(soup, self.selectors["actif"]),
-                "disponibilite" : self.safe_select_text(soup, self.selectors["disponibilite"]),
-                "surface" : self.safe_select_text(soup, self.selectors["surface"]),
-                "division" : self.safe_select_text(soup, self.selectors["division"]),
-                "adresse" : self.safe_select_text(soup, self.selectors["adresse"]),
-                "contact" : self.safe_select_text(soup, self.selectors["contact"]),
-                "accroche" : self.safe_select_text(soup, self.selectors["accroche"]),
-                "amenagements" : self.safe_select_text(soup, self.selectors["amenagements"]),
-                "prix_global" : self.safe_select_text(soup, self.selectors["prix_global"])
+                "actif": self.safe_select_text(soup, self.selectors["actif"]),
+                "disponibilite": self.safe_select_text(
+                    soup, self.selectors["disponibilite"]
+                ),
+                "surface": (
+                    self.safe_select_text(soup, self.selectors["surface"])
+                    + self.safe_select_text(soup, self.selectors["division"])
+                    if self.selectors["division"] != "None"
+                    else self.safe_select_text(soup, self.selectors["surface"])
+                ),
+                "adresse": self.safe_select_text(soup, self.selectors["adresse"]),
+                "contact": self.safe_select_text(soup, self.selectors["contact"]),
+                "accroche": self.safe_select_text(soup, self.selectors["accroche"]),
+                "amenagements": self.safe_select_text(
+                    soup, self.selectors["amenagements"]
+                ),
+                "prix_global": self.safe_select_text(
+                    soup, self.selectors["prix_global"]
+                ),
             }
+
             # Fonction de post-traitement si besoin spécifique pour certains champs du dictionnaire
             self.post_traitement_hook(data, soup, url)
             return data
-        
+
         except Exception as e:
             logger.error(f"[{self.name}] Erreur scraping des données pour {url}: {e}")
             return None
-        
-    def post_traitement_hook(self, data: dict, soup: BeautifulSoup, url: str) -> Optional[dict]:
+
+    def post_traitement_hook(
+        self, data: dict, soup: BeautifulSoup, url: str
+    ) -> Optional[dict]:
         """Fonction de post-traitement à surcharger si besoin spécifique pour certains champs du dictionnaire"""
         pass
-    
+
     def choix_sitemap(self) -> list[str]:
         """
         Choisi le mode d'extraction de la sitemap en fonction de son type xml ou html
-        
+
         Returns:
             (list[str]): Liste de chaîne de caractères représentants les urls à scraper
         """
         logger.info("Choix de la méthode d'extraction")
-        
+
         if self.format_sitemap == "XML":
             logger.info(f"[{self.sitemap_url}] Utilisation de la méthode XML")
             return self.get_sitemap_xml()
@@ -137,8 +156,10 @@ class BaseScraper(ABC):
             logger.info(f"[{self.sitemap_url}] Utilisation de la méthode HTML")
             return self.get_sitemap_html()
         else:
-            raise ValueError(f"Le format de la sitemap : {self.format_sitemap} n'est pas supporté")
-    
+            raise ValueError(
+                f"Le format de la sitemap : {self.format_sitemap} n'est pas supporté"
+            )
+
     def safe_select_text(self, soup: BeautifulSoup, selector: str) -> str:
         """
         Extrait le texte d'un élément HTML de manière sécurisée
@@ -149,43 +170,55 @@ class BaseScraper(ABC):
         Returns:
             (str): Chaîne de caractères représentant la valeur du sélécteur requêté sinon la valeur "N/A"
         """
-        if selector == "None" :
+        if selector == "None":
             return "N/A"
-        
+
         try:
             el = soup.select_one(selector)
             return el.get_text(strip=True) if el else "N/A"
-        
+
         except Exception as e:
-            logger.error(f"[{self.name}] Erreur dans safe_select_text avec selector='{selector}': {e}")
+            logger.error(
+                f"[{self.name}] Erreur dans safe_select_text avec selector='{selector}': {e}"
+            )
             return "N/A"
-    
+
     def run(self) -> None:
         """Exécute le programme complet"""
         try:
             logger.info(f"[{self.name.upper()}] Début du scraping")
             urls = self.choix_sitemap()
 
-            if hasattr(self, "filtre_idf_bureaux") and callable(getattr(self, "filtre_idf_bureaux")):
+            if hasattr(self, "filtre_idf_bureaux") and callable(
+                getattr(self, "filtre_idf_bureaux")
+            ):
                 url_filtrees = self.filtre_idf_bureaux(urls)
             else:
                 url_filtrees = urls
-            
+
             if self.format_sitemap == "API":
                 return urls
             else:
-                logger.info(f"[{self.name.upper()}] Début du scraping des données pour chacune des offres")
-                for url in url_filtrees[:5]:
+                logger.info(
+                    f"[{self.name.upper()}] Début du scraping des données pour chacune des offres"
+                )
+                for url in url_filtrees:
                     try:
                         result = self.scrape_listing(url)
                         if result:
                             self.results.append(result)
                     except Exception as e:
-                        logger.error(f"[{self.name.upper()}] Erreur lors de la récupération de {url}: {e}")
-                
-                logger.info(f"[{self.name.upper()}] Fin du scraping. {len(self.results)} résultats collectés.")
+                        logger.error(
+                            f"[{self.name.upper()}] Erreur lors de la récupération de {url}: {e}"
+                        )
+
+                logger.info(
+                    f"[{self.name.upper()}] Fin du scraping. {len(self.results)} résultats collectés."
+                )
                 return self.results
-            
+
         except Exception as e:
-            logger.error(f"[{self.name.upper()}] Erreur importante lors du scraping : {e}")
+            logger.error(
+                f"[{self.name.upper()}] Erreur importante lors du scraping : {e}"
+            )
             return []

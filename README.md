@@ -1,4 +1,4 @@
-# Squirrel Scrapers
+# Squirrel Scrapers V.1
 
 Ce projet est une collection de scrapers pour extraire des données d'annonces immobilières de différents sites d'Agence.
 Il permet d'avoir une vue du marché complète pour le bureaux en Île-de-France, locaux d'activités et entrepôts en France.
@@ -19,16 +19,15 @@ Liste des sites d'agences disponibles :
    - ajout des données de localisation si disponibles (long/lat)
    - comparer lat/long, adresse, accroche, titre et surface totale
 - Modifier le cache d'user-agent pour qu'il ne prenne que les browsers chrome/mozilla/opéra (quelques erreurs objectification en UserAgent)
-- Travail sur la détéctabilité du scraper en fonction du besoin : cookies, TLSfingerprint, Timing de requêtes et Javascriptfingerprint
 
 2. Priorité 2 :
 - Système de cache pour éviter de re-scraper les mêmes pages trop souvent ?
-- Mise en place de retry mechanisms pour les requêtes échouées
 - Repérage d'un trop grand nombre de N/A sur certaines valeurs pour surveiller la présence du bon sélecteur
 - Travail sur les offres de coworking
 
 3. Priorité 3 :
 - Travail sur la factorisation du code et la vitesse de scraping
+- Mise en place de retry mechanisms pour les requêtes échouées
 - Parallélisation des scraping avec asyncio (asyncio + aiohttp)
 - Tests unitaires et d'intégration ?
 - Barre de progression des traitements
@@ -69,9 +68,15 @@ venv\Scripts\activate     # Windows
 pip install -r requirements.txt
 ```
 
+3. Ajouter votre proxy :
+`main.py`
+```
+    PROXY = "YOUR PROXY ADRESS"
+```
+
 ## Utilisation
 
-Pour lancer tous les scrapers (par défaut lance l'analyse pour les 5 premiers urls) :
+Pour lancer tous les scrapers :
 ```bash
 python main.py
 ```
@@ -102,6 +107,7 @@ Format de sortie JSON :
 - Export des données en JSON
 - Logging détaillé
 - Gestion des user-agents
+- Utilisation de proxy
 
 ## Ajouter un nouveau scraper
 

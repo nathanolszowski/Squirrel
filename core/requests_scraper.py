@@ -12,13 +12,14 @@ from config.settings import REQUEST_TIMEOUT
 
 logger = logging.getLogger(__name__)
 
+
 class RequestsScraper(BaseScraper):
     """Classe de base pour les scrapers utilisant requests et qui hérite de la classe abstraite BaseScraper"""
-    
+
     def get_sitemap_xml(self) -> List[str]:
         """
         Récupère les URLs depuis le ou les sitemaps XML en surchageant la méthode de la classe abstraite BaseScraper
-        
+
         Returns:
             urls (List[str]): Liste de chaînes de caractères représentant les urls à scraper
         """
@@ -28,29 +29,44 @@ class RequestsScraper(BaseScraper):
             if isinstance(self.sitemap_url, dict):
                 logger.info("Récupération des urls depuis plusieurs sitemaps XML")
                 for actif, url in self.sitemap_url.items():
-                    with httpx.Client(proxy=self.proxy, headers={"User-agent":self.ua_generateur.get()}, timeout=REQUEST_TIMEOUT, follow_redirects=True) as client:
+                    with httpx.Client(
+                        proxy=self.proxy,
+                        headers={"User-agent": self.ua_generateur.get()},
+                        timeout=REQUEST_TIMEOUT,
+                        follow_redirects=True,
+                    ) as client:
                         response = client.get(url)
                     response.raise_for_status()
                     soup = BeautifulSoup(response.content, "xml")
-                    
+
                     # Récupérer toutes les URLs du sitemap
                     urls.extend([url.find("loc").text for url in soup.find_all("url")])
                 logger.info(f"[{self.name}] Trouvé {len(urls)} URLs dans les sitemaps")
             else:
                 logger.info("Récupération des urls depuis la XML")
-                with httpx.Client(proxy=self.proxy, headers={"User-agent":self.ua_generateur.get()}, timeout=REQUEST_TIMEOUT, follow_redirects=True) as client:
+                with httpx.Client(
+                    proxy=self.proxy,
+                    headers={"User-agent": self.ua_generateur.get()},
+                    timeout=REQUEST_TIMEOUT,
+                    follow_redirects=True,
+                ) as client:
                     response = client.get(self.sitemap_url)
                 response.raise_for_status()
                 soup = BeautifulSoup(response.content, "xml")
                 # Récupérer toutes les URLs du sitemap
-                urls = [self.sitemap_url.find("loc").text for self.sitemap_url in soup.find_all("url")]
+                urls = [
+                    self.sitemap_url.find("loc").text
+                    for self.sitemap_url in soup.find_all("url")
+                ]
                 logger.info(f"[{self.name}] Trouvé {len(urls)} URLs dans le sitemap")
             return urls
-    
+
         except Exception as e:
-            logger.error(f"[{self.name}] Erreur lors de la récupération du sitemap {self.sitemap_url}: {e}")
+            logger.error(
+                f"[{self.name}] Erreur lors de la récupération du sitemap {self.sitemap_url}: {e}"
+            )
             return None
-    
+
     def get_sitemap_html(self) -> List[str]:
         pass
 
