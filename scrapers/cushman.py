@@ -20,18 +20,13 @@ class CUSHMANScraper(RequestsScraper):
         super().__init__(ua_generateur, proxy, "CUSHMAN", SITEMAPS["CUSHMAN"])
         self.selectors = CUSHMAN_SELECTORS
 
-    def post_traitement_hook(
-        self, data: dict, soup: BeautifulSoup, url: str
-    ) -> dict[str]:
+    def post_traitement_hook(self, data: dict, soup: BeautifulSoup, url: str) -> None:
         """Méthode de post-traitement surchargée pour les besoins du scraper CUSHMAN
 
         Args:
             data (dict[str]): Représente les données de l'offre à scraper
             soup (BeautifulSoup): Représente le parser lié à la page html de l'offre à scraper
             url (str): Représente l'url de l'offre à scraper
-
-        Returns:
-            dict[str]: Représente les données de l'offre à scraper après modification spécifique pour un scraper
         """
         # Surcharger la méthode obtenir contrat
         contrat_map = {"location": "Location", "achat": "Vente"}

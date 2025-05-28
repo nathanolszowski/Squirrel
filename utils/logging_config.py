@@ -15,6 +15,7 @@ def setup_logging(log_dir: str = "logs") -> TextIO:
 
     Args:
         log_dir (str): Chaîne de caractère représentant le répertoire où stocker les logs
+
     Returns:
         TextIO: Un objet fichier JSON ouvert en mode lecture.
     """

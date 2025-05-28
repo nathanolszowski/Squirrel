@@ -6,10 +6,11 @@ Classe de base pour les scrapers utilisant Selenium
 
 import logging
 from bs4 import BeautifulSoup
+from typing import Union
 from seleniumwire import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
-
+from utils.user_agent import Rotator
 from webdriver_manager.chrome import ChromeDriverManager
 from .base_scraper import BaseScraper
 from config.settings import SELENIUM_OPTIONS, SELENIUM_WAIT_TIME
@@ -22,8 +23,8 @@ class SeleniumScraper(BaseScraper):
 
     def __init__(
         self,
-        ua_generateur,
-        proxy,
+        ua_generateur: Rotator,
+        proxy: str,
         name: str,
         sitemap_url: str,
         timeout=SELENIUM_WAIT_TIME,
@@ -64,7 +65,7 @@ class SeleniumScraper(BaseScraper):
             )
             raise
 
-    def get_sitemap_xml(self) -> list[str]:
+    def obtenir_sitemap_xml(self) -> Union[list[str], list[None]]:
         """
         Récupère les URLs depuis le ou les sitemaps XML en surchageant la méthode de la classe abstraite BaseScraper
 
@@ -111,8 +112,9 @@ class SeleniumScraper(BaseScraper):
                     f"[{self.name.upper()}] Une erreur est survenue lors de la fermeture du driver Selenium: {e}"
                 )
 
-    def get_sitemap_html(self) -> None:
+    # Obligé d'appeler les méthodes ci-dessous car implémentées dans la classe abstraite
+    def obtenir_sitemap_html(self) -> list[str]:
         pass
 
-    def get_sitemap_api(self) -> list[str]:
+    def obtenir_sitemap_api(self) -> list[str]:
         pass

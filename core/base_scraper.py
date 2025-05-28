@@ -4,7 +4,7 @@ Classe de base abstraite pour tous les scrapers
 """
 
 from abc import ABC, abstractmethod
-from typing import Optional
+from typing import Union
 import logging
 import httpx
 from config.settings import REQUEST_TIMEOUT
@@ -101,7 +101,7 @@ class BaseScraper(ABC):
                 f"Le format de la sitemap : {self.format_sitemap} n'est pas supporté"
             )
 
-    def rechercher_donnees_offre(self, url: str) -> dict[str]:
+    def rechercher_donnees_offre(self, url: str) -> Union[dict[str], dict[None]]:
         """Récupère les informations d'une offre à partir de son url
 
         * Hooks à surcharger par les instances si besoin spécifiques :
@@ -157,20 +157,17 @@ class BaseScraper(ABC):
 
         except Exception as e:
             logger.error(f"[{self.name}] Erreur scraping des données pour {url}: {e}")
-            return None
+            return {}
 
     def post_traitement_hook(
         self, data: dict[str], soup: BeautifulSoup, url: str
-    ) -> Optional[dict]:
+    ) -> None:
         """Méthode de post-traitement à surcharger si besoin spécifique pour certains champs du dictionnaire
 
         Args:
             data (dict[str]): Représente les données de l'offre à scraper
             soup (BeautifulSoup): Représente le parser lié à la page html de l'offre à scraper
             url (str): Représente l'url de l'offre à scraper
-
-        Returns:
-            Optional[dict]: Représente les données de l'offre à scraper après modification spécifique pour un scraper
         """
         pass
 
@@ -197,7 +194,7 @@ class BaseScraper(ABC):
             )
             return "N/A"
 
-    def run(self) -> None:
+    def run(self) -> Union[list[str], None]:
         """Méthode pour lancer le scraper"""
         try:
             logger.info(

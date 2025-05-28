@@ -11,12 +11,12 @@ import os
 logger = logging.getLogger(__name__)
 
 
-def export_json(data, log_dir: str = "exports"):
+def export_json(data: dict[str], log_dir: str = "exports") -> None:
     """
     Exporte les résultats au format JSON
 
     Args:
-        data (dict): Données à exporter
+        data (dict[str]): Données à exporter
         log_dir (str): Nom du dossier qui compile les résultats
     """
 

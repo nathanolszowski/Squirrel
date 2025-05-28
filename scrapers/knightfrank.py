@@ -5,6 +5,7 @@ Scraper pour KNIGHT FRANK
 
 import logging
 import re
+from typing import Union
 from bs4 import BeautifulSoup
 from core.selenium_scraper import SeleniumScraper
 from config.settings import SITEMAPS
@@ -102,7 +103,7 @@ class KNIGHTFRANKScraper(SeleniumScraper):
                     url = None
         return urls
 
-    def obtenir_sitemap_html(self) -> list[str]:
+    def obtenir_sitemap_html(self) -> Union[list[str], list[None]]:
         """
         Méthode de navigation qui surcharge la méthode de la classe abstraite BaseScraper
 

@@ -5,6 +5,8 @@ Classe de base pour les scrapers utilisant requests
 
 import logging
 import httpx
+from typing import Union
+from utils.user_agent import Rotator
 from bs4 import BeautifulSoup
 from .base_scraper import BaseScraper
 from config.settings import REQUEST_TIMEOUT
@@ -17,8 +19,8 @@ class RequestsScraper(BaseScraper):
 
     def __init__(
         self,
-        ua_generateur,
-        proxy,
+        ua_generateur: Rotator,
+        proxy: str,
         name: str,
         sitemap_url: str,
         timeout=REQUEST_TIMEOUT,
@@ -28,7 +30,7 @@ class RequestsScraper(BaseScraper):
         self.driver = None
         self.timeout = timeout
 
-    def get_sitemap_xml(self) -> list[str]:
+    def obtenir_sitemap_xml(self) -> Union[list[str], list[None]]:
         """
         Récupère les URLs depuis le ou les sitemaps XML en surchageant la méthode de la classe abstraite BaseScraper
 
@@ -80,8 +82,9 @@ class RequestsScraper(BaseScraper):
             )
             return []
 
-    def get_sitemap_html(self) -> list[str]:
+    # Obligé d'appeler les méthodes ci-dessous car implémentées dans la classe abstraite
+    def obtenir_sitemap_html(self) -> list[str]:
         pass
 
-    def get_sitemap_api(self) -> list[str]:
+    def obtenir_sitemap_api(self) -> list[str]:
         pass

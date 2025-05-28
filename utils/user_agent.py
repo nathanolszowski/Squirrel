@@ -13,7 +13,7 @@ from typing import List, Optional, Union, Dict
 from time import time
 from ua_parser import user_agent_parser
 import logging
-from config.settings import USER_AGENT_MAJ, FICHIER_CACHE_USER_AGENT
+from config.settings import USER_AGENT_MAJ, FICHIER_CACHE_USER_AGENT, REQUEST_TIMEOUT
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +23,7 @@ class UserAgent:
 
     def __init__(self, user_agent: str) -> None:
         """
-        Initialise un nouvel user-agent
+        Instanciation d'un nouvel user-agent
 
         Args:
             user-agent (str): Châine de caractère représentant un Nom d'user-agent, par exemple : "Mozilla/5.0 (Windows NT 10.0; Win64; x64)
@@ -60,15 +60,15 @@ class ListUserAgent:
     def __init__(
         self, proxy, fichier_cache=FICHIER_CACHE_USER_AGENT, activer_maj=USER_AGENT_MAJ
     ):
-        self.fichier_cache = fichier_cache
-        self.activer_maj = activer_maj
-        self.proxy = proxy
-        self.url_actuelle_user_agents = self.obtenir_url_actualise_user_agents()
-        self.liste_user_agents = [
+        self.fichier_cache: str = fichier_cache
+        self.activer_maj: bool = activer_maj
+        self.proxy: str = proxy
+        self.url_actuelle_user_agents: str = self.obtenir_url_actualise_user_agents()
+        self.liste_user_agents: list[UserAgent] = [
             UserAgent(ua) for ua in self.obtenir_liste_user_agents()
         ]
 
-    def obtenir_liste(self):
+    def obtenir_liste(self) -> list[UserAgent]:
         """Retourne la liste ListUserAgents"""
         return self.liste_user_agents if self.liste_user_agents else []
 
@@ -80,10 +80,16 @@ class ListUserAgent:
             derniere_url_actualise (str): Chaîne de caractère représentant l'url de la dernière liste d'user-agents à jour
         """
         logger.info("Récupération de l'url vers la dernière liste à jour d'user-agents")
-        url_usergantsio = "https://useragents.io/sitemaps/useragents.xml"
+        url_usergantsio: str = "https://useragents.io/sitemaps/useragents.xml"
         try:
-            request = httpx.get(url_usergantsio, proxy=self.proxy, timeout=5)
-            soup = BeautifulSoup(request.text, "xml")
+            with httpx.Client(
+                proxy=self.proxy,
+                headers={"User-agent": self.ua_generateur.get()},
+                timeout=REQUEST_TIMEOUT,
+                follow_redirects=True,
+            ) as client:
+                reponse = client.get(url_usergantsio)
+            soup = BeautifulSoup(reponse.text, "xml")
             url_actuelle_user_agents = soup.find_all("sitemap")[-1]
             url_actuelle_user_agents = url_actuelle_user_agents.find("loc").text
             logger.info(
@@ -99,18 +105,22 @@ class ListUserAgent:
                 f"[{url_usergantsio}] Erreur lors de la récupération de la valeur de la dernière liste à jour d'user-agents : {e}"
             )
 
-    def obtenir_liste_user_agents_actualise(self) -> List[str]:
+    def obtenir_liste_user_agents_actualise(self) -> list[str]:
         """
         Récupère les user_agents string depuis la dernière liste à jour
 
         Returns:
-            user_agents (List[str]): Chaîne de caractère représentant l'url de la dernière sitemap d'user-agents à jour
+            user_agents (list[str]): Chaîne de caractère représentant l'url de la dernière sitemap d'user-agents à jour
         """
         logger.info("Récupération de la liste d'user-agents")
         try:
-            liste_agents = httpx.get(
-                self.url_actuelle_user_agents, proxy=self.proxy, timeout=5
-            )
+            with httpx.Client(
+                proxy=self.proxy,
+                headers={"User-agent": self.ua_generateur.get()},
+                timeout=REQUEST_TIMEOUT,
+                follow_redirects=True,
+            ) as client:
+                liste_agents = client.get(self.url_actuelle_user_agents)
             sitemap_actuelle = BeautifulSoup(liste_agents.text, "xml")
             user_agents_liens = [
                 url.find("loc").text for url in sitemap_actuelle.find_all("url")
@@ -126,7 +136,13 @@ class ListUserAgent:
         user_agents_string = []
         for url in user_agents_liens:
             try:
-                response = httpx.get(url, proxy=self.proxy, timeout=5)
+                with httpx.Client(
+                    proxy=self.proxy,
+                    headers={"User-agent": self.ua_generateur.get()},
+                    timeout=REQUEST_TIMEOUT,
+                    follow_redirects=True,
+                ) as client:
+                    response = client.get(url)
                 soup = BeautifulSoup(response.content, "html.parser")
                 user_agents_string.append(
                     soup.select_one("body > div:nth-child(1) > main > h1").get_text()
@@ -145,7 +161,7 @@ class ListUserAgent:
         )
         return user_agents_string
 
-    def lire_cache_user_agents(self) -> Union[Dict[str, List[str]], None]:
+    def lire_cache_user_agents(self) -> Union[Dict[str, list[str]], None]:
         """Vérifie la présence du fichier de cache d'user-agents"""
         logger.info("Vérifie la présence du fichier de cache d'user-agents")
         try:
@@ -166,7 +182,12 @@ class ListUserAgent:
             )
 
     def obtenir_url_cache_user_agents(self) -> Optional[str]:
-        """Récupére l'url de la dernière liste d'user-agents depuis notre cache"""
+        """
+        Récupére l'url de la dernière liste d'user-agents depuis notre cache
+
+        Returns:
+            Optional[str]: Représente l'url de la dernière liste d'user-agents depuis le cache
+        """
         cache = self.lire_cache_user_agents()
         if cache:
             return next(iter(cache.keys()), None)
@@ -179,7 +200,7 @@ class ListUserAgent:
         cache_url = self.obtenir_url_cache_user_agents()
         return self.url_actuelle_user_agents == cache_url
 
-    def sauvegarder_cache_user_agents(self, user_agents: List[str]) -> None:
+    def sauvegarder_cache_user_agents(self, user_agents: list[str]) -> None:
         """Sauvegarde la liste d'user-agents dans le cache JSON"""
         logger.info(
             "Début de la sauvegarde de la liste d'user-agents dans le cache JSON"
@@ -198,7 +219,7 @@ class ListUserAgent:
                 f"[{self.fichier_cache}] Erreur lors de la lecture du ficher cache JSON : {e}"
             )
 
-    def obtenir_liste_user_agents(self):
+    def obtenir_liste_user_agents(self) -> list[str]:
         """Renvoi la liste d'user-agents à mettre à jour ou non"""
         logger.info(
             "Début de la récupération de la liste d'user-agents à jour, depuis le cache si possible."
@@ -224,13 +245,13 @@ class Rotator:
         Initialise un nouveau générateur d'user-agent
 
         Args:
-            user-agents ListUserAgent: Représente un objet ListUserAgent qui est une liste d'objet UserAgent
+            user-agents (ListUserAgent): Représente un objet ListUserAgent qui est une liste d'objet UserAgent
         """
         logger.info("Initialisation du sélecteur d'user-agent")
-        self.user_agents = user_agents
+        self.user_agents: ListUserAgent = user_agents
 
     # Créér une note (un poids) pour chaque user-agent
-    def weigh_user_agent(self, user_agent: UserAgent) -> int:
+    def notation_user_agent(self, user_agent: UserAgent) -> int:
         """
         Notation d'un user-agent selon ses caractéristiques
 
@@ -239,39 +260,39 @@ class Rotator:
         Returns:
             (int): Notation de l'user-agent en cours d'analyse
         """
-        weight = 1000
+        notation: int = 1000
 
         # Augmente la note pour les user-agents les moins utilisés
         if user_agent.last_used:
             _seconds_since_last_use = time() - user_agent.last_used
-            weight += _seconds_since_last_use
+            notation += _seconds_since_last_use
 
         # Augmente la note par rapport au navigateur utilisé
         if user_agent.browser == "Chrome":
-            weight += 100
+            notation += 100
         if user_agent.browser == "Firefox" or "Edge":
-            weight += 50
+            notation += 50
         if user_agent.browser == "Chrome Mobile" or "Firefox Mobile":
-            weight += 0
+            notation += 0
 
         # Augmente la note pour les navigateurs avec une version récente
         if user_agent.browser_version:
-            weight += user_agent.browser_version * 10
+            notation += user_agent.browser_version * 10
 
         # Augmente la note pour les navigateurs qui utilisent une version 50 ou supérieure de Chrome
         if user_agent.browser == "Chrome" and user_agent.browser_version > 50:
-            weight += 200
+            notation += 200
 
         # Augmente la note pour based on the OS type
         if user_agent.os == "Windows":
-            weight += 150
+            notation += 150
         if user_agent.os == "Mac OS X":
-            weight += 100
+            notation += 100
         if user_agent.os in ["Linux", "Ubuntu"]:
-            weight -= 50
+            notation -= 50
         if user_agent.os == "Android":
-            weight -= 100
-        return weight
+            notation -= 100
+        return notation
 
     def get(self) -> str:
         """
@@ -281,13 +302,13 @@ class Rotator:
             (str): Retourne un user-agent qui aura été choisi selon sa notation et sa dernière date d'utilisation
         """
         # Note tous les user-agents
-        user_agent_weights = []
+        user_agent_notes = []
         for user_agent in self.user_agents:
-            user_agent_weights.append(self.weigh_user_agent(user_agent))
+            user_agent_notes.append(self.notation_user_agent(user_agent))
         # Sélectionne un user-agent
         user_agent = random.choices(
             self.user_agents,
-            weights=user_agent_weights,
+            notations=user_agent_notes,
             k=1,
         )[0]
         # Met à jour l'attribut de dernière utilisation

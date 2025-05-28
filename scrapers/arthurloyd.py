@@ -19,18 +19,13 @@ class ARTHURLOYDScraper(RequestsScraper):
         super().__init__(ua_generateur, proxy, "ARTHURLOYD", SITEMAPS["ARTHURLOYD"])
         self.selectors = ARTHURLOYD_SELECTORS
 
-    def post_traitement_hook(
-        self, data: dict, soup: BeautifulSoup, url: str
-    ) -> dict[str]:
+    def post_traitement_hook(self, data: dict, soup: BeautifulSoup, url: str) -> None:
         """Méthode de post-traitement surchargée pour les besoins du scraper AlexBolton
 
         Args:
             data (dict[str]): Représente les données de l'offre à scraper
             soup (BeautifulSoup): Représente le parser lié à la page html de l'offre à scraper
             url (str): Représente l'url de l'offre à scraper
-
-        Returns:
-            dict[str]: Représente les données de l'offre à scraper après modification spécifique pour un scraper
         """
         # Surcharger la méthode obtenir contrat
         contrat_map = {
