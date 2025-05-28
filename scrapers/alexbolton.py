@@ -52,7 +52,7 @@ class ALEXBOLTONScraper(RequestsScraper):
 
     def filtre_urls(self, urls: list[str]) -> list[str]:
         """
-        Méthode de filtrage surchargée pour les besoins d uscraper AlexBolton. FYI : AlexBolton ne fait que du Bureaux IDF
+        Méthode de filtrage surchargée pour les besoins du scraper AlexBolton. FYI : AlexBolton ne fait que du Bureaux IDF
 
         Args:
             urls (list[str]): Liste de chaînes de caractères représentant les urls à scraper

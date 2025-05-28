@@ -20,13 +20,25 @@ class CUSHMANScraper(RequestsScraper):
         super().__init__(ua_generateur, proxy, "CUSHMAN", SITEMAPS["CUSHMAN"])
         self.selectors = CUSHMAN_SELECTORS
 
-    def post_traitement_hook(self, data: dict, soup: BeautifulSoup, url: str) -> dict:
-        # Déterminer le contrat
+    def post_traitement_hook(
+        self, data: dict, soup: BeautifulSoup, url: str
+    ) -> dict[str]:
+        """Méthode de post-traitement surchargée pour les besoins du scraper CUSHMAN
+
+        Args:
+            data (dict[str]): Représente les données de l'offre à scraper
+            soup (BeautifulSoup): Représente le parser lié à la page html de l'offre à scraper
+            url (str): Représente l'url de l'offre à scraper
+
+        Returns:
+            dict[str]: Représente les données de l'offre à scraper après modification spécifique pour un scraper
+        """
+        # Surcharger la méthode obtenir contrat
         contrat_map = {"location": "Location", "achat": "Vente"}
         data["contrat"] = next(
             (label for key, label in contrat_map.items() if key in url), "N/A"
         )
-        # Déterminer l'actif
+        # Surcharger la méthode obtenir actif
         actif_map = {
             "Bureaux": "Bureaux",
             "Activités": "Locaux d'activité",
@@ -36,17 +48,18 @@ class CUSHMANScraper(RequestsScraper):
             (label for key, label in actif_map.items() if key in data["actif"]), "N/A"
         )
 
-    def filtre_idf_bureaux(self, urls: list[str]) -> list[str]:
+    def filtre_urls(self, urls: list[str]) -> list[str]:
         """
-        Filtre les URLs pour supprimer les bureaux hors IDF
+        Méthode de filtrage surchargée pour les besoins du scraper CUSHMAN
 
         Args:
             urls (list[str]): Liste de chaînes de caractères représentant les urls à scraper
+
         Returns:
-            filtered_urls (list[str]): Liste de chaînes de caractères représentant les urls à scraper après filtrage des urls bureaux régions
+            urls_filtrees (list[str]): Liste de chaînes de caractères représentant les urls à scraper après filtrage des urls bureaux régions
         """
-        logger.info("Filtrage des offres")
-        filtered_urls = []
+        logger.info("Filtrage des offres Cushman & Wakefield")
+        urls_filtrees = []
         pattern = re.compile(
             r"-\d{5}-\d+[a-zA-Z]*$"
         )  # Suffixe de type "-75009-139113AB"
@@ -57,11 +70,10 @@ class CUSHMANScraper(RequestsScraper):
                     part = last_segment.split("-")
                     part = part[-2]
                     if not any(departement in part for departement in DEPARTMENTS_IDF):
-                        filtered_urls.append(url)
+                        urls_filtrees.append(url)
                 else:
-                    filtered_urls.append(url)
+                    urls_filtrees.append(url)
         logger.info(
-            f"[{self.name.upper()}] Trouvé {len(filtered_urls)} URLs filtrées sans bureaux région"
+            f"[{self.name.upper()}] Trouvé {len(urls_filtrees)} URLs filtrées sans bureaux région"
         )
-        print(filtered_urls)
-        return filtered_urls
+        return urls_filtrees

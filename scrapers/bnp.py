@@ -69,7 +69,7 @@ class BNPScraper(RequestsScraper):
         Returns:
             urls_filtrees (list[str]): Liste de chaînes de caractères représentant les urls à scraper après filtrage des urls bureaux régions
         """
-        logger.info("Filtrage des offres")
+        logger.info("Filtrage des offres BNP")
         urls_filtrees = []
         for url in urls:
             if "bureau" in url:

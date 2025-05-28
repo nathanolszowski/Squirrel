@@ -67,7 +67,7 @@ class CBREScraper(RequestsScraper):
         Returns:
             urls_filtrees (list[str]): Liste de chaînes de caractères représentant les urls à scraper après filtrage des urls bureaux régions
         """
-        logger.info("Filtrage des offres")
+        logger.info("Filtrage des offres CBRE")
         urls_filtrees = []
         pattern = re.compile(
             r"https://immobilier.cbre.fr/offre/(a-louer|a-vendre)/bureaux/(\d+)"
