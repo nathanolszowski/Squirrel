@@ -4,86 +4,114 @@ Classe de base abstraite pour tous les scrapers
 """
 
 from abc import ABC, abstractmethod
-from typing import List, Optional
+from typing import Optional
 import logging
 import httpx
 from config.settings import REQUEST_TIMEOUT
 from bs4 import BeautifulSoup
+from utils.user_agent import Rotator
 
 logger = logging.getLogger(__name__)
 
 
 class BaseScraper(ABC):
-    """Classe de base abstraite pour tous les scrapers"""
+    """Classe de base abstraite pour l'initialisation des scrapers"""
 
-    def __init__(self, ua_generateur, proxy, name: str, sitemap: list) -> None:
-        """
-        Initialise un nouveau scraper
+    def __init__(
+        self,
+        user_agent_generateur: Rotator,
+        proxy: str,
+        nom_site: str,
+        sitemap: list[str],
+    ) -> None:
+        """Instanciation d'un scraper depuis la classe abstraite BaseScraper
 
         Args:
-            name (str): Nom du scraper (ex: 'bnp', 'jll')
-            sitemap_url (str): URL de la sitemap XML ou HTML
+            user_agent_generateur (str): Réprésente le générateur d'user-agents à utiliser dans les requêtes
+            proxy (str): Représente le lien vers le proxy à utiliser dans les requêtes
+            name (str): Représente le nom du site à scraper
+            sitemap (list[str]): Réprésente le format d'extraction et la ou les urls des sites à scraper ex: ["XML", "Url"] ou ["XML", {"Type1":"Url", "Type2":"Url"}]
         """
-        self.ua_generateur = ua_generateur
+        self.ua_generateur = user_agent_generateur
         self.proxy = proxy
-        self.name = name
+        self.name = nom_site
         self.format_sitemap = sitemap[0]
         self.sitemap_url = sitemap[1]
-        self.results = []
+        self.resultats_offres = []
 
     @abstractmethod
-    def get_sitemap_xml(self) -> List[str]:
-        """
-        Récupère les URLs depuis le ou les sitemaps XML
+    def obtenir_sitemap_xml(self) -> list[str]:
+        """Récupère les URLs depuis le ou les sitemaps XML
 
         Returns:
-            urls (List[str]): Liste de chaînes de caractères représentant les urls à scraper
+            list[str]: Représente les urls à scraper depuis le format XML
         """
         pass
 
     @abstractmethod
-    def get_sitemap_html(self) -> List[str]:
-        """
-        Récupère les URLs depuis le ou les sitemaps HTML
+    def obtenir_sitemap_html(self) -> list[str]:
+        """Récupère les URLs depuis le ou les sitemaps HTML
 
         Returns:
-            urls (List[str]): Liste de chaînes de caractères représentant les urls à scraper
+            list[str]: Représente les urls à scraper depuis le format HTML
         """
         pass
 
     @abstractmethod
-    def get_sitemap_api(self) -> List[str]:
-        """
-        Récupère les URLs depuis le ou les sitemaps API
+    def obtenir_sitemap_api(self) -> list[str]:
+        """Récupère les URLs depuis le ou les sitemaps API
 
         Returns:
-            urls (List[str]): Liste de chaînes de caractères représentant les urls à scraper
+            list[str]: Représente les urls à scraper depuis le format API
         """
         pass
 
     @abstractmethod
-    def filtre_idf_bureaux(self, urls: list) -> list:
-        """
-        Filtre les URLs pour supprimer les bureaux hors IDF
+    def filtre_urls(self, urls: list) -> list[str]:
+        """Filtre les URLs selon les règles spécifiques de chaque scraper
 
         Args:
-            urls (list[str]): Liste de chaînes de caractères représentant les urls à scraper
+            urls (list): Représente les urls avant filtrage
+
         Returns:
-            filtered_urls (list[str]): Liste de chaînes de caractères représentant les urls à scraper après filtrage des urls bureaux régions
+            list[str]: Représente les urls après filtrage
         """
         pass
 
-    def scrape_listing(self, url: str) -> dict:
+    def choix_methode_extraction(self) -> list[str]:
         """
-        Scrape les données d'une annonce depuis une url
+        Choisi le mode d'extraction de la sitemap en fonction de son type xml ou html
 
-        Hooks à surcharger par les instances si besoin spécifiques :
+        Returns:
+            list[str]: Liste de chaîne de caractères représentants les urls à scraper
+        """
+        logger.info("Choix de la méthode d'extraction")
+
+        if self.format_sitemap == "XML":
+            logger.info(f"[{self.sitemap_url}] Utilisation de la méthode XML")
+            return self.obtenir_sitemap_xml()
+        elif self.format_sitemap == "API":
+            logger.info(f"[{self.sitemap_url}] Utilisation de la méthode API")
+            return self.obtenir_sitemap_api()
+        elif self.format_sitemap == "URL":
+            logger.info(f"[{self.sitemap_url}] Utilisation de la méthode HTML")
+            return self.obtenir_sitemap_html()
+        else:
+            raise ValueError(
+                f"Le format de la sitemap : {self.format_sitemap} n'est pas supporté"
+            )
+
+    def rechercher_donnees_offre(self, url: str) -> dict[str]:
+        """Récupère les informations d'une offre à partir de son url
+
+        * Hooks à surcharger par les instances si besoin spécifiques :
             - post_traitement_hook()
 
         Args:
-            urls (str): Chaîne de caractères représentant l'url à scraper
-        Retruns:
-            data (dict): Dictionnaire avec les informations de chaque offre scrapée
+            url (str): Représentant l'url à scraper
+
+        Returns:
+            dict[str]: Dictionnaire avec les informations de l'offre scrapée depuis l'url
         """
         try:
             with httpx.Client(
@@ -92,9 +120,9 @@ class BaseScraper(ABC):
                 timeout=REQUEST_TIMEOUT,
                 follow_redirects=True,
             ) as client:
-                response = client.get(url)
-            response.raise_for_status()
-            soup = BeautifulSoup(response.text, "html.parser")
+                reponse = client.get(url)
+            reponse.raise_for_status()
+            soup = BeautifulSoup(reponse.text, "html.parser")
 
             # Extraction des données
             data = {
@@ -132,50 +160,36 @@ class BaseScraper(ABC):
             return None
 
     def post_traitement_hook(
-        self, data: dict, soup: BeautifulSoup, url: str
+        self, data: dict[str], soup: BeautifulSoup, url: str
     ) -> Optional[dict]:
-        """Fonction de post-traitement à surcharger si besoin spécifique pour certains champs du dictionnaire"""
-        pass
+        """Fonction de post-traitement à surcharger si besoin spécifique pour certains champs du dictionnaire
 
-    def choix_sitemap(self) -> list[str]:
-        """
-        Choisi le mode d'extraction de la sitemap en fonction de son type xml ou html
+        Args:
+            data (dict[str]): Représente les données de l'offre à scraper
+            soup (BeautifulSoup): Représente le parser lié à la page html de l'offre à scraper
+            url (str): Représente l'url de l'offre à scraper
 
         Returns:
-            (list[str]): Liste de chaîne de caractères représentants les urls à scraper
+            Optional[dict]: Représente les données de l'offre à scraper après modification spécifique pour un scraper
         """
-        logger.info("Choix de la méthode d'extraction")
-
-        if self.format_sitemap == "XML":
-            logger.info(f"[{self.sitemap_url}] Utilisation de la méthode XML")
-            return self.get_sitemap_xml()
-        elif self.format_sitemap == "API":
-            logger.info(f"[{self.sitemap_url}] Utilisation de la méthode API")
-            return self.get_sitemap_api()
-        elif self.format_sitemap == "URL":
-            logger.info(f"[{self.sitemap_url}] Utilisation de la méthode HTML")
-            return self.get_sitemap_html()
-        else:
-            raise ValueError(
-                f"Le format de la sitemap : {self.format_sitemap} n'est pas supporté"
-            )
+        pass
 
     def safe_select_text(self, soup: BeautifulSoup, selector: str) -> str:
         """
-        Extrait le texte d'un élément HTML de manière sécurisée
+        Extrait le texte d'un élément HTML de manière sécurisée depuis un élément BeautifulSoup
 
         Args:
-            soup (BeautifulSoup): Objet BeautifulSoup représentant le contenu HTML de la page à requêter
-            selector (str): Chaîne de caractère représentant l'élément CSS à requêter et qui provient du fichier settings.py
+            soup (BeautifulSoup): Représente le contenu HTML de la page à scraper
+            selector (str): Représente l'élément CSS à requêter et qui provient du fichier settings.py
         Returns:
-            (str): Chaîne de caractères représentant la valeur du sélécteur requêté sinon la valeur "N/A"
+            (str): Représente la valeur du sélécteur requêté sinon la valeur "N/A"
         """
         if selector == "None":
             return "N/A"
 
         try:
-            el = soup.select_one(selector)
-            return el.get_text(strip=True) if el else "N/A"
+            element_selector = soup.select_one(selector)
+            return element_selector.get_text(strip=True) if element_selector else "N/A"
 
         except Exception as e:
             logger.error(
@@ -184,38 +198,42 @@ class BaseScraper(ABC):
             return "N/A"
 
     def run(self) -> None:
-        """Exécute le programme complet"""
+        """Méthode pour lancer le scraper"""
         try:
-            logger.info(f"[{self.name.upper()}] Début du scraping")
-            urls = self.choix_sitemap()
-
-            if hasattr(self, "filtre_idf_bureaux") and callable(
-                getattr(self, "filtre_idf_bureaux")
-            ):
-                url_filtrees = self.filtre_idf_bureaux(urls)
+            logger.info(
+                f"[{self.name.upper()}] Début du programme de scraping des offres immobilières"
+            )
+            urls = self.choix_methode_extraction()
+            # Filtrer seulement si la méthode est implémentée
+            if hasattr(self, "filtre_urls") and callable(getattr(self, "filtre_urls")):
+                url_filtrees = self.filtre_urls(urls)
             else:
                 url_filtrees = urls
-
+            # Il n'est pas nécessaire de boucler sur la liste en passant par API pour l'instant
             if self.format_sitemap == "API":
-                return urls
+                self.resultats_offres = urls
+                logger.info(
+                    f"[{self.name.upper()}] Fin du scraping. {len(self.resultats_offres)} résultats collectés."
+                )
+                return self.resultats_offres
             else:
                 logger.info(
                     f"[{self.name.upper()}] Début du scraping des données pour chacune des offres"
                 )
                 for url in url_filtrees:
                     try:
-                        result = self.scrape_listing(url)
-                        if result:
-                            self.results.append(result)
+                        resultats = self.rechercher_donnees_offre(url)
+                        if resultats:
+                            self.resultats_offres.append(resultats)
                     except Exception as e:
                         logger.error(
                             f"[{self.name.upper()}] Erreur lors de la récupération de {url}: {e}"
                         )
 
                 logger.info(
-                    f"[{self.name.upper()}] Fin du scraping. {len(self.results)} résultats collectés."
+                    f"[{self.name.upper()}] Fin du scraping. {len(self.resultats_offres)} résultats collectés."
                 )
-                return self.results
+                return self.resultats_offres
 
         except Exception as e:
             logger.error(

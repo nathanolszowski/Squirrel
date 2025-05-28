@@ -44,6 +44,7 @@ class ALEXBOLTONScraper(RequestsScraper):
 
         Args:
             urls (list[str]): Liste de chaînes de caractères représentant les urls à scraper
+
         Returns:
             filtered_urls (list[str]): Liste de chaînes de caractères représentant les urls à scraper après filtrage des urls bureaux régions
         """
