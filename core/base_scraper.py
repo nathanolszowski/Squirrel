@@ -67,11 +67,11 @@ class BaseScraper(ABC):
         pass
 
     @abstractmethod
-    def filtre_urls(self, urls: list) -> list[str]:
+    def filtre_urls(self, urls: list[str]) -> list[str]:
         """Filtre les URLs selon les règles spécifiques de chaque scraper
 
         Args:
-            urls (list): Représente les urls avant filtrage
+            urls (list[str]): Représente les urls avant filtrage
 
         Returns:
             list[str]: Représente les urls après filtrage
