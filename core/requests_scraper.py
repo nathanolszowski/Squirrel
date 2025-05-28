@@ -15,6 +15,19 @@ logger = logging.getLogger(__name__)
 class RequestsScraper(BaseScraper):
     """Classe de base pour les scrapers utilisant httpx et qui hérite de la classe abstraite BaseScraper"""
 
+    def __init__(
+        self,
+        ua_generateur,
+        proxy,
+        name: str,
+        sitemap_url: str,
+        timeout=REQUEST_TIMEOUT,
+    ) -> None:
+        """Instanciation d'un scraper Requests depuis la classe abstraite BaseScraper"""
+        super().__init__(ua_generateur, proxy, name, sitemap_url)
+        self.driver = None
+        self.timeout = timeout
+
     def get_sitemap_xml(self) -> list[str]:
         """
         Récupère les URLs depuis le ou les sitemaps XML en surchageant la méthode de la classe abstraite BaseScraper

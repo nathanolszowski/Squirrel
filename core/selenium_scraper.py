@@ -28,19 +28,20 @@ class SeleniumScraper(BaseScraper):
         sitemap_url: str,
         timeout=SELENIUM_WAIT_TIME,
     ) -> None:
+        """Instanciation d'un scraper Selenium depuis la classe abstraite BaseScraper"""
         super().__init__(ua_generateur, proxy, name, sitemap_url)
         self.driver = None
         self.timeout = timeout
-        self.setup_driver()
+        self.configuration_driver()
 
-    def setup_driver(self) -> None:
+    def configuration_driver(self) -> None:
         """Configure le driver Selenium via les infos du fichier settings.py"""
         # Proxy config
         seleniumwire_proxy = {
             "proxy": {
                 "http": self.proxy,
                 "https": self.proxy,
-                "no_proxy": "localhost,127.0.0.1",  # Évite le proxy pour ces adresses
+                "no_proxy": "localhost,127.0.0.1",  # Éviter le proxy pour ces adresses
             },
         }
         options = Options()
@@ -63,9 +64,9 @@ class SeleniumScraper(BaseScraper):
             )
             raise
 
-    def get_sitemap_xml(self) -> list:
+    def get_sitemap_xml(self) -> list[str]:
         """
-        Récupère les URLs depuis le ou les sitemaps XML
+        Récupère les URLs depuis le ou les sitemaps XML en surchageant la méthode de la classe abstraite BaseScraper
 
         Returns:
             urls (list[str]): Liste de chaîne de caractères représentants les urls à scraper
@@ -82,12 +83,12 @@ class SeleniumScraper(BaseScraper):
                     f"[{self.name}{actif}] Trouvé {len(urls)} URLs dans les sitemaps"
                 )
             else:
-                logger.info("Récupération depuis la sitemap XML")
+                logger.info("Récupération depuis le sitemap XML")
                 self.driver.get(self.sitemap_url)
                 soup = BeautifulSoup(self.driver.page_source, "xml")
                 urls = [url.find("loc").text for url in soup.find_all("url")]
                 logger.info(
-                    f"[{self.name.upper()}] Trouvé {len(urls)} URLs dans le sitemap"
+                    f"[{self.name.upper()}] Trouvé {len(urls)} URLs dans le sitemap XML"
                 )
             return urls
 
