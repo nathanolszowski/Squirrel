@@ -12,10 +12,11 @@ SELENIUM_WAIT_TIME = 30  # secondes
 
 # Configuration Selenium
 SELENIUM_OPTIONS = [
-    "--headless",
+    "--headless=new",
     "--disable-blink-features=AutomationControlled",
     "--disable-gpu",
     "--enable-unsafe-swiftshader",
+    "--disable-3d-apis",
     "--no-sandbox",
     "start-maximized",
     "--log-level=1",

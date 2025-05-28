@@ -175,7 +175,7 @@ class BaseScraper(ABC):
                 return urls
             else:
                 logger.info(f"[{self.name.upper()}] Début du scraping des données pour chacune des offres")
-                for url in url_filtrees:
+                for url in url_filtrees[:5]:
                     try:
                         result = self.scrape_listing(url)
                         if result:

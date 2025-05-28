@@ -6,9 +6,10 @@ Classe de base pour les scrapers utilisant Selenium
 
 import logging
 from bs4 import BeautifulSoup
-from selenium import webdriver
+from seleniumwire import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
+
 from webdriver_manager.chrome import ChromeDriverManager
 from .base_scraper import BaseScraper
 from config.settings import SELENIUM_OPTIONS, SELENIUM_WAIT_TIME
@@ -26,16 +27,24 @@ class SeleniumScraper(BaseScraper):
     
     def setup_driver(self) -> None:
         """Configure le driver Selenium via les infos du fichier settings.py"""
+        # Proxy config
+        seleniumwire_proxy = {
+            "proxy": {
+                "http": self.proxy,
+                "https": self.proxy,
+                "no_proxy": 'localhost,127.0.0.1'  # Évite le proxy pour ces adresses
+            },
+        }
         options = Options()
         for option in SELENIUM_OPTIONS:
             options.add_argument(option)
         options.add_argument(f"user-agent={self.ua_generateur.get()}")
-        options.add_argument(f"--proxy-server={self.proxy}")
         
         try:
             self.driver = webdriver.Chrome(
                 service=Service(ChromeDriverManager().install()),
-                options=options
+                options=options,
+                seleniumwire_options=seleniumwire_proxy
             )
             logger.info(f"[{self.name.upper()}] Le driver Selenium a été initialisé avec succès")
         except Exception as e:
@@ -54,13 +63,12 @@ class SeleniumScraper(BaseScraper):
             if isinstance(self.sitemap_url, dict):
                 for actif, url in self.sitemap_url.items():
                     logger.info("Récupération depuis les sitemaps XML")
-                    self.driver.get(url)
                     soup = BeautifulSoup(self.driver.page_source, "xml")
+                    print(soup)
                     urls.extend([url.find("loc").text for url in soup.find_all("url")])
                 logger.info(f"[{self.name}{actif}] Trouvé {len(urls)} URLs dans les sitemaps")
             else:
                 logger.info("Récupération depuis la sitemap XML")
-                print(self.sitemap_url)
                 self.driver.get(self.sitemap_url)
                 soup = BeautifulSoup(self.driver.page_source, "xml")
                 urls = [url.find("loc").text for url in soup.find_all("url")]

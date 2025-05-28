@@ -5,11 +5,11 @@ Point d'entrée principal du scraper
 
 import logging
 #from scrapers.bnp import BNPScraper
-from scrapers.jll import JLLScraper
+#from scrapers.jll import JLLScraper
 #from scrapers.cbre import CBREScraper
 #from scrapers.alexbolton import ALEXBOLTONScraper
 #from scrapers.cushman import CUSHMANScraper
-#from scrapers.knightfrank import KNIGHTFRANKScraper
+from scrapers.knightfrank import KNIGHTFRANKScraper
 #from scrapers.arthurloyd import ARTHURLOYDScraper
 #from scrapers.savills import SAVILLSScraper
 from utils.export import export_json
@@ -18,28 +18,28 @@ from utils.user_agent import Rotator, ListUserAgent
 
 def main():
     """Fonction principale"""
+    """Fonction principale"""
     
     # Configuration du logging avec fichier horodaté
     log_file = setup_logging()
     logger = logging.getLogger(__name__)
     logging.getLogger("httpx").setLevel(logging.WARNING)
+    logging.getLogger("seleniumwire").setLevel(logging.WARNING)
     logger.info(f"Démarrage du programme de scraping. Les logs seront conservés dans ce fichier: {log_file}")
     
-    proxy = ""
+    proxy = "YOUR PROXY ADRESS"
 
     ua_liste = ListUserAgent(proxy)
     ua_generateur = Rotator(ua_liste.obtenir_liste())
 
-    
-    
     # Liste des scrapers à exécuter
     scrapers = [
         #BNPScraper(ua_generateur, proxy)
-        JLLScraper(ua_generateur, proxy)
+        #JLLScraper(ua_generateur, proxy)
         #CBREScraper(ua_generateur, proxy)
         #ALEXBOLTONScraper(ua_generateur, proxy)
         #CUSHMANScraper(ua_generateur, proxy),
-        #KNIGHTFRANKScraper(ua_generateur, proxy)
+        KNIGHTFRANKScraper(ua_generateur, proxy)
         #ARTHURLOYDScraper(ua_generateur, proxy),
         #SAVILLSScraper(ua_generateur, proxy)
         # Ajouter les autres scrapers ici
@@ -62,7 +62,7 @@ def main():
             
     if all_results :
         export_json(all_results)
-        #http://zfqxbelefdh8k61-country-fr-session-qoasi5chbw-lifetime-1:2miqjvw2r3u14nf@rp.scrapegw.com:6060
+        
     logger.info("Le programme de scraping est terminé")
 if __name__ == "__main__":
     main()
