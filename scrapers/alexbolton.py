@@ -32,7 +32,7 @@ class ALEXBOLTONScraper(RequestsScraper):
         Returns:
             dict[str]: Représente les données de l'offre à scraper après modification spécifique pour un scraper
         """
-        # Déterminer le contrat
+        # Surcharger la méthode obtenir contrat
         contrat_map = {
             "Loyer": "Location",
             "Prix": "Vente",
@@ -45,12 +45,12 @@ class ALEXBOLTONScraper(RequestsScraper):
             ),
             "N/A",
         )
-        # Déterminer l'accroche
+        # Surcharger la méthode obtenir accroche
         accroche = soup.find("div", class_="col-lg-5 position-relative")
         accroche = accroche.find_all("p")
         data["accroche"] = accroche[8].get_text()
 
-    def filtre_idf_bureaux(self, urls: list[str]) -> list[str]:
+    def filtre_urls(self, urls: list[str]) -> list[str]:
         """
         Méthode de filtrage surchargée pour les besoins d uscraper AlexBolton. FYI : AlexBolton ne fait que du Bureaux IDF
 
