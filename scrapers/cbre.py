@@ -20,7 +20,19 @@ class CBREScraper(RequestsScraper):
         super().__init__(ua_generateur, proxy, "CBRE", SITEMAPS["CBRE"])
         self.selectors = CBRE_SELECTORS
 
-    def post_traitement_hook(self, data: dict, soup: BeautifulSoup, url: str) -> dict:
+    def post_traitement_hook(
+        self, data: dict, soup: BeautifulSoup, url: str
+    ) -> dict[str]:
+        """Méthode de post-traitement surchargée pour les besoins du scraper CBRE
+
+        Args:
+            data (dict[str]): Représente les données de l'offre à scraper
+            soup (BeautifulSoup): Représente le parser lié à la page html de l'offre à scraper
+            url (str): Représente l'url de l'offre à scraper
+
+        Returns:
+            dict[str]: Représente les données de l'offre à scraper après modification spécifique pour un scraper
+        """
         # Surcharger la méthode obtenir la reference
         reference_element = soup.find("li", class_="LS breadcrumb-item active")
         reference_element = reference_element.find("span")
@@ -45,14 +57,15 @@ class CBREScraper(RequestsScraper):
             (label for key, label in contrat_map.items() if key in url), "N/A"
         )
 
-    def filtre_idf_bureaux(self, urls: list[str]) -> list[str]:
+    def filtre_urls(self, urls: list[str]) -> list[str]:
         """
-        Filtre les URLs pour supprimer les bureaux hors IDF
+        Méthode de filtrage surchargée pour les besoins du scraper BNP
 
         Args:
             urls (list[str]): Liste de chaînes de caractères représentant les urls à scraper
+
         Returns:
-            filtered_urls (list[str]): Liste de chaînes de caractères représentant les urls à scraper après filtrage des urls bureaux régions
+            urls_filtrees (list[str]): Liste de chaînes de caractères représentant les urls à scraper après filtrage des urls bureaux régions
         """
         logger.info("Filtrage des offres")
         urls_filtrees = []
@@ -60,7 +73,9 @@ class CBREScraper(RequestsScraper):
             r"https://immobilier.cbre.fr/offre/(a-louer|a-vendre)/bureaux/(\d+)"
         )
         for url in urls:
-            if url.startswith("https://immobilier.cbre.fr/offre/"):
+            if url.startswith(
+                "https://immobilier.cbre.fr/offre/"
+            ):  # On filtre les offres bureaux dont l'url commence par cette string
                 if "bureaux" in url:
                     match = pattern.match(url)
                     if match and match.group(2)[:2] in DEPARTMENTS_IDF:
