@@ -32,7 +32,7 @@ def main():
         f"Démarrage du programme de scraping. Les logs seront conservés dans ce fichier: {log_file}"
     )
 
-    PROXY = "YOUR PROXY ADRESS"
+    PROXY = "TON ADRESSE DE PROXY"
 
     ua_liste = ListUserAgent(PROXY)
     ua_generateur = Rotator(ua_liste.obtenir_liste())
@@ -50,25 +50,25 @@ def main():
         # Ajouter les autres scrapers ici
     ]
 
-    all_results = []
+    all_resultats = []
 
     # Exécution des scrapers
     for scraper in scrapers:
         try:
             logger.info(f"Démarrage du scraper {scraper.name.upper()} ...")
-            results = scraper.run()
+            resultats = scraper.run()
 
-            if results:
-                all_results.extend(results)
+            if resultats:
+                all_resultats.extend(resultats)
                 logger.info(
-                    f"Récupération de {len(results)} résultats pour le scraper {scraper.name}"
+                    f"Récupération de {len(resultats)} résultats pour le scraper {scraper.name}"
                 )
 
         except Exception as e:
             logger.error(f"Erreur de lancement pour {scraper.name} : {e}")
 
-    if all_results:
-        export_json(all_results)
+    if all_resultats:
+        export_json(all_resultats)
 
     logger.info("Le programme de scraping est terminé")
 
