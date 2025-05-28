@@ -162,7 +162,7 @@ class BaseScraper(ABC):
     def post_traitement_hook(
         self, data: dict[str], soup: BeautifulSoup, url: str
     ) -> Optional[dict]:
-        """Fonction de post-traitement à surcharger si besoin spécifique pour certains champs du dictionnaire
+        """Méthode de post-traitement à surcharger si besoin spécifique pour certains champs du dictionnaire
 
         Args:
             data (dict[str]): Représente les données de l'offre à scraper

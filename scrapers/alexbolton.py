@@ -17,9 +17,21 @@ class ALEXBOLTONScraper(RequestsScraper):
 
     def __init__(self, ua_generateur, proxy) -> None:
         super().__init__(ua_generateur, proxy, "ALEXBOLTON", SITEMAPS["ALEXBOLTON"])
-        self.selectors = ALEXBOLTON_SELECTORS  # -*- coding: utf-8 -*-
+        self.selectors = ALEXBOLTON_SELECTORS
 
-    def post_taitement_hook(self, data: dict, soup: BeautifulSoup, url: str) -> dict:
+    def post_taitement_hook(
+        self, data: dict, soup: BeautifulSoup, url: str
+    ) -> dict[str]:
+        """Méthode de post-traitement surchargée pour les besoins du scraper AlexBolton
+
+        Args:
+            data (dict[str]): Représente les données de l'offre à scraper
+            soup (BeautifulSoup): Représente le parser lié à la page html de l'offre à scraper
+            url (str): Représente l'url de l'offre à scraper
+
+        Returns:
+            dict[str]: Représente les données de l'offre à scraper après modification spécifique pour un scraper
+        """
         # Déterminer le contrat
         contrat_map = {
             "Loyer": "Location",
@@ -40,20 +52,22 @@ class ALEXBOLTONScraper(RequestsScraper):
 
     def filtre_idf_bureaux(self, urls: list[str]) -> list[str]:
         """
-        Filtre les URLs pour supprimer les bureaux hors IDF. FYI : AlexBolton ne fait que du Bureaux IDF
+        Méthode de filtrage surchargée pour les besoins d uscraper AlexBolton. FYI : AlexBolton ne fait que du Bureaux IDF
 
         Args:
             urls (list[str]): Liste de chaînes de caractères représentant les urls à scraper
 
         Returns:
-            filtered_urls (list[str]): Liste de chaînes de caractères représentant les urls à scraper après filtrage des urls bureaux régions
+            urls_filtrees (list[str]): Liste de chaînes de caractères représentant les urls à scraper après filtrage des urls bureaux régions
         """
-        logger.info("Filtrage des offres")
-        filtered_urls = []
+        logger.info("Filtrage des offres AlexBolton")
+        urls_filtrees = []
         for url in urls:
-            if url.startswith("https://www.alexbolton.fr/annonces/"):
-                filtered_urls.append(url)
+            if url.startswith(
+                "https://www.alexbolton.fr/annonces/"
+            ):  # On filtre les offres bureaux dont l'url commence par cette string
+                urls_filtrees.append(url)
         logger.info(
-            f"[{self.name.upper()}] Trouvé {len(filtered_urls)} URLs filtrées sans bureaux région"
+            f"[{self.name.upper()}] Trouvé {len(urls_filtrees)} URLs filtrées sans bureaux région"
         )
-        return filtered_urls
+        return urls_filtrees
