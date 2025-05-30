@@ -84,7 +84,8 @@ class ListUserAgent:
         try:
             with httpx.Client(
                 proxy=self.proxy,
-                headers={"User-agent": self.ua_generateur.get()},
+                headers={"User-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"},
                 timeout=REQUEST_TIMEOUT,
                 follow_redirects=True,
             ) as client:
@@ -308,7 +309,7 @@ class Rotator:
         # Sélectionne un user-agent
         user_agent = random.choices(
             self.user_agents,
-            notations=user_agent_notes,
+            weights=user_agent_notes,
             k=1,
         )[0]
         # Met à jour l'attribut de dernière utilisation

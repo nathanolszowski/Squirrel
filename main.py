@@ -6,13 +6,13 @@ Point d'entrée principal du scraper
 import logging
 
 # from scrapers.bnp import BNPScraper
-# from scrapers.jll import JLLScraper
+from scrapers.jll import JLLScraper
 # from scrapers.cbre import CBREScraper
 # from scrapers.alexbolton import ALEXBOLTONScraper
 # from scrapers.cushman import CUSHMANScraper
 # from scrapers.arthurloyd import ARTHURLOYDScraper
 # from scrapers.savills import SAVILLSScraper
-from scrapers.knightfrank import KNIGHTFRANKScraper
+# from scrapers.knightfrank import KNIGHTFRANKScraper
 
 
 from utils.export import export_json
@@ -32,7 +32,7 @@ def main():
         f"Démarrage du programme de scraping. Les logs seront conservés dans ce fichier: {log_file}"
     )
 
-    PROXY = "TON ADRESSE DE PROXY"
+    PROXY = "TON ADRESSE PROXY"
 
     ua_liste = ListUserAgent(PROXY)
     ua_generateur = Rotator(ua_liste.obtenir_liste())
@@ -40,12 +40,12 @@ def main():
     # Liste des scrapers à exécuter
     scrapers = [
         # BNPScraper(ua_generateur, PROXY)
-        # JLLScraper(ua_generateur, PROXY)
+        JLLScraper(ua_generateur, PROXY)
         # CBREScraper(ua_generateur, PROXY)
         # ALEXBOLTONScraper(ua_generateur, PROXY)
         # CUSHMANScraper(ua_generateur, PROXY),
-        KNIGHTFRANKScraper(ua_generateur, PROXY)
-        # ARTHURLOYDScraper(ua_generateur, PROXY),
+        # KNIGHTFRANKScraper(ua_generateur, PROXY)
+        # ARTHURLOYDScraper(ua_generateur, PROXY)
         # SAVILLSScraper(ua_generateur, PROXY)
         # Ajouter les autres scrapers ici
     ]
