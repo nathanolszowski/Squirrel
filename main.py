@@ -33,7 +33,7 @@ def main():
         f"Démarrage du programme de scraping. Les logs seront conservés dans ce fichier: {log_file}"
     )
 
-    PROXY = "http://zfqxbelefdh8k61-country-fr-session-elbdhwr6mq-lifetime-1:vkfspx2ez8cjy7c@rp.scrapegw.com:6060"
+    PROXY = ""
 
     ua_liste = ListUserAgent(PROXY)
     ua_generateur = Rotator(ua_liste.obtenir_liste())
