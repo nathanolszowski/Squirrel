@@ -6,12 +6,13 @@ Point d'entrée principal du scraper
 import logging
 
 # from scrapers.bnp import BNPScraper
-from scrapers.jll import JLLScraper
+# from scrapers.jll import JLLScraper
 # from scrapers.cbre import CBREScraper
 # from scrapers.alexbolton import ALEXBOLTONScraper
 # from scrapers.cushman import CUSHMANScraper
 # from scrapers.arthurloyd import ARTHURLOYDScraper
-# from scrapers.savills import SAVILLSScraper
+from scrapers.savills import SAVILLSScraper
+
 # from scrapers.knightfrank import KNIGHTFRANKScraper
 
 
@@ -32,21 +33,21 @@ def main():
         f"Démarrage du programme de scraping. Les logs seront conservés dans ce fichier: {log_file}"
     )
 
-    PROXY = "TON ADRESSE PROXY"
+    PROXY = "http://zfqxbelefdh8k61-country-fr-session-elbdhwr6mq-lifetime-1:vkfspx2ez8cjy7c@rp.scrapegw.com:6060"
 
     ua_liste = ListUserAgent(PROXY)
     ua_generateur = Rotator(ua_liste.obtenir_liste())
 
     # Liste des scrapers à exécuter
     scrapers = [
-        # BNPScraper(ua_generateur, PROXY)
-        JLLScraper(ua_generateur, PROXY)
-        # CBREScraper(ua_generateur, PROXY)
-        # ALEXBOLTONScraper(ua_generateur, PROXY)
+        # BNPScraper(ua_generateur, PROXY),
+        # JLLScraper(ua_generateur, PROXY),
+        # CBREScraper(ua_generateur, PROXY),
+        # ALEXBOLTONScraper(ua_generateur, PROXY),
         # CUSHMANScraper(ua_generateur, PROXY),
-        # KNIGHTFRANKScraper(ua_generateur, PROXY)
-        # ARTHURLOYDScraper(ua_generateur, PROXY)
-        # SAVILLSScraper(ua_generateur, PROXY)
+        # KNIGHTFRANKScraper(ua_generateur, PROXY),
+        # ARTHURLOYDScraper(ua_generateur, PROXY),
+        SAVILLSScraper(ua_generateur, PROXY)
         # Ajouter les autres scrapers ici
     ]
 

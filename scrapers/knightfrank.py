@@ -57,7 +57,6 @@ class KNIGHTFRANKScraper(SeleniumScraper):
             list[str]: Représente la liste d'urls formatées des offres à scraper
         """
         div_parent = soup.select_one("#listCards > div")
-        print(div_parent)
         if not div_parent:
             print("Pas d'élément listCards trouvé")
             return []

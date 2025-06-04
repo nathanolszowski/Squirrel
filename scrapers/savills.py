@@ -5,6 +5,7 @@ Scraper pour SAVILLS
 
 import logging
 import httpx
+import json
 from typing import Union
 from core.requests_scraper import RequestsScraper
 from config.settings import SITEMAPS, REQUEST_TIMEOUT
@@ -15,14 +16,16 @@ logger = logging.getLogger(__name__)
 class SAVILLSScraper(RequestsScraper):
     """Scraper pour le site SAVILLS qui hérite de la classe RequestsScraper"""
 
-    def __init__(self, ua_generateur) -> None:
-        super().__init__(ua_generateur, "SAVILLS", SITEMAPS["SAVILLS"])
+    def __init__(self, ua_generateur, proxy) -> None:
+        super().__init__(ua_generateur, proxy, "SAVILLS", SITEMAPS["SAVILLS"])
 
         self.base_url = "https://search.savills.com"
+        self.ua_generateur = ua_generateur
+        self.proxy = proxy
         self.api_url = "https://livev6-searchapi.savills.com/Data/SearchByUrl"
         self.property_url = "https://search.savills.com/fr/fr/bien-immobilier-details/"
 
-    def get_sitemap_api(self) -> Union[list[str], list[None]]:
+    def obtenir_sitemap_api(self) -> Union[list[str], list[None]]:
         """Méthode de récupération les URLs depuis le ou les sitemaps API qui surcharge celle de la classe abstraite BaseScraper
 
         Returns:
@@ -42,6 +45,7 @@ class SAVILLSScraper(RequestsScraper):
             nb_pages_resultats = 1
             while page <= nb_pages_resultats:
                 params = f"{url}&Page={page}"
+                print(params)
                 params_url = {
                     "url": params,
                 }
@@ -49,12 +53,13 @@ class SAVILLSScraper(RequestsScraper):
                     with httpx.Client(
                         proxy=self.proxy,
                         headers=header_search_url,
-                        json=params_url,
                         follow_redirects=True,
                         timeout=REQUEST_TIMEOUT,
                     ) as client:
-                        reponse = client.post(self.api_url)
+                        reponse = client.post(self.api_url, data=params_url)
                     reponse.raise_for_status()
+                    data = reponse.json()
+                    logger.info(json.dumps(data, indent=2))
 
                     nb_pages_resultats = reponse.json()["Results"]["PagingInfo"][
                         "PageCount"
@@ -80,7 +85,7 @@ class SAVILLSScraper(RequestsScraper):
                     page += 1
                 except Exception as e:
                     logger.error(
-                        f"[{self.name}] Erreur scraping des données pour {url}: {e}"
+                        f"[{self.name}] Erreur scraping des données pour {self.api_url}{params_url}: {e}"
                     )
                     return []
         return resultats
