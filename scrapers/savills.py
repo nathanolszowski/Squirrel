@@ -45,7 +45,6 @@ class SAVILLSScraper(RequestsScraper):
             nb_pages_resultats = 1
             while page <= nb_pages_resultats:
                 params = f"{url}&Page={page}"
-                print(params)
                 params_url = {
                     "url": params,
                 }
@@ -59,34 +58,60 @@ class SAVILLSScraper(RequestsScraper):
                         reponse = client.post(self.api_url, data=params_url)
                     reponse.raise_for_status()
                     data = reponse.json()
-                    logger.info(json.dumps(data, indent=2))
+                    # Extraire et sécuriser le nombre de pages
+                    paging_info = (
+                        data.get("Results", {}).get("PagingInfo", {}).get("PageCount")
+                    )
+                    if isinstance(paging_info, int) and paging_info > 0:
+                        nb_pages_resultats = paging_info
+                    else:
+                        logger.warning(
+                            f"[{self.name}] Aucune page trouvée pour {actif}"
+                        )
+                        break  # sortir de la boucle while
 
-                    nb_pages_resultats = reponse.json()["Results"]["PagingInfo"][
-                        "PageCount"
-                    ]
-                    offres = reponse.json()["Results"]["Properties"]
-
+                    logger.info(
+                        f"[{self.name}] Page {page} / {nb_pages_resultats} pour {actif}"
+                    )
+                    offres = data.get("Results", {}).get("Properties", [])
                     for offre in offres:
                         offre_detail = {
                             "confrere": self.name,
                             "url": self.property_url
-                            + offre["ExternalPropertyIDFormatted"],
-                            "reference": offre["ExternalPropertyIDFormatted"],
-                            "actif": offre["PropertyTypes"]["Caption"],
-                            "disponibilite": offre["ByUnit"][0]["Disponibilité"],
-                            "surface": offre["SizeFormatted"],
-                            "adresse": offre["AddressLine2"],
-                            "contact": offre["PrimaryAgent"]["AgentName"],
-                            "accroche": offre["Description"],
-                            "amenagements": offre["LongDescription"]["Body"],
-                            "prix_global": offre["DisplayPriceText"],
+                            + offre.get("ExternalPropertyIDFormatted", ""),
+                            "reference": offre.get("ExternalPropertyIDFormatted", ""),
+                            "actif": (
+                                offre.get("PropertyTypes", [{}])[0].get("Caption", "")
+                                if isinstance(offre.get("PropertyTypes"), list)
+                                and len(offre.get("PropertyTypes")) > 0
+                                else ""
+                            ),
+                            "disponibilite": (
+                                offre.get("ByUnit", [{}])[0].get("Disponibilité", "")
+                                if isinstance(offre.get("ByUnit"), list)
+                                and len(offre.get("ByUnit")) > 0
+                                else ""
+                            ),
+                            "surface": offre.get("SizeFormatted", ""),
+                            "adresse": offre.get("AddressLine2", ""),
+                            "contact": offre.get("PrimaryAgent", {}).get(
+                                "AgentName", ""
+                            ),
+                            "accroche": offre.get("Description", ""),
+                            "amenagements": (
+                                offre.get("LongDescription", [{}])[0].get("Body", "")
+                                if isinstance(offre.get("LongDescription"), list)
+                                and len(offre.get("LongDescription")) > 0
+                                else ""
+                            ),
+                            "prix_global": offre.get("DisplayPriceText", ""),
                         }
+
                         resultats.append(offre_detail)
                     page += 1
+
                 except Exception as e:
-                    logger.error(
-                        f"[{self.name}] Erreur scraping des données pour {self.api_url}{params_url}: {e}"
-                    )
+                    logger.error(f"[{self.name}] Erreur page {page}: {e}")
                     return []
         return resultats
 
