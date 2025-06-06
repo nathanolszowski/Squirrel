@@ -75,17 +75,34 @@ class SAVILLSScraper(RequestsScraper):
                     )
                     offres = data.get("Results", {}).get("Properties", [])
                     for offre in offres:
+                        contrat = offre.get("SizeDescription", "")
+                        contrat_map = {
+                            "louer": "Location",
+                            "vendre": "Vente",
+                        }
+                        contrat = next(
+                            (
+                                label
+                                for key, label in contrat_map.items()
+                                if key in contrat
+                            ),
+                            "N/A",
+                        )
                         offre_detail = {
                             "confrere": self.name,
                             "url": self.property_url
                             + offre.get("ExternalPropertyIDFormatted", ""),
                             "reference": offre.get("ExternalPropertyIDFormatted", ""),
+                            "url_image": offre.get("ImagesGallery")[0].get(
+                                "ImageUrl_L", ""
+                            ),
                             "actif": (
                                 offre.get("PropertyTypes", [{}])[0].get("Caption", "")
                                 if isinstance(offre.get("PropertyTypes"), list)
                                 and len(offre.get("PropertyTypes")) > 0
                                 else ""
                             ),
+                            "contrat": contrat,
                             "disponibilite": (
                                 offre.get("ByUnit", [{}])[0].get("Disponibilité", "")
                                 if isinstance(offre.get("ByUnit"), list)
@@ -94,6 +111,8 @@ class SAVILLSScraper(RequestsScraper):
                             ),
                             "surface": offre.get("SizeFormatted", ""),
                             "adresse": offre.get("AddressLine2", ""),
+                            "latitude": offre.get("Latitude", ""),
+                            "longitude": offre.get("Longitude", ""),
                             "contact": offre.get("PrimaryAgent", {}).get(
                                 "AgentName", ""
                             ),
