@@ -117,7 +117,8 @@ class ListUserAgent:
         try:
             with httpx.Client(
                 proxy=self.proxy,
-                headers={"User-agent": self.ua_generateur.get()},
+                headers={"User-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"},
                 timeout=REQUEST_TIMEOUT,
                 follow_redirects=True,
             ) as client:
@@ -139,15 +140,16 @@ class ListUserAgent:
             try:
                 with httpx.Client(
                     proxy=self.proxy,
-                    headers={"User-agent": self.ua_generateur.get()},
+                headers={"User-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"},
                     timeout=REQUEST_TIMEOUT,
                     follow_redirects=True,
                 ) as client:
                     response = client.get(url)
                 soup = BeautifulSoup(response.content, "html.parser")
-                user_agents_string.append(
-                    soup.select_one("body > div:nth-child(1) > main > h1").get_text()
-                )
+                ua_chaine = soup.select_one("body > div:nth-child(1) > main > h1").get_text()
+                if any(ua_chaine.startswith(browser) for browser in ["Mozilla", "Opéra"]):
+                    user_agents_string.append(ua_chaine)
             except httpx.HTTPError as e:
                 logger.error(
                     f"[{self.url_actuelle_user_agents}] Erreur lors de la récupération la dernière liste à jour d'user-agents : {e}"

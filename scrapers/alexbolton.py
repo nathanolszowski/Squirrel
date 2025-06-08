@@ -19,7 +19,7 @@ class ALEXBOLTONScraper(RequestsScraper):
         super().__init__(ua_generateur, proxy, "ALEXBOLTON", SITEMAPS["ALEXBOLTON"])
         self.selectors = ALEXBOLTON_SELECTORS
 
-    def post_taitement_hook(self, data: dict, soup: BeautifulSoup, url: str) -> None:
+    def post_traitement_hook(self, data: dict, soup: BeautifulSoup, url: str) -> None:
         """Méthode de post-traitement surchargée pour les besoins du scraper AlexBolton
 
         Args:
@@ -27,6 +27,7 @@ class ALEXBOLTONScraper(RequestsScraper):
             soup (BeautifulSoup): Représente le parser lié à la page html de l'offre à scraper
             url (str): Représente l'url de l'offre à scraper
         """
+        data["actif"] = "Bureaux"
         # Surcharger la méthode obtenir contrat
         contrat_map = {
             "Loyer": "Location",
@@ -44,6 +45,17 @@ class ALEXBOLTONScraper(RequestsScraper):
         accroche = soup.find("div", class_="col-lg-5 position-relative")
         accroche = accroche.find_all("p")
         data["accroche"] = accroche[8].get_text()
+
+        # Surcharger la méthode obtenir url image
+        img = soup.find("img", class_="listing-header-photo-img u-z-index-1 d-md-none")
+        if img and img.get("src"):
+            data["url_image"] = img["src"]
+
+        # # Surcharger la méthode obtenir latitude et longitude
+        position_div = soup.find("div", id="listing-map-target")
+        if position_div:
+            data["latitude"] = position_div.get("data-latitude")
+            data["longitude"] = position_div.get("data-longitude")
 
     def filtre_urls(self, urls: list[str]) -> list[str]:
         """

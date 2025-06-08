@@ -5,7 +5,7 @@ Il permet d'avoir une vue du marché complète pour le bureaux en Île-de-France
 Liste des sites d'agences disponibles :
 - CBRE
 - BNP
-- JLL
+- JLL /!/ En panne pour le moment /!/
 - AlexBolton
 - Cushman & Wakefield
 - Knight Frank
@@ -15,12 +15,16 @@ Liste des sites d'agences disponibles :
 ## Etat du projet et amélioration à venir
 
 1. Priorité 1 :
+- Modifier le cache d'user-agent pour qu'il ne prenne que les browsers chrome/mozilla/opéra (quelques erreurs objectification en UserAgent)
+- Ajout des longitude/latitude pour toutes les agences
+- Ajout lien photo descriptive pour toutes les agences
+- Homogénéiser les données
 - Gérer les doublons d'offres :
    - ajout des données de localisation si disponibles (long/lat)
    - comparer lat/long, adresse, accroche, titre et surface totale
-- Modifier le cache d'user-agent pour qu'il ne prenne que les browsers chrome/mozilla/opéra (quelques erreurs objectification en UserAgent)
 
 2. Priorité 2 :
+- Ajout des secteurs de marché
 - Système de cache pour éviter de re-scraper les mêmes pages trop souvent ?
 - Repérage d'un trop grand nombre de N/A sur certaines valeurs pour surveiller la présence du bon sélecteur
 - Travail sur les offres de coworking

@@ -5,6 +5,8 @@ Scraper pour CUSHMAN
 
 import logging
 import re
+import json
+import html
 from bs4 import BeautifulSoup
 from core.requests_scraper import RequestsScraper
 from config.settings import DEPARTMENTS_IDF, SITEMAPS
@@ -42,6 +44,20 @@ class CUSHMANScraper(RequestsScraper):
         data["actif"] = next(
             (label for key, label in actif_map.items() if key in data["actif"]), "N/A"
         )
+        # Surcharger la méthode obtenir l'url image
+        parent_image = soup.find("div", class_="c-swiper__slide")
+        img_image = parent_image.find("source")
+        if img_image and img_image["srcset"] :
+            data["url_image"] = img_image["srcset"]
+
+        # Surcharger la méthode obtenir la posititon gps
+        div_map = soup.find('div', class_='c-map js-map')
+        data_property = div_map.get('data-property')
+        decoded_json_str = html.unescape(data_property)
+        positions = json.loads(decoded_json_str)
+        data["latitude"] = positions["address"]["displayedGeolocation"]["lat"]
+        data["longitude"] = positions["address"]["displayedGeolocation"]["lon"]
+
 
     def filtre_urls(self, urls: list[str]) -> list[str]:
         """

@@ -45,7 +45,24 @@ class KNIGHTFRANKScraper(SeleniumScraper):
         )
         # Surcharger la méthode obtenir l'actif
         data["actif"] = "Bureaux"
-        # Déterminer l'adresse
+        # Surcharger la méthode obtenir l'adresse
+
+        # Surcharger la méthode obtenir l'url image
+        parent_image = soup.find("div", class_="col-xl-8 p-0 bg-dark photoUne")
+        img_image = parent_image.find("img")
+        if img_image and img_image["src"] :
+            data["url_image"] = img_image["src"]
+        # Surcharger la méthode obtenir la position
+        scripts = soup.find_all("script")
+        for script in scripts:
+            if script.string and "initMap" in script.string:  # Filtre le script qui contient la fonction initMap
+                js_code = script.string
+                lat_match = re.search(r"lat\s*:\s*([0-9\.\-]+)", js_code)
+                lng_match = re.search(r"lng\s*:\s*([0-9\.\-]+)", js_code)
+                
+                if lat_match and lng_match:
+                    data["latitude"] = float(lat_match.group(1))
+                    data["longitude"] = float(lng_match.group(1))
 
     def trouver_formater_urls_offres(self, soup: BeautifulSoup) -> list[str]:
         """Méthode qui ermet de formater les urls KnightFrannk lors de la méthode obtenir_sitemap_html

@@ -51,7 +51,23 @@ class CBREScraper(RequestsScraper):
         data["contrat"] = next(
             (label for key, label in contrat_map.items() if key in url), "N/A"
         )
+        # Surcharger la méthode obtenir l'url image
+        parent_image = soup.find("div", class_="main-image")
+        img_image = parent_image.find("img")
+        if img_image and img_image["src"] :
+            data["url_image"] = img_image["src"]
 
+        # Surcharger la méthode obtenir la position gps
+        parent = soup.find("a", id="contentHolder_streetMapLink")
+        if parent:
+            href = parent.get("href")
+            match = re.search(r'cbll=([\d\.]+),([\d\.]+)', href)
+            if match:
+                data["latitude"] = float(match.group(1))
+                data["longitude"] = float(match.group(2))
+        else:   
+            data["latitude"] = "48.866669"
+            data["longitude"] = "2.33333 "
     def filtre_urls(self, urls: list[str]) -> list[str]:
         """
         Méthode de filtrage surchargée pour les besoins du scraper BNP

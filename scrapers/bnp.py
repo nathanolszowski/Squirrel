@@ -5,6 +5,9 @@ Scraper pour BNP Paribas Real Estate
 
 import logging
 from bs4 import BeautifulSoup
+from urllib.parse import urljoin
+import re
+import json
 from core.requests_scraper import RequestsScraper
 from config.settings import DEPARTMENTS_IDF, SITEMAPS
 from config.selectors import BNP_SELECTORS
@@ -19,7 +22,7 @@ class BNPScraper(RequestsScraper):
         super().__init__(ua_generateur, proxy, "BNP", SITEMAPS["BNP"])
         self.selectors = BNP_SELECTORS
 
-    def post_taitement_hook(self, data: dict, soup: BeautifulSoup, url: str) -> None:
+    def post_traitement_hook(self, data: dict, soup: BeautifulSoup, url: str) -> None:
         """Méthode de post-traitement surchargée pour les besoins du scraper de BNP
 
         Args:
@@ -53,6 +56,26 @@ class BNPScraper(RequestsScraper):
         adresse = self.safe_select_text(soup, self.selectors["adresse"])
         nom_immeuble = self.safe_select_text(soup, self.selectors["nom_immeuble"])
         data["adresse"] = f"{nom_immeuble} {adresse}".strip()
+
+        # Surcharger la méthode obtenir l'url image
+        parent_image = soup.find("div", class_="img-container")
+        img_image = parent_image.find("img")
+        if img_image and img_image["data-lazy"] :
+            url_image = urljoin("https://www.bnppre.fr", img_image["data-lazy"])
+            data["url_image"] = url_image
+
+        # Surcharger la méthode obtenir la position gps
+        script = soup.find('script', string=re.compile(r'var geocode'))
+        match = re.search(r'var geocode\s*=\s*(\{.*?\});', script.string, re.DOTALL)
+
+        if match:
+            geocode_json = match.group(1)
+            geocode = json.loads(geocode_json)
+            
+            # Extraire la localisation
+            location = geocode['results'][0]['geometry']['location']
+            data["latitude"] = location['lat']
+            data["longitude"] = location['lng']
 
     def filtre_urls(self, urls: list[str]) -> list[str]:
         """

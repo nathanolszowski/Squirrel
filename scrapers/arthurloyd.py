@@ -5,6 +5,9 @@ Scraper pour ARTHURLOYD
 
 import logging
 from bs4 import BeautifulSoup
+import json
+import html
+from urllib.parse import urljoin
 from core.requests_scraper import RequestsScraper
 from config.settings import SITEMAPS
 from config.selectors import ARTHURLOYD_SELECTORS
@@ -48,6 +51,22 @@ class ARTHURLOYDScraper(RequestsScraper):
         data["adresse"] = (
             f"{self.safe_select_text(soup, self.selectors["titre"])}, {data["adresse"]}"
         )
+
+        # Surcharger la méthode obtenir l'url image
+        
+        li = soup.select_one("#ogallery li")
+        if li:
+            data["url_image"] = urljoin("https://www.arthur-loyd.com", li.get("data-background"))
+
+        # Surcharger la méthode obtenir la position gps
+        div = soup.find("div", attrs={"data-live-props-value": True})
+        encoded_data = div["data-live-props-value"]
+        decoded_data = html.unescape(encoded_data)
+        data_dict = json.loads(decoded_data)
+        markers = data_dict.get("markers", [])
+        if markers:
+            data["latitude"] = markers[0].get("latitude")
+            data["longitude"] = markers[0].get("longitude")
 
     def filtre_urls(self, urls: list[str]) -> list[str]:
         """
