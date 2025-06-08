@@ -53,10 +53,12 @@ class ARTHURLOYDScraper(RequestsScraper):
         )
 
         # Surcharger la méthode obtenir l'url image
-        
+
         li = soup.select_one("#ogallery li")
         if li:
-            data["url_image"] = urljoin("https://www.arthur-loyd.com", li.get("data-background"))
+            data["url_image"] = urljoin(
+                "https://www.arthur-loyd.com", li.get("data-background")
+            )
 
         # Surcharger la méthode obtenir la position gps
         div = soup.find("div", attrs={"data-live-props-value": True})
