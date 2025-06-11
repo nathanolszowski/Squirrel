@@ -16,14 +16,13 @@ Liste des sites d'agences disponibles :
 
 1. Priorité 1 :
 - Modifier le cache d'user-agent pour qu'il ne prenne que les browsers chrome/mozilla/opéra (quelques erreurs objectification en UserAgent)
-- Ajout des longitude/latitude pour toutes les agences
-- Ajout lien photo descriptive pour toutes les agences
-- Homogénéiser les données
+- Perfectionner la récupération des longitude/latitude et des adresses pour toutes les agences
+- Homogénéiser les données récoltées
 - Gérer les doublons d'offres :
-   - ajout des données de localisation si disponibles (long/lat)
    - comparer lat/long, adresse, accroche, titre et surface totale
 
 2. Priorité 2 :
+- Séparer les champs de surface et la division
 - Ajout des secteurs de marché
 - Système de cache pour éviter de re-scraper les mêmes pages trop souvent ?
 - Repérage d'un trop grand nombre de N/A sur certaines valeurs pour surveiller la présence du bon sélecteur
@@ -52,6 +51,7 @@ Squirrel/
 │   ├── jll.py
 │   └── ...
 ├── utils/
+│   └── data_pipelines        # Fonctions de nettoyage des données
 │   └── export.py             # Fonctions d'export JSON (créé un nouveau dossier exports à la racine)
 │   └── user_agent.py         # Générateur d'user-agents
 │   └── logging_config        # Initialisation du logger (créé un nouveau dossier logs à la racine)
@@ -100,6 +100,9 @@ Format de sortie JSON :
    "contact": "Baptiste Quilgars",
    "accroche": "BNP PARIBAS REAL ESTATE vous propose, à la Vente, une cellule d'activité avec bureaux d'accompagnement, en bon état, disponible à Croissy-Beaubourg.",
    "amenagements": "L'essentiel à retenirDisponibilité :ImmédiateCharge au sol Rdc :2,00 tonne(s)/m²Porte d'accès plain-pied :3HauteursHauteur sous poutre :5,00 mètre(s)Accès véhiculesAccessibilité type véhicules :Tous porteursEquipementsCharge au sol Rdc :2,00 tonne(s)/m²Climatisation :Réversible dans la partie BureauxEclairage Bureaux :Luminaires encastrésEclairage naturel :SkydomesFaux plafond :OuiFenêtres :OuiPorte d'accès plain-pied :3Sol bureaux :ParquetSols du bâtiment :BétonSource chauffage :Electrique 2 AérothermesType / Etat du bâtimentEtat de l'immeuble :Etat d'usagePrestations de serviceParking :35 PlacesSécurité :Contrôle d'accès - PortailAménagementsAménagement des bureaux :CloisonnésLocaux sociaux :SanitairesSanitaires :Oui",
+   "url_image": "https://www.bnppre.fr/sites/default/files/styles/max_2600x2600/public/offers/34/34fcc0a002c3245f1c2cd2c393d1e2b89a1e5582.jpg.webp?itok=tGm22I-P",
+   "latitude": 44.8019097,
+   "longitude": -0.6488505,
    "prix_global": "1 700 000 €"
 }
 ```
