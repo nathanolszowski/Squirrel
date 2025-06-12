@@ -66,7 +66,7 @@ class JLLScraper(SeleniumScraper):
                     last_segment = url.strip("/").split("/")[-1]
                     part = last_segment.split("-")
                     part = part[-2]
-                    if not any(departement in part for departement in DEPARTMENTS_IDF):
+                    if any(departement in part for departement in DEPARTMENTS_IDF):
                         urls_filtrees.append(url)
                 else:
                     urls_filtrees.append(url)

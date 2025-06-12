@@ -60,22 +60,22 @@ class BNPScraper(RequestsScraper):
         # Surcharger la méthode obtenir l'url image
         parent_image = soup.find("div", class_="img-container")
         img_image = parent_image.find("img")
-        if img_image and img_image["data-lazy"] :
+        if img_image and img_image["data-lazy"]:
             url_image = urljoin("https://www.bnppre.fr", img_image["data-lazy"])
             data["url_image"] = url_image
 
         # Surcharger la méthode obtenir la position gps
-        script = soup.find('script', string=re.compile(r'var geocode'))
-        match = re.search(r'var geocode\s*=\s*(\{.*?\});', script.string, re.DOTALL)
+        script = soup.find("script", string=re.compile(r"var geocode"))
+        match = re.search(r"var geocode\s*=\s*(\{.*?\});", script.string, re.DOTALL)
 
         if match:
             geocode_json = match.group(1)
             geocode = json.loads(geocode_json)
-            
+
             # Extraire la localisation
-            location = geocode['results'][0]['geometry']['location']
-            data["latitude"] = location['lat']
-            data["longitude"] = location['lng']
+            location = geocode["results"][0]["geometry"]["location"]
+            data["latitude"] = location["lat"]
+            data["longitude"] = location["lng"]
 
     def filtre_urls(self, urls: list[str]) -> list[str]:
         """
@@ -92,9 +92,7 @@ class BNPScraper(RequestsScraper):
         for url in urls:
             if "bureau" in url:
                 # Regarde si contient les départements IDF
-                if not any(
-                    f"-{departement}/" in url for departement in DEPARTMENTS_IDF
-                ):
+                if any(f"-{departement}/" in url for departement in DEPARTMENTS_IDF):
                     urls_filtrees.append(url)
             else:
                 urls_filtrees.append(url)
