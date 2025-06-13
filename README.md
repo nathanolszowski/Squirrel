@@ -15,7 +15,6 @@ Liste des sites d'agences disponibles :
 ## Etat du projet et amélioration à venir
 
 1. Priorité 1 :
-- Modifier le cache d'user-agent pour qu'il ne prenne que les browsers chrome/mozilla/opéra (quelques erreurs objectification en UserAgent)
 - Perfectionner la récupération des longitude/latitude et des adresses pour toutes les agences
 - Homogénéiser les données récoltées
 - Gérer les doublons d'offres :

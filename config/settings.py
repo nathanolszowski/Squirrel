@@ -3,6 +3,8 @@
 Configuration globale pour les scrapers
 """
 
+PROXY = ""
+
 # Départements d'Île-de-France ciblés
 DEPARTMENTS_IDF = ["75", "77", "78", "91", "92", "93", "94", "95"]
 

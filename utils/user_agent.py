@@ -84,8 +84,10 @@ class ListUserAgent:
         try:
             with httpx.Client(
                 proxy=self.proxy,
-                headers={"User-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"},
+                headers={
+                    "User-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                    "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
+                },
                 timeout=REQUEST_TIMEOUT,
                 follow_redirects=True,
             ) as client:
@@ -117,8 +119,10 @@ class ListUserAgent:
         try:
             with httpx.Client(
                 proxy=self.proxy,
-                headers={"User-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"},
+                headers={
+                    "User-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                    "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
+                },
                 timeout=REQUEST_TIMEOUT,
                 follow_redirects=True,
             ) as client:
@@ -140,15 +144,21 @@ class ListUserAgent:
             try:
                 with httpx.Client(
                     proxy=self.proxy,
-                headers={"User-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"},
+                    headers={
+                        "User-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                        "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
+                    },
                     timeout=REQUEST_TIMEOUT,
                     follow_redirects=True,
                 ) as client:
                     response = client.get(url)
                 soup = BeautifulSoup(response.content, "html.parser")
-                ua_chaine = soup.select_one("body > div:nth-child(1) > main > h1").get_text()
-                if any(ua_chaine.startswith(browser) for browser in ["Mozilla", "Opéra"]):
+                ua_chaine = soup.select_one(
+                    "body > div:nth-child(1) > main > h1"
+                ).get_text()
+                if any(
+                    ua_chaine.startswith(browser) for browser in ["Mozilla", "Opera"]
+                ):
                     user_agents_string.append(ua_chaine)
             except httpx.HTTPError as e:
                 logger.error(
