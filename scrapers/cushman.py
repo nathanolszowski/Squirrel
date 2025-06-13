@@ -37,9 +37,12 @@ class CUSHMANScraper(RequestsScraper):
         )
         # Surcharger la méthode obtenir actif
         actif_map = {
+            "bureaux": "Bureaux",
             "Bureaux": "Bureaux",
             "Activités": "Locaux d'activité",
             "Entrepôts": "Entrepots",
+            "Coworking": "Bureau équipé",
+            "Bureaux privés": "Bureau équipé",
         }
         data["actif"] = next(
             (label for key, label in actif_map.items() if key in data["actif"]), "N/A"
@@ -81,7 +84,7 @@ class CUSHMANScraper(RequestsScraper):
                     part = part[-2]
                     if any(departement in part for departement in DEPARTMENTS_IDF):
                         urls_filtrees.append(url)
-                else:
+                elif "activites" or "entrepots" in url:
                     urls_filtrees.append(url)
         logger.info(
             f"[{self.name.upper()}] Trouvé {len(urls_filtrees)} URLs filtrées sans bureaux région"
