@@ -5,7 +5,6 @@ Scraper pour SAVILLS
 
 import logging
 import httpx
-import json
 from typing import Union
 from core.requests_scraper import RequestsScraper
 from config.settings import SITEMAPS, REQUEST_TIMEOUT
