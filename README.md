@@ -22,17 +22,18 @@ Liste des sites d'agences disponibles :
 
 2. Priorité 2 :
 - Séparer les champs de surface et la division
-- Ajout des secteurs de marché
 - Système de cache pour éviter de re-scraper les mêmes pages trop souvent ?
 - Repérage d'un trop grand nombre de N/A sur certaines valeurs pour surveiller la présence du bon sélecteur
-- Travail sur les offres de coworking
 
 3. Priorité 3 :
 - Travail sur la factorisation du code et la vitesse de scraping
+- Ajout des secteurs de marché
+- Comparer le nouvel export avec l'ancien
+- Barre de progression des traitements
 - Mise en place de retry mechanisms pour les requêtes échouées
 - Parallélisation des scraping avec asyncio (asyncio + aiohttp)
 - Tests unitaires et d'intégration ?
-- Barre de progression des traitements
+
 
 ## Structure du projet
 

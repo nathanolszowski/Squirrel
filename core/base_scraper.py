@@ -134,11 +134,11 @@ class BaseScraper(ABC):
                 "disponibilite": self.safe_select_text(
                     soup, self.selectors["disponibilite"]
                 ),
-                "surface": (
-                    self.safe_select_text(soup, self.selectors["surface"])
-                    + self.safe_select_text(soup, self.selectors["division"])
+                "surface": (self.safe_select_text(soup, self.selectors["surface"])),
+                "division": (
+                    self.safe_select_text(soup, self.selectors["division"])
                     if self.selectors["division"] != "None"
-                    else self.safe_select_text(soup, self.selectors["surface"])
+                    else None
                 ),
                 "adresse": self.safe_select_text(soup, self.selectors["adresse"]),
                 "contact": self.safe_select_text(soup, self.selectors["contact"]),
