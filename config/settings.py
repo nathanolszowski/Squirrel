@@ -33,6 +33,7 @@ SITEMAPS = {
             "Bureaux": "https://www.bnppre.fr/sitemaps/bnppre/sitemap-bureaux.xml",
             "Entrepôt": "https://www.bnppre.fr/sitemaps/bnppre/sitemap-entrepots.xml",
             "Locaux": "https://www.bnppre.fr/sitemaps/bnppre/sitemap-locaux.xml",
+            "Coworking": "https://bnppre.fr/sitemaps/bnppre/sitemap-coworking.xml",
         },
     ],
     "JLL": ["XML", "https://immobilier.jll.fr/sitemap-properties.xml"],

@@ -55,8 +55,8 @@ class CUSHMANScraper(RequestsScraper):
         data_property = div_map.get("data-property")
         decoded_json_str = html.unescape(data_property)
         positions = json.loads(decoded_json_str)
-        data["latitude"] = positions["address"]["displayedGeolocation"]["lat"]
-        data["longitude"] = positions["address"]["displayedGeolocation"]["lon"]
+        data["latitude"] = float(positions["address"]["displayedGeolocation"]["lat"])
+        data["longitude"] = float(positions["address"]["displayedGeolocation"]["lon"])
 
     def filtre_urls(self, urls: list[str]) -> list[str]:
         """

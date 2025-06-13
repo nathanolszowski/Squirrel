@@ -48,6 +48,7 @@ class BNPScraper(RequestsScraper):
             "bureau": "Bureaux",
             "local": "Locaux d'activité",
             "entrepot": "Entrepots",
+            "coworking": "Bureau équipé",
         }
         data["actif"] = next(
             (label for key, label in actif_map.items() if key in url), "N/A"
@@ -74,8 +75,8 @@ class BNPScraper(RequestsScraper):
 
             # Extraire la localisation
             location = geocode["results"][0]["geometry"]["location"]
-            data["latitude"] = location["lat"]
-            data["longitude"] = location["lng"]
+            data["latitude"] = float(location["lat"])
+            data["longitude"] = float(location["lng"])
 
     def filtre_urls(self, urls: list[str]) -> list[str]:
         """

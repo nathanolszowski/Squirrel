@@ -54,8 +54,8 @@ class ALEXBOLTONScraper(RequestsScraper):
         # # Surcharger la méthode obtenir latitude et longitude
         position_div = soup.find("div", id="listing-map-target")
         if position_div:
-            data["latitude"] = position_div.get("data-latitude")
-            data["longitude"] = position_div.get("data-longitude")
+            data["latitude"] = float(position_div.get("data-latitude"))
+            data["longitude"] = float(position_div.get("data-longitude"))
 
     def filtre_urls(self, urls: list[str]) -> list[str]:
         """

@@ -67,8 +67,8 @@ class ARTHURLOYDScraper(RequestsScraper):
         data_dict = json.loads(decoded_data)
         markers = data_dict.get("markers", [])
         if markers:
-            data["latitude"] = markers[0].get("latitude")
-            data["longitude"] = markers[0].get("longitude")
+            data["latitude"] = float(markers[0].get("latitude"))
+            data["longitude"] = float(markers[0].get("longitude"))
 
     def filtre_urls(self, urls: list[str]) -> list[str]:
         """
