@@ -39,6 +39,7 @@ class CBREScraper(RequestsScraper):
             "bureaux": "Bureaux",
             "activites": "Locaux d'activité",
             "entrepots": "Entrepots",
+            "coworking": "Bureau équipé",
         }
         data["actif"] = next(
             (label for key, label in actif_map.items() if key in url), "N/A"
@@ -85,7 +86,7 @@ class CBREScraper(RequestsScraper):
         logger.info("Filtrage des offres CBRE")
         urls_filtrees = []
         pattern = re.compile(
-            r"https://immobilier.cbre.fr/offre/(a-louer|a-vendre)/bureaux/(\d+)"
+            r"https://immobilier.cbre.fr/offre/(a-louer|a-vendre)/(bureaux|coworking)/(\d+)"
         )
         for url in urls:
             if url.startswith(

@@ -4,6 +4,7 @@ Point d'entrée principal du scraper
 """
 
 import logging
+from datetime import datetime
 
 # from scrapers.jll import JLLScraper /!/ En panne - Ne pas utiliser /!/
 from scrapers.bnp import BNPScraper
@@ -52,6 +53,8 @@ def main():
     all_resultats = []
 
     # Exécution des scrapers
+    debut_chrono = datetime.now()
+    logger.info(f"Le programme a démarré à {debut_chrono}")
     for scraper in scrapers:
         try:
             logger.info(f"Démarrage du scraper {scraper.name.upper()} ...")
@@ -70,6 +73,11 @@ def main():
         export_json(all_resultats)
 
     logger.info("Le programme de scraping est terminé")
+    fin_chrono = datetime.now()
+    chrono = fin_chrono - debut_chrono
+    logger.info(
+        f"Le programme a terminé à {fin_chrono}. Le programme s'est executé en {chrono}"
+    )
 
 
 if __name__ == "__main__":

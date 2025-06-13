@@ -146,9 +146,9 @@ class BaseScraper(ABC):
                 "amenagements": self.safe_select_text(
                     soup, self.selectors["amenagements"]
                 ),
-                "url_image" : self.safe_select_text(soup, self.selectors["url_image"]),
-                "latitude" : self.safe_select_text(soup, self.selectors["latitude"]),
-                "longitude" : self.safe_select_text(soup, self.selectors["longitude"]),
+                "url_image": self.safe_select_text(soup, self.selectors["url_image"]),
+                "latitude": self.safe_select_text(soup, self.selectors["latitude"]),
+                "longitude": self.safe_select_text(soup, self.selectors["longitude"]),
                 "prix_global": self.safe_select_text(
                     soup, self.selectors["prix_global"]
                 ),
@@ -220,11 +220,15 @@ class BaseScraper(ABC):
                 logger.info(
                     f"[{self.name.upper()}] Début du scraping des données pour chacune des offres"
                 )
+                nb_urls = len(url_filtrees)
                 for url in url_filtrees:
                     try:
                         resultats = self.rechercher_donnees_offre(url)
                         if resultats:
                             self.resultats_offres.append(resultats)
+                        logger.info(
+                            f"[{self.name.upper()}] Recherche des données en cours - {url_filtrees.index(url)}/{nb_urls}"
+                        )
                     except Exception as e:
                         logger.error(
                             f"[{self.name.upper()}] Erreur lors de la récupération de {url}: {e}"

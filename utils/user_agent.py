@@ -326,5 +326,4 @@ class Rotator:
         )[0]
         # Met à jour l'attribut de dernière utilisation
         user_agent.last_used = time()
-        logger.info(f"Un nouvel user_agent a été sélectionné {user_agent}")
         return str(user_agent)
