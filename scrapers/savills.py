@@ -75,6 +75,7 @@ class SAVILLSScraper(RequestsScraper):
                     )
                     offres = data.get("Results", {}).get("Properties", [])
                     for offre in offres:
+                        # Déterminer le type de contrat
                         contrat = offre.get("SizeDescription", "")
                         contrat_map = {
                             "louer": "Location",
@@ -88,6 +89,24 @@ class SAVILLSScraper(RequestsScraper):
                             ),
                             "N/A",
                         )
+                        # Déterminer le type d'actif
+                        actif = offre.get("PropertyTypes", [{}])[0].get("Caption", "")
+                        if (
+                            isinstance(offre.get("PropertyTypes"), list)
+                            and len(offre.get("PropertyTypes")) > 0
+                        ):
+                            if actif == "Entrepôts / Locaux d'activité":
+                                for surface in offre.get("ByUnit"):
+                                    type_surface = surface["Type"]
+                                    if (
+                                        type_surface == "Activités"
+                                        or type_surface == "Entrepôts"
+                                    ):
+                                        actif = type_surface
+                                        break
+                        else:
+                            actif = None
+
                         offre_detail = {
                             "confrere": self.name,
                             "url": self.property_url
@@ -96,12 +115,7 @@ class SAVILLSScraper(RequestsScraper):
                             "url_image": offre.get("ImagesGallery")[0].get(
                                 "ImageUrl_L", ""
                             ),
-                            "actif": (
-                                offre.get("PropertyTypes", [{}])[0].get("Caption", "")
-                                if isinstance(offre.get("PropertyTypes"), list)
-                                and len(offre.get("PropertyTypes")) > 0
-                                else ""
-                            ),
+                            "actif": actif,
                             "contrat": contrat,
                             "disponibilite": (
                                 offre.get("ByUnit", [{}])[0].get("Disponibilité", "")
