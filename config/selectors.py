@@ -111,7 +111,7 @@ ARTHURLOYD_SELECTORS = {
     "reference": "#advisor-brick-wrapper > div > div:nth-child(1) > div.offer-informations.d-flex.align-items-center.justify-content-between > div.reference > b",
     "contrat": "None",
     "actif": "None",
-    "disponibilite": "#advisor-brick-wrapper > div > div:nth-child(1) > div:nth-child(3) > div > ul > li:nth-child(2) > span:nth-child(2)",
+    "disponibilite": "None",
     "surface": "#details-desktop > div > div.col-xl-2.d-none.d-xl-block.text-end > div > div > a > div.max-surface > span",
     "division": "#details-desktop > div > div.col-xl-2.d-none.d-xl-block.text-end > div > div > a > div.d-flex.justify-content-end.min-surface > div:nth-child(1) > span.surface",
     "adresse": "#localisation > div",

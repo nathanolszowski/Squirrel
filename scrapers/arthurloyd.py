@@ -51,15 +51,21 @@ class ARTHURLOYDScraper(RequestsScraper):
         data["adresse"] = (
             f"{self.safe_select_text(soup, self.selectors["titre"])}, {data["adresse"]}"
         )
+        # Surcharger la méthode obtenir la disponibilité
 
+        date = soup.find("i", class_="fak fa-date")
+        if date:
+            data["disponibilite"] = soup.select_one(
+                "#advisor-brick-wrapper > div > div:nth-child(1) > div:nth-child(3) > div > ul > li:nth-child(2) > span:nth-child(2)"
+            )
+        else:
+            data["disponibilite"] = None
         # Surcharger la méthode obtenir l'url image
-
         li = soup.select_one("#ogallery li")
         if li:
             data["url_image"] = urljoin(
                 "https://www.arthur-loyd.com", li.get("data-background")
             )
-
         # Surcharger la méthode obtenir la position gps
         div = soup.find("div", attrs={"data-live-props-value": True})
         encoded_data = div["data-live-props-value"]
