@@ -2,7 +2,7 @@
 """
 Configuration globale pour les scrapers
 """
-PROXY = "http://zfqxbelefdh8k61-country-fr-session-xsbn30p8ic-lifetime-1:vkfspx2ez8cjy7c@rp.scrapegw.com:6060"
+PROXY = ""
 
 # Départements d'Île-de-France ciblés
 DEPARTMENTS_IDF = ["75", "77", "78", "91", "92", "93", "94", "95"]
