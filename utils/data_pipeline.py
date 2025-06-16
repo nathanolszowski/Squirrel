@@ -41,9 +41,7 @@ def appliquer_nettoyage_specifique(df: pd.DataFrame) -> pd.DataFrame:
             )
 
         elif confrere == "CUSHMAN":
-            row["reference"] = nettoyer_reference(
-                row.get("reference", ""), r"^Réf\s*:\s*"
-            )
+            row["reference"] = nettoyer_reference(row.get("reference", ""), r"^Réf.:")
             row["prix_global"] = nettoyer_prix(row.get("prix_global", ""))
 
         elif confrere == "KNIGHTFRANK":

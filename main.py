@@ -43,7 +43,7 @@ def main():
     scrapers = [
         BNPScraper(ua_generateur, PROXY),
         # JLLScraper(ua_generateur, PROXY) /!/ En panne - Ne pas utiliser /!/
-        CBREScraper(ua_generateur, PROXY),
+        # CBREScraper(ua_generateur, PROXY),
         # ALEXBOLTONScraper(ua_generateur, PROXY),
         CUSHMANScraper(ua_generateur, PROXY),
         # KNIGHTFRANKScraper(ua_generateur, PROXY),
@@ -74,7 +74,7 @@ def main():
     if all_resultats:
         dataFrame = pd.DataFrame(all_resultats)
         dataFrame = appliquer_nettoyage_specifique(dataFrame)
-        export_json(all_resultats)
+        export_json(dataFrame)
 
     logger.info("Le programme de scraping est terminé")
     fin_chrono = datetime.now()
