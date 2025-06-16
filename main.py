@@ -5,6 +5,7 @@ Point d'entrée principal du scraper
 
 import logging
 from datetime import datetime
+import pandas as pd
 
 # from scrapers.jll import JLLScraper /!/ En panne - Ne pas utiliser /!/
 from scrapers.bnp import BNPScraper
@@ -20,6 +21,7 @@ from utils.export import export_json
 from utils.logging_config import setup_logging
 from utils.user_agent import Rotator, ListUserAgent
 from config.settings import PROXY
+from utils.data_pipeline import appliquer_nettoyage_specifique
 
 
 def main():
@@ -70,6 +72,8 @@ def main():
             logger.error(f"Erreur de lancement pour {scraper.name} : {e}")
 
     if all_resultats:
+        dataFrame = pd.DataFrame(all_resultats)
+        dataFrame = appliquer_nettoyage_specifique(dataFrame)
         export_json(all_resultats)
 
     logger.info("Le programme de scraping est terminé")

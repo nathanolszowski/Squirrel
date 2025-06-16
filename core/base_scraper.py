@@ -138,7 +138,7 @@ class BaseScraper(ABC):
                 "division": (
                     self.safe_select_text(soup, self.selectors["division"])
                     if self.selectors["division"] != "None"
-                    else None
+                    else "Non divisible"
                 ),
                 "adresse": self.safe_select_text(soup, self.selectors["adresse"]),
                 "contact": self.safe_select_text(soup, self.selectors["contact"]),

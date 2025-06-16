@@ -7,17 +7,18 @@ import json
 from datetime import datetime
 import logging
 import os
+import pandas as pd
 
 logger = logging.getLogger(__name__)
 
 
-def export_json(data: dict[str], log_dir: str = "exports") -> None:
+def export_json(data: pd.DataFrame, log_dir: str = "exports") -> None:
     """
     Exporte les résultats au format JSON
 
     Args:
-        data (dict[str]): Données à exporter
-        log_dir (str): Nom du dossier qui compile les résultats
+        data (pd.DataFrame): Le DataFrame à exporter.
+        output_path (str): Le chemin du fichier de sortie (.json).
     """
 
     if not os.path.exists(log_dir):
@@ -28,8 +29,10 @@ def export_json(data: dict[str], log_dir: str = "exports") -> None:
         now = datetime.now().strftime("%Y-%m-%d_%H-%M")
         log_file = os.path.join(log_dir, f"{now}.json")
 
+        data = data.to_dict(orient="records")
+
         with open(log_file, "w", encoding="utf-8") as f:
-            json.dump(data, f, ensure_ascii=False, indent=4)
+            json.dump(data, f, ensure_ascii=False, indent=2)
 
         logger.info(f"Exportation réussie de {len(data)} résultats")
 
