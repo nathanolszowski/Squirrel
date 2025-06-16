@@ -21,7 +21,6 @@ Liste des sites d'agences disponibles :
    - comparer lat/long, adresse, accroche, titre et surface totale
 
 2. Priorité 2 :
-- Séparer les champs de surface et la division
 - Système de cache pour éviter de re-scraper les mêmes pages trop souvent ?
 - Repérage d'un trop grand nombre de N/A sur certaines valeurs pour surveiller la présence du bon sélecteur
 

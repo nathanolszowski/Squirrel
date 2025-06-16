@@ -221,7 +221,7 @@ class BaseScraper(ABC):
                     f"[{self.name.upper()}] Début du scraping des données pour chacune des offres"
                 )
                 nb_urls = len(url_filtrees)
-                for url in url_filtrees:
+                for url in url_filtrees[:5]:
                     try:
                         resultats = self.rechercher_donnees_offre(url)
                         if resultats:
