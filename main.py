@@ -45,7 +45,7 @@ def main():
         # JLLScraper(ua_generateur, PROXY) /!/ En panne - Ne pas utiliser /!/
         # CBREScraper(ua_generateur, PROXY),
         # ALEXBOLTONScraper(ua_generateur, PROXY),
-        CUSHMANScraper(ua_generateur, PROXY),
+        # CUSHMANScraper(ua_generateur, PROXY),
         # KNIGHTFRANKScraper(ua_generateur, PROXY),
         # ARTHURLOYDScraper(ua_generateur, PROXY),
         # SAVILLSScraper(ua_generateur, PROXY)
