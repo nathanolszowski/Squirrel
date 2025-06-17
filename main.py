@@ -73,6 +73,7 @@ def main():
 
     if all_resultats:
         dataFrame = pd.DataFrame(all_resultats)
+        logger.info("Lancement du nettoyage du dictionnaire d'offres")
         dataFrame = appliquer_nettoyage_specifique(dataFrame)
         export_json(dataFrame)
 

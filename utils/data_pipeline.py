@@ -27,7 +27,6 @@ def nettoyer_disponibilite(val: str) -> str:
 
 def appliquer_nettoyage_specifique(df: pd.DataFrame) -> pd.DataFrame:
     def nettoyer_ligne(row):
-        logger.info("Lancement du nettoyage du dictionnaire d'offres")
         confrere = row["confrere"]
 
         if confrere == "BNP":
