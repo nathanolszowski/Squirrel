@@ -114,10 +114,12 @@ class BaseScraper(ABC):
             dict[str]: Dictionnaire avec les informations de l'offre scrapée depuis l'url
         """
         try:
+            retry = httpx.HTTPTransport(retries=3)
             with httpx.Client(
                 proxy=self.proxy,
                 headers={"User-agent": self.ua_generateur.get()},
                 timeout=REQUEST_TIMEOUT,
+                transport=retry,
                 follow_redirects=True,
             ) as client:
                 reponse = client.get(url)
