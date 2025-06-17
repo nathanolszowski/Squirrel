@@ -58,17 +58,28 @@ class CUSHMANScraper(RequestsScraper):
             data["division"] = "Non divisibles"
         # Surcharger la méthode obtenir l'url image
         parent_image = soup.find("div", class_="c-swiper__slide")
-        img_image = parent_image.find("source")
-        if img_image and img_image["srcset"]:
-            data["url_image"] = img_image["srcset"]
+        if parent_image:
+            img_image = parent_image.find("source")
+            if img_image and img_image["srcset"]:
+                data["url_image"] = img_image["srcset"]
+        else:
+            data["url_image"] = None
 
         # Surcharger la méthode obtenir la posititon gps
         div_map = soup.find("div", class_="c-map js-map")
-        data_property = div_map.get("data-property")
-        decoded_json_str = html.unescape(data_property)
-        positions = json.loads(decoded_json_str)
-        data["latitude"] = float(positions["address"]["displayedGeolocation"]["lat"])
-        data["longitude"] = float(positions["address"]["displayedGeolocation"]["lon"])
+        if div_map:
+            data_property = div_map.get("data-property")
+            decoded_json_str = html.unescape(data_property)
+            positions = json.loads(decoded_json_str)
+            data["latitude"] = float(
+                positions["address"]["displayedGeolocation"]["lat"]
+            )
+            data["longitude"] = float(
+                positions["address"]["displayedGeolocation"]["lon"]
+            )
+        else:
+            data["latitude"] = 48.866669
+            data["longitude"] = 2.33333
 
     def filtre_urls(self, urls: list[str]) -> list[str]:
         """
