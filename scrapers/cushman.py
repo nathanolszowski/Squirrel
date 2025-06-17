@@ -48,14 +48,14 @@ class CUSHMANScraper(RequestsScraper):
             (label for key, label in actif_map.items() if key in data["actif"]), "N/A"
         )
         # Surcharger la méthode obtenir la division
-        if "divisibles" in data["surface"]:
+        if "divisibles à partir" in data["surface"]:
             divisible = data["surface"].find("divisibles")
             surface_divisible = data["surface"][:divisible].strip()
             divisibilite = data["surface"][divisible:].strip()
             data["surface"] = surface_divisible
             data["division"] = divisibilite
         else:
-            data["division"] = "Non divisible"
+            data["division"] = "Non divisibles"
         # Surcharger la méthode obtenir l'url image
         parent_image = soup.find("div", class_="c-swiper__slide")
         img_image = parent_image.find("source")

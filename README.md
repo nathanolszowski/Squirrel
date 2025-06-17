@@ -129,3 +129,17 @@ Format de sortie JSON :
 - Les sélecteurs sont centralisés dans `config/selectors.py`
 - La configuration globale est dans `config/settings.py`
 - Les logs permettent de suivre l'exécution et diagnostiquer les erreurs
+
+## Résolution d'erreur
+
+- [Errno 11001] getaddrinfo failed
+└──> Traduit l'argument host/port en une séquence de 5 tuples contenant tous les arguments nécessaires à la création d'une socket connectée à ce service. host est un nom de domaine, une représentation sous forme de chaîne d'une adresse IPv4/v6 ou None.
+- [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)
+└──> TLS support version ?
+- peer closed connection without sending complete message body (incomplete chunked read)
+└──> Limite imposé par le serveur interrogé.
+   └──> Rien n'a faire du côté client. Possiblement espacer les requêtes.
+- Server disconnected without sending a response
+└──> erreur dû aux timeouts ou à la "keep-alive connection" (soit côté client, soit côté serveur)
+   └──> Voir paramétrage httpx.Limits.
+
